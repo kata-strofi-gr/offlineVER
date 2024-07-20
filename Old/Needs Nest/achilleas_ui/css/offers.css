@@ -1,0 +1,13 @@
+/* Item */
+/* TODO: add transistion for height and card flipping effect for adding */
+.item {
+    margin: 5px;
+    border: orangered 3px solid;
+    min-height: 5em;
+    max-height: 8em;
+    overflow: hidden;
+}
+
+.item p {
+    margin: 0;
+}

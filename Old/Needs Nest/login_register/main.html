@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="././CSS/log_in.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <title>Test Page</title>
+</head>
+
+
+<script src="login.js"></script>
+
+<body>
+  
+    <div class="wrapper">
+        <div class="logo">
+            <img src="./Media/Untitled-2.png" alt="">
+        </div>
+        <div class="text-center mt-4 name">
+            Welcome to NeedsNest 
+        </div>
+
+        <div class="form-box log_in" >
+            <form class="p-3 mt-3" id = "log_in">
+
+                <div class="text-center mt-1 name">
+                    Login to your account 
+                </div>
+
+                <div class="form-field d-flex align-items-center">
+                    <span class="far fa-user"></span>
+                    <i class='bx bx-user bx-flip-horizontal' ></i>
+                    <input type="text" name="userName" id="userName" placeholder="Username">
+                </div>
+
+                <div class="form-field d-flex align-items-center">
+                    <i class='bx bx-lock-alt bx-flip-horizontal' ></i>
+                    <input type="password" name="password" id="pwd" placeholder="Password">
+                </div>
+                
+                <button class="btn mt-3 login-btn">Login</button>
+                <button class="btn mt-3 register-btn">Register</button>
+
+            </form>
+            <div class="text-center fs-6">
+                <a href="#">Forget password?</a>
+            </div>
+        </div>
+        <div class="form_register_box">
+
+            <form class="p-3 mt-3" id = "Registration">
+
+                <div class="text-center mt-4 name">
+                    Login to your account 
+                </div>
+
+                <div class="form-field d-flex align-items-center">
+                    <span class="far fa-user"></span>
+                    <i class='bx bx-user bx-flip-horizontal' ></i>
+                    <input type="text" name="userName" id="userName" placeholder="Username">
+                </div>
+
+                <div class="form-field d-flex align-items-center">
+                    <span class="far fa-user"></span>
+                    <i class='bx bxs-envelope' ></i>
+                    <input type="text" name="email" id="email" placeholder="Email">
+                </div>
+
+                <div class="form-field d-flex align-items-center">
+                    <i class='bx bx-lock-alt bx-flip-horizontal' ></i>
+                    <input type="password" name="password" id="pwd" placeholder="Password">
+                </div>
+                
+                <button class="btn mt-3 register-btn">Register</button>
+                <div class="register_to_login text-center mt-3">
+                    <p>Already have an account ? <a href="#" class="log_in-link"> Log in</a></p>
+                </div>
+            
+            </form>
+         </div>
+    </div>
+</body>
+
+</html>
+
