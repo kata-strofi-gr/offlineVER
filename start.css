@@ -1,12 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+
 * {
     box-sizing: border-box;
 }
 
-.body{
-    overflow-x: hidden;
+
+
+:root {
+    --kataRED: #FA4343;
+    --grey50: #5F5F5F;
 }
-
-
 .container{
     display: grid;
     height: 100%;
@@ -56,8 +60,9 @@
 
 .RlogoBIG {
     height: 100vh; /* Adjust height relative to viewport height */
-    max-height: 200px; /* Ensure it doesn't get too large */
+    max-height: 25vh; /* Ensure it doesn't get too large */
     width: auto; /* Maintain aspect ratio */
+    margin: auto;
 }
 
 /* Responsive size adjustments for .GRmapstart */
@@ -70,6 +75,149 @@
     display: none;
 }
 
+.customB {
+    display: flex;
+    width: 232px;
+    height: 100px;
+    padding: 21px 32px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    border-radius: 31px;
+    background: var(--kataRED, #FA4343);
+    color: white;
+    font-size: 24px;
+    border: none;
+    cursor: pointer;
+    margin: auto;
+    margin-top: 20%;
+    font-weight: 700;
+}
+
+body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #fff;
+}
+
+.menu-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 29px; /* Increase the font size */
+    height: 80% ;/* Full height of the parent container */
+    width: 80%; /* Full width of the parent container */
+    max-width: 100%;
+    flex-wrap: wrap;
+    margin: auto;
+}
+
+.menu-item {
+    color: #FA4343; /* The red color as per the button example */
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 29px; /* Increase the font size */
+}
+
+.menu-item:hover{
+    text-decoration: underline;
+    
+}
+
+.separator {
+    color: var(--grey50);
+    font-size: 40px;
+}
+
+.customB:hover{
+    background-color: black;
+}
+
+
+.newsT1{
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 1vh;
+    padding-bottom: 1vh;
+    padding-left: 1vh;
+    box-sizing: border-box;
+}
+
+
+.newsT2{
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 1vh;
+    padding-bottom: 1vh;
+    padding-left: 1vh;
+    box-sizing: border-box;
+    
+}
+
+
+.newsT3{
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 1vh;
+    padding-bottom: 1vh;
+    padding-left: 1vh;
+    box-sizing: border-box;
+    
+}
+
+.newNotif {
+    background-color: #FA4343;
+    color: white;
+    border-radius: 31px 0 0 31px;
+    padding: 30px 50px 30px 30px;
+    max-width: 90%;
+    margin-right: 0px;
+    align-items: end;
+    
+}
+
+#secondpriority{
+    background-color: rgb(236, 186, 60);
+}
+
+#thirdpriority{
+    background-color: rgb(205, 203, 184);
+}
+
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0 0 10px 0;
+}
+
+.recipient-info {
+    font-size: 16px;
+    font-style: italic;
+    margin: 0 0 10px 0;
+}
+
+
+.description {
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0 0 10px 0;
+}
+
+.time-date {
+    font-size: 12px;
+    text-align: right;
+    margin: 0;
+}
+
+
+
+
+/* MOBILE SCREEN */
 @media only screen and (max-width:550px){
     .container
     {
@@ -92,11 +240,93 @@
         display: none;
     }
     .newsT1, .newsT2 {
-        min-height: 100px; /* Increase minimum height for mobile view */
-        padding: 10px; /* Add padding for better readability */
+        min-height: 250px;
+        padding: 10px; 
     }
 
     .GRmapstart{
         max-height: 400px;
+    }
+
+    .newNotif{
+        margin-right: 0px;
+        padding: 15px 20px 15px 15px; /* Adjust padding for smaller screens */
+        max-width: 95%; /* Adjust max-width for smaller screens */
+        max-height: 95%;
+    }
+}
+
+
+/* Menu Toggle Button */
+.menu-toggle {
+    font-size: 30px;
+    cursor: pointer;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+
+.overlay {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 45%; /* Expand from bottom to middle */
+    display: none; /* Hidden by default */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it sits above other content */
+}
+.overlay-content {
+    background-color: white;
+    padding: 60px;
+    border-radius: 15px 15px 0 0; /* Rounded top corners */
+    text-align: center;
+    position: relative;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Space out the content and button */
+}
+
+#overlayLoginButton{
+    height: 7vh;
+}
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 30px;
+    font-size: 40px;
+    cursor: pointer;
+}
+
+/* Mobile Menu */
+.mobile-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.menu-item {
+    color: #FA4343;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 24px;
+}
+
+/* Mobile Screen Adjustments */
+@media only screen and (max-width: 550px) {
+    .menuT {
+        display: none;
+    }
+
+    .menuTmobile {
+        display: block;
+        grid-area: menuTmobile;
+        padding: 10px;
     }
 }
