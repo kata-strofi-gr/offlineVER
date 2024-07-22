@@ -1,0 +1,102 @@
+* {
+    box-sizing: border-box;
+}
+
+.body{
+    overflow-x: hidden;
+}
+
+
+.container{
+    display: grid;
+    height: 100%;
+    width: 100%;
+    grid-template-columns: 2fr 1fr 1fr 0.8fr;
+    grid-template-rows: 0.8fr 1fr 1fr 1fr;
+    grid-template-areas: "logoT menuT menuT logBT" "mapT mapT newsT1 newsT1" "mapT mapT newsT2 newsT2" "mapT mapT newsT3 newsT3";
+    grid-gap: 0.1rem;
+}
+
+
+.logoT{
+    background-color: aqua;
+    grid-area: logoT;
+}
+
+.mapT{
+    background-color: red;
+    grid-area: mapT;
+}
+
+.menuT{
+    background-color: green;
+    grid-area: menuT;
+}
+
+
+.logBT{
+    background-color: yellow;
+    grid-area: logBT;
+}
+
+.newsT1{
+    background-color: brown;
+    grid-area: newsT1;
+}
+
+.newsT2{
+    background-color: burlywood;
+    grid-area: newsT2;
+}
+
+.newsT3{
+    background-color: aliceblue;
+    grid-area: newsT3;
+}
+
+.RlogoBIG {
+    height: 100vh; /* Adjust height relative to viewport height */
+    max-height: 200px; /* Ensure it doesn't get too large */
+    width: auto; /* Maintain aspect ratio */
+}
+
+/* Responsive size adjustments for .GRmapstart */
+.GRmapstart {
+    height: 70vh; /* Adjust height relative to viewport height */
+    max-height: 800px; /* Cap the height */
+    width: 100%; /* Full width of the grid item */
+}
+.menuTmobile{
+    display: none;
+}
+
+@media only screen and (max-width:550px){
+    .container
+    {
+        grid-template-columns: 1.5fr 0.5fr;
+        grid-template-rows: 1fr 2.5fr 1fr 1fr;
+        grid-template-areas: "logoT menuTmobile" "mapT mapT" "newsT1 newsT1" "newsT2 newsT2";
+    }
+    .menuT{
+        display: none;
+    }
+    .menuTmobile{
+        display: inline;
+        background-color: blueviolet;
+        grid-area: menuTmobile;
+    }
+    .newsT3{
+        display: none;
+    }
+    .logBT{
+        display: none;
+    }
+    .newsT1, .newsT2 {
+        min-height: 100px; /* Increase minimum height for mobile view */
+        padding: 10px; /* Add padding for better readability */
+    }
+
+    .GRmapstart{
+        max-height: 400px;
+    }
+}
