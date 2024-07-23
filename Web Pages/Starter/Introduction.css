@@ -23,8 +23,8 @@ body {
     display: grid;
     height: 100%;
     width: 100%;
-    grid-template-columns: 2fr 1fr 1fr 0.8fr;
-    grid-template-rows: 0.8fr 1fr 1fr 1fr;
+    grid-template-columns: 2fr 0.8fr 0.8fr 0.8fr;
+    grid-template-rows: 0.8fr 0.8fr 0.8fr 0.8fr;
     grid-template-areas: 
         "logoT menuT menuT logBT" 
         "mapT mapT newsT1 newsT1" 
