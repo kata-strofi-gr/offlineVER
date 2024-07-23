@@ -1,0 +1,286 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --primaryRed: #FA4343;
+    --darkGrey: #5f5f5f;
+}
+
+body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #fff;
+}
+
+.container {
+    display: grid;
+    height: 100%;
+    width: 100%;
+    grid-template-columns: 2fr 1fr 1fr 0.8fr;
+    grid-template-rows: 0.8fr 1fr 1fr 1fr;
+    grid-template-areas: 
+        "logoT menuT menuT logBT" 
+        "mapT mapT newsT1 newsT1" 
+        "mapT mapT newsT2 newsT2";
+    grid-gap: 0.04rem;
+}
+
+/* Layout Areas */
+.logoT {
+    background-color: #FFF;
+    grid-area: logoT;
+}
+
+.mapT {
+    background-color: #FFF;
+    grid-area: mapT;
+}
+
+.menuT {
+    background-color: #FFF;
+    grid-area: menuT;
+}
+
+.logBT {
+    background-color: #FFF;
+    grid-area: logBT;
+}
+
+.newsT1, .newsT2, .newsT3 {
+    display: flex;
+    justify-content: flex-end;
+    padding: 1vh;
+    box-sizing: border-box;
+}
+
+.newsT1 { background-color: #FFF; }
+.newsT2 { background-color: #FFF; }
+
+.newNotif {
+    background-color: var(--primaryRed);
+    color: white;
+    border-radius: 31px 0 0 31px;
+    padding: 30px 50px 30px 30px;
+    max-width: 90%;
+    margin-right: 0;
+    align-items: end;
+}
+
+#secondpriority { background-color: rgb(236, 186, 60); }
+#thirdpriority { background-color: rgb(205, 203, 184); }
+
+/* Text Styles */
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0 0 10px 0;
+}
+
+.recipient-info {
+    font-size: 16px;
+    font-style: italic;
+    margin: 0 0 10px 0;
+}
+
+.description {
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0 0 10px 0;
+}
+
+.time-date {
+    font-size: 12px;
+    text-align: right;
+    margin: 0;
+}
+
+/* Logo and Map Styles */
+.RlogoBIG {
+    height: 100vh;
+    max-height: 25vh;
+    width: auto;
+    margin: auto;
+}
+
+.GRmapstart {
+    height: 70vh;
+    max-height: 800px;
+    width: 100%;
+}
+
+/* Menu Styles */
+.menu-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 29px;
+    height: 80%;
+    width: 80%;
+    max-width: 100%;
+    flex-wrap: wrap;
+    margin: auto;
+}
+
+.menu-item {
+    color: var(--primaryRed);
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 29px;
+}
+
+.menu-item:hover {
+    text-decoration: underline;
+}
+
+.separator {
+    color: var(--darkGrey);
+    font-size: 40px;
+}
+
+.menuTmobile {
+    display: none;
+}
+
+/* Button Styles */
+.customB {
+    display: flex;
+    width: 232px;
+    height: 100px;
+    padding: 21px 32px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    border-radius: 31px;
+    background: var(--primaryRed);
+    color: white;
+    font-size: 24px;
+    border: none;
+    cursor: pointer;
+    margin: auto;
+    margin-top: 20%;
+    font-weight: 700;
+}
+
+.customB:hover {
+    background-color: black;
+}
+
+/* Mobile Menu */
+.menu-toggle {
+    font-size: 50px;
+    cursor: pointer;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    box-sizing: border-box;
+    padding-top: 40px;
+}
+
+.overlay {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.overlay-content {
+    background-color: white;
+    padding: 60px;
+    border-radius: 15px 15px 0 0;
+    text-align: center;
+    position: relative;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#overlayLoginButton {
+    height: 7vh;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 30px;
+    font-size: 40px;
+    cursor: pointer;
+}
+
+.mobile-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.menu-item {
+    color: var(--primaryRed);
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 24px;
+}
+
+/* Responsive Adjustments */
+@media only screen and (max-width: 550px) {
+    .container {
+        grid-template-columns: 1.4fr 0.4fr;
+        grid-template-rows: 1fr 2.5fr 1fr 1fr;
+        grid-template-areas: 
+            "logoT menuTmobile" 
+            "mapT mapT" 
+            "newsT1 newsT1" 
+            "newsT2 newsT2";
+    }
+
+    .menuT {
+        display: none;
+    }
+
+    .menuTmobile {
+        display: block;
+        background-color: #fff;
+        grid-area: menuTmobile;
+        padding: 10px;
+    }
+
+    .logBT, .newsT3 {
+        display: none;
+    }
+
+    .newsT1, .newsT2 {
+        min-height: 250px;
+        padding: 10px;
+    }
+
+    .GRmapstart {
+        max-height: 400px;
+    }
+
+    .newNotif {
+        margin-right: 0;
+        padding: 15px 20px 15px 15px;
+        max-width: 95%;
+        max-height: 95%;
+    }
+
+    .RlogoBIG {
+        height: auto;
+        max-height: 20vh;
+    }
+}
