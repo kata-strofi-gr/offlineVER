@@ -357,8 +357,8 @@ body {
 }
 
 .popupback {
-    position: relative;
-    width: 90%;
+    position: fixed;
+    width: 100%;
     max-width: 705px;
     padding: 20px;
     border-radius: 41px;
@@ -366,6 +366,7 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     text-align: center;
     backdrop-filter: none;
+
 }
 
 .popuptitle {
@@ -373,7 +374,7 @@ body {
     font-weight: 700;
     margin-bottom: 20px;
     margin-top: 70px;
-    margin-right: 170px;
+    margin-right: 35%;
     color: white;
 }
 
@@ -383,7 +384,6 @@ body {
 
 input[type="text"], input[type="password"] {
     width: calc(100% - 40px);
-    max-width: 554px;
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #ccc;
@@ -393,18 +393,17 @@ input[type="text"], input[type="password"] {
 
 .register-link {
     display: block;
-    margin: 10px 0;
+    margin: 10px;
     font-size: 1rem;
     color: white;
-    font-weight: 300;
-    margin-right: 250px;    
+    margin-right: 70%;
 }
 
 .login-button {
     display: inline-block;
     margin-top: 10px;
     padding: 15px 30px;
-    margin-left: 400px;
+    margin-left: 65%;
     border-radius: 15px;
     background-color: black;
     color: white;
@@ -412,6 +411,13 @@ input[type="text"], input[type="password"] {
     font-weight: 900;
     cursor: pointer;
     text-decoration: none;
+    border: none; /* Remove any border */
+    outline: none;
+}
+
+.login-button:hover{
+    background-color: white;
+    color: var(--kataRED);
 }
 
 .exit-button {
@@ -435,4 +441,90 @@ input[type="text"], input[type="password"] {
     display: inline-block;
     margin-right: 390px;
     margin-bottom: 10px;
+}
+
+.logF{
+    background-color: pink;
+    grid-area: logF;
+}
+.forgotF{
+    background-color: purple;
+    grid-area: forgotF;
+}
+.userF{
+    background-color: turquoise;
+    grid-area: userF;
+}
+.passF{
+    background-color: green;
+    grid-area: passF;
+}
+.textF{
+    background-color: navy;
+    grid-area: textF;
+}
+
+.exitF{
+    background-color: yellow;
+    grid-area: exitF;
+}
+/*mobile login flexbox*/
+.container2{
+    display: none;
+}
+
+.container2{
+    display: none;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    grid-template-columns: 1.5fr 0.5fr;
+    grid-template-rows: 1.5fr 1fr 1fr 1fr 0.5fr 1fr;
+    grid-template-areas: "textF exitF" "textF textF" "userF userF" "passF passF" "forgotF forgotF" "logF logF";
+    grid-gap: 0.1rem;
+    z-index: 9999;
+    backdrop-filter: blur(5px);
+    position: fixed;
+    justify-items: center; /* Center items horizontally */
+    align-items: center; /* Center items vertically */
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+    .popupback {
+        padding: 15px;
+        width: 95%;
+    }
+
+    .popuptitle {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        margin-right:49%;
+    }
+
+    .input-container {
+        margin-bottom: 15px;
+    }
+
+    input[type="text"], input[type="password"] {
+        padding: 8px;
+        font-size: 0.9rem;
+    }
+
+    .register-link {
+        font-size: 0.9rem;
+        margin-right: 49%;
+    }
+
+    .login-button {
+        padding: 10px 20px;
+        font-size: 1.2rem;
+        margin-left: 60%;
+    }
+
+    .exit-button {
+        width: 25px;
+        height: 25px;
+    }
 }

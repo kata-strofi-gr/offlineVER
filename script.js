@@ -1,3 +1,5 @@
+
+//mobile menu leitourgia
 document.addEventListener('DOMContentLoaded', function() {
     const menuToggle = document.getElementById('menu-toggle');
     const overlay = document.getElementById('overlay');
@@ -30,25 +32,38 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-
 //savvatou login
 document.addEventListener("DOMContentLoaded", () => {
     const wrapperButton = document.querySelector(".logBT");
-    const popupOverlay = document.getElementById("popupOverlay");
-    const exitButton = document.getElementById("exitButton");
-
+    const exitButton = document.getElementById("exitButton5");
+    const cont2 = document.getElementById("contF");
+    
     wrapperButton.addEventListener("click", () => {
-        popupOverlay.classList.add("active");
+        if (cont2.style.display === 'none' ) {
+            cont2.style.display = 'grid';
+        } else {
+            cont2.style.display = 'none';
+        }
     });
 
     exitButton.addEventListener("click", () => {
-        popupOverlay.classList.remove("active");
+        cont2.style.display = 'none';
     });
 
-    // Close the popup if the overlay is clicked
-    popupOverlay.addEventListener("click", (e) => {
-        if (e.target === popupOverlay) {
-            popupOverlay.classList.remove("active");
+    //gia mobile version
+    const wrapperButton2 = document.querySelector(".customB");
+    
+    wrapperButton2.addEventListener("click", () => {
+        if (cont2.style.display === 'none' ) {
+            cont2.style.display = 'grid';
+        } else {
+            cont2.style.display = 'none';
         }
     });
+
+    exitButton.addEventListener("click", () => {
+        cont2.style.display = 'none';
+    });
+
 });
+
