@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin</title>
+    <link rel="stylesheet" href="admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+</head>
+<body>
+    <div class="container">
+        <div class="modeT">
+            <div class="modeRectangle">
+                <div class="modeF">
+                    Συνδεδεμένος ως Admin
+                </div>
+            </div>
+        </div>
+        <div class="logoT">
+            <img class="RlogoBIG" alt="" src="kata-strofiF.svg">
+        </div>
+        <div class="menuT">
+            <nav class="menu-bar">
+                <a href="#" class="menu-item">Αρχική</a>
+                <span class="separator">|</span>
+                <a href="#" class="menu-item">Δράση</a>
+                <span class="separator">|</span>
+                <a href="#" class="menu-item">Άρθρα</a>
+                <span class="separator">|</span>
+                <a href="#" class="menu-item">Επικοινωνία</a>
+            </nav>
+        </div>
+        <div class="imapT">
+            <div class="mapContainer">
+                <h1 class="mapWtitle">
+                    Διαδραστικός χάρτης
+                </h1>
+                <div class="mapView">
+                    <div id="map"></div>
+                    <div class="help-icon">?</div>
+                </div>
+                <div class="buttonArea">
+                    <button class="map-button">Αιτήματα αναληφθέντα</button>
+                    <button class="map-button">Αιτήματα εκκρεμή</button>
+                    <button class="map-button">Προσφορές</button>
+                    <button class="map-button">Οχήματα με task</button>
+                    <button class="map-button">Οχήματα χωρίς task</button>
+                    <button class="map-button">Σε εξέλιξη</button>
+                </div>
+
+                </div>
+            </div>
+
+
+            <div class="boxesT">boxesinfo</div>   
+    </div>
+
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="mapScript.js"></script>
+</body>
+</html>
