@@ -23,46 +23,53 @@
 
 
 .logoT{
-    background-color: aqua;
+    /*background-color: aqua;*/
     grid-area: logoT;
+    display: flex;
+    justify-content: flex-start; /* Center horizontally */
+    align-items: center; /* Center vertically */
 }
 
 .mapT{
-    background-color: red;
+    /*background-color: red;*/
     grid-area: mapT;
 }
 
 .menuT{
-    background-color: green;
+    /*background-color: green;*/
     grid-area: menuT;
+       
 }
 
 
 .logBT{
-    background-color: yellow;
+    /*background-color: yellow;*/
     grid-area: logBT;
+    display: flex;
+    justify-content: center; /* Centers content horizontally */
+    align-items: center; /* Centers content vertically */
+    text-align: center; 
 }
 
 .newsT1{
-    background-color: brown;
+    /*background-color: brown;*/
     grid-area: newsT1;
 }
 
 .newsT2{
-    background-color: burlywood;
+    /*background-color: burlywood;*/
     grid-area: newsT2;
 }
 
 .newsT3{
-    background-color: aliceblue;
+    /*background-color: aliceblue;*/
     grid-area: newsT3;
 }
 
 .RlogoBIG {
-    height: 100vh; /* Adjust height relative to viewport height */
-    max-height: 25vh; /* Ensure it doesn't get too large */
-    width: auto; /* Maintain aspect ratio */
-    margin: auto;
+    margin-left: 10vh;
+    height: auto;
+    width: 30vh; /* Maintain aspect ratio */    
 }
 
 /* Responsive size adjustments for .GRmapstart */
@@ -77,12 +84,11 @@
 
 .customB {
     display: flex;
-    width: 232px;
-    height: 100px;
+    width: 180px;
+    height: 90px;
     padding: 21px 32px;
     justify-content: center;
     align-items: center;
-    gap: 10px;
     flex-shrink: 0;
     border-radius: 31px;
     background: var(--kataRED, #FA4343);
@@ -91,7 +97,7 @@
     border: none;
     cursor: pointer;
     margin: auto;
-    margin-top: 20%;
+    margin-top: 37%;
     font-weight: 700;
 }
 
@@ -108,20 +114,20 @@ body {
 .menu-bar {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 10px;
-    font-size: 29px; /* Increase the font size */
-    height: 80% ;/* Full height of the parent container */
-    width: 80%; /* Full width of the parent container */
-    max-width: 100%;
+    font-size: 3vh; /* Increase the font size */
+    height: 100% ;/* Full height of the parent container */
+    width: 100%; /* Full width of the parent container */
     flex-wrap: wrap;
-    margin: auto;
+    margin-right: 2vh;
 }
 
 .menu-item {
     color: #FA4343; /* The red color as per the button example */
     text-decoration: none;
     font-weight: bold;
-    font-size: 29px; /* Increase the font size */
+    font-size: 3vh; /* Increase the font size */
 }
 
 .menu-item:hover{
@@ -219,6 +225,24 @@ body {
 
 /* MOBILE SCREEN */
 @media only screen and (max-width:550px){
+    .RlogoBIG{
+        margin-left: 0;
+        height: 100vh; /* Adjust height relative to viewport height */
+        max-height: 25vh; /* Ensure it doesn't get too large */
+    }
+    .mobile-menu {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .menu-item {
+        color: #FA4343;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 24px;
+    }
+    
     .container
     {
         grid-template-columns: 1.5fr 0.5fr;
@@ -307,18 +331,6 @@ body {
 }
 
 /* Mobile Menu */
-.mobile-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.menu-item {
-    color: #FA4343;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 24px;
-}
 
 /* Mobile Screen Adjustments */
 @media only screen and (max-width: 550px) {
