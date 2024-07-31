@@ -46,7 +46,7 @@
 }
 
 .imapT{
-    
+    padding: 5%;
     grid-area: imapT;
 }
 
@@ -115,7 +115,7 @@
 /* edo gia xarti*/
 .mapContainer {
     width: 100%;
-    max-width: 900px;
+    max-width: 1000px;
     margin: 0 auto;
     border-radius: 15px;
     overflow: hidden; /* Prevents overflow issues */
@@ -124,12 +124,14 @@
 }
 
 .mapWtitle {
+    font-family: Roboto;
     background-color: #FA4343;
     color: white;
-    padding: 10px;
+    padding: 20px;
     margin: 0;
     text-align: center;
     font-size: 1.5em;
+    
 }
 
 .mapView {
@@ -150,14 +152,16 @@
     background-color: white;
     color: #FA4343;
     border-radius: 50%;
-    width: 30px;
-    height: 30px;
+    width: 15px;
+    height: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.5em;
     cursor: pointer;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 999;
+    margin: 15px;
 }
 
 .buttonArea {
@@ -182,3 +186,60 @@
 .map-button:hover {
     background-color: #e03b3b;
 }
+
+
+.exitB{
+    width: 500px;
+    margin: 50px;
+}
+
+
+.offer-box {
+    display: none;
+    flex-direction: column;
+    border-radius: 15px;
+    background-color: #00AEEF;
+    color: white;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+    padding: 10px;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto; /* Center horizontally */
+}
+
+.offer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid white;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    cursor: move; /* Change cursor to indicate draggable area */
+}
+
+.offer-title {
+    font-size: 2em;
+    font-weight: bold;
+    flex-grow: 1;
+}
+
+.close-btn {
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+
+
+.offer-details {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.offer-details p {
+    margin: 5px 0;
+}
+
+
+
