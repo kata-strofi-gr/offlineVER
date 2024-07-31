@@ -277,3 +277,79 @@
 .menu-item-container:hover .dropdown-content {
     display: block;
 }
+
+.form-container {
+    font-family: roboto;
+    display: none;
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    width: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.form-header {
+    background-color: #FA4343;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    font-size: 1.2em;
+}
+
+.form-content {
+    padding: 20px;
+}
+
+.form-content label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.form-content select,
+.form-content input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.form-content select {
+    appearance: none;
+    background: #f9f9f9 url('data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjNDAwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMCA2Ij4gPHBhdGggZD0iTTUgMEw5IDZIMkw1IDB6Ii8+IDwvc3ZnPg==') no-repeat right 10px center;
+    background-size: 10px;
+}
+
+.form-content input[type="text"]::placeholder {
+    color: #aaa;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn {
+    width: 48%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 15px;
+}
+
+.btn.extra {
+    background-color: #FF6B6B;
+}
+
+.btn.submit {
+    background-color: #FA4343;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}

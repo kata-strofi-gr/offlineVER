@@ -456,28 +456,28 @@ input[type="text"], input[type="password"] {
 }
 
 .logF{
-    background-color: pink;
+    
     grid-area: logF;
 }
 .forgotF{
-    background-color: purple;
+    
     grid-area: forgotF;
 }
 .userF{
-    background-color: turquoise;
+    
     grid-area: userF;
 }
 .passF{
-    background-color: green;
+    
     grid-area: passF;
 }
 .textF{
-    background-color: navy;
+    
     grid-area: textF;
 }
 
 .exitF{
-    background-color: yellow;
+    
     grid-area: exitF;
 }
 /*mobile login flexbox*/

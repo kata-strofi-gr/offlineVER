@@ -76,7 +76,7 @@ document.getElementById('stockStatus').addEventListener('click', function(e) {
 });
 document.getElementById('newsCreate').addEventListener('click', function(e) {
     e.preventDefault(); // Prevent default link behavior
-    showStockManage();
+    newAithma();
 });
 document.getElementById('rescuerCreate').addEventListener('click', function(e) {
     e.preventDefault(); // Prevent default link behavior
@@ -88,20 +88,20 @@ document.getElementById('loggout').addEventListener('click', function(e) {
 });
 
 //leitourgies parathiron apo to menu
-function showStockManage() {
+function newAithma() {
     var mapContainer = document.getElementById('mapContainerI');
-    var contentSection = document.getElementById('contentSection');
+    var contentSection = document.getElementById('newAithmata');
 
     mapContainer.style.display = 'none';
     contentSection.style.display = 'block';
 }
 
-//anakateuthinsi sthn arxikh othoni
+//anakateuthinsi sthn admin othoni
 document.getElementById('logoF').addEventListener('click', function(e) {
     e.preventDefault();
     var mapContainer = document.getElementById('mapContainerI');
-    var contentSection = document.getElementById('contentSection');
+    var requestSection = document.getElementById('newAithmata');
 
     mapContainer.style.display = 'block';
-    contentSection.style.display = 'none';
+    requestSection.style.display = 'none';
 });

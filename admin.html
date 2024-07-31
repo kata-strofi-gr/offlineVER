@@ -36,7 +36,7 @@
                 <div class="menu-item-container">
                     <a href="#" class="menu-item">Δημιουργία</a>
                     <div class="dropdown-content">
-                        <a href="#" id="newsCreate">Δημιουργία ανακοίνωσης</a>
+                        <a href="#" id="newsCreate">Δημιουργία αιτήματος</a>
                         <a href="#" id="rescuerCreate">Δημιουργία διασώστη</a>
                     </div>
                 </div>
@@ -73,6 +73,30 @@
                 </div>
 
             </div>
+
+
+            <div class="form-container" id="newAithmata">
+                <div class="form-header">
+                    Νέο αίτημα
+                </div>
+                <div class="form-content">
+                    <label for="type">Είδος</label>
+                    <select id="type" name="type">
+                        <option value="" disabled selected>Επιλέξτε είδος</option>
+                        <option value="option1">Μπυυρες</option>
+                        <option value="option2">Χορταρακι</option>
+                        <option value="option3">Χαρτακια</option>
+                    </select>
+        
+                    <label for="quantity">Ποσότητα</label>
+                    <input type="text" id="quantity" name="quantity" placeholder="Ποσότητα">
+        
+                    <div class="form-buttons">
+                        <button type="button" class="btn extra" id="extraReq">Έξτρα αιτήματα</button>
+                        <button type="submit" class="btn submit">Υποβολή</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
 
@@ -96,7 +120,6 @@
                 
             </div>   
     </div>
-
 
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
