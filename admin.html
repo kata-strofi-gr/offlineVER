@@ -19,29 +19,49 @@
             </div>
         </div>
         <div class="logoT">
-            <img class="RlogoBIG" alt="" src="kata-strofiF.svg">
+            <img class="RlogoBIG" alt="" src="kata-strofiF.svg" id="logoF">
         </div>
         <div class="menuT">
             <nav class="menu-bar">
-                <a href="#" class="menu-item">Αποθήκη</a>
+                <div class="menu-item-container">
+                    <a href="#" class="menu-item">Αποθήκη</a>
+                    <div class="dropdown-content">
+                        <a href="#" id="stockManage">Διαχείριση αποθήκης</a>
+                        <a href="#" id="stockStatus">Κατάσταση αποθήκης</a>
+                    </div>
+                </div>
                 <span class="separator">|</span>
                 <a href="#" class="menu-item">Στατιστικά</a>
                 <span class="separator">|</span>
-                <a href="#" class="menu-item">Δημιουργία</a>
+                <div class="menu-item-container">
+                    <a href="#" class="menu-item">Δημιουργία</a>
+                    <div class="dropdown-content">
+                        <a href="#" id="newsCreate">Δημιουργία ανακοίνωσης</a>
+                        <a href="#" id="rescuerCreate">Δημιουργία διασώστη</a>
+                    </div>
+                </div>
                 <span class="separator">|</span>
-                <a href="#" class="menu-item">Επιλογές</a>
+                <div class="menu-item-container">
+                    <a href="#" class="menu-item">Επιλογές</a>
+                    <div class="dropdown-content">
+                        <a href="#" id="loggout">Αποσύνδεση</a>
+                        <a href="#" id="other">Ότι θέλετε</a>
+                    </div>
+                </div>
             </nav>
         </div>
         <div class="imapT">
-            <div class="mapContainer">
+            <div class="mapContainer" id="mapContainerI">
                 <h1 class="mapWtitle">
                     Διαδραστικός χάρτης
                 </h1>
                 <div class="mapView">
                     <div id="map"></div>
-                    <div class="help-icon">
+                    <div class="help-icon" id="helpBtn">
                         <img class="exitB" alt="" src="helpB.png" >
                     </div>
+                </div>
+                <div class="sidebar" id="sidebar">
                 </div>
                 <div class="buttonArea">
                     <button class="map-button">Αιτήματα αναληφθέντα</button>
@@ -52,11 +72,11 @@
                     <button class="map-button">Σε εξέλιξη</button>
                 </div>
 
-                </div>
             </div>
+        </div>
 
 
-            <div class="boxesT">boxesinfo
+            <div class="boxesT">
                 <div class="offer-box" id="draggableBox">
                     <div class="offer-header">
                         <span class="offer-title">Προσφορά</span>
@@ -76,6 +96,7 @@
                 
             </div>   
     </div>
+
 
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>

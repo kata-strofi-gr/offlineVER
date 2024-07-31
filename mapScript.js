@@ -66,9 +66,42 @@ closePopup.addEventListener('click', closePopupFunction);
 
 // Optional: Open popup on page load
 // openPopup();
+document.getElementById('stockManage').addEventListener('click', function(e) {
+    e.preventDefault(); // Prevent default link behavior
+    showStockManage();
+});
+document.getElementById('stockStatus').addEventListener('click', function(e) {
+    e.preventDefault(); // Prevent default link behavior
+    showStockManage();
+});
+document.getElementById('newsCreate').addEventListener('click', function(e) {
+    e.preventDefault(); // Prevent default link behavior
+    showStockManage();
+});
+document.getElementById('rescuerCreate').addEventListener('click', function(e) {
+    e.preventDefault(); // Prevent default link behavior
+    showStockManage();
+});
+document.getElementById('loggout').addEventListener('click', function(e) {
+    e.preventDefault(); // Prevent default link behavior
+    window.location.href = 'http://127.0.0.1:5500/start.html#';
+});
 
+//leitourgies parathiron apo to menu
+function showStockManage() {
+    var mapContainer = document.getElementById('mapContainerI');
+    var contentSection = document.getElementById('contentSection');
 
+    mapContainer.style.display = 'none';
+    contentSection.style.display = 'block';
+}
 
+//anakateuthinsi sthn arxikh othoni
+document.getElementById('logoF').addEventListener('click', function(e) {
+    e.preventDefault();
+    var mapContainer = document.getElementById('mapContainerI');
+    var contentSection = document.getElementById('contentSection');
 
-
-
+    mapContainer.style.display = 'block';
+    contentSection.style.display = 'none';
+});
