@@ -8,6 +8,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+     <!-- Include jQuery -->
+     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+     <!-- Include jQuery UI CSS and JS for Datepicker -->
+     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+     <!-- Include Chart.js -->
+     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+
+
+
+
 </head>
 <body>
     <div class="container">
@@ -31,7 +44,7 @@
                     </div>
                 </div>
                 <span class="separator">|</span>
-                <a href="#" class="menu-item">Στατιστικά</a>
+                <a href="#" class="menu-item" id="statistikaShow">Στατιστικά</a>
                 <span class="separator">|</span>
                 <div class="menu-item-container">
                     <a href="#" class="menu-item">Δημιουργία</a>
@@ -124,6 +137,24 @@
             </div>
         </div>
 
+
+
+        <div class="dashboard-container" id="statistikoulia">
+            <div class="header">
+                Στατιστικά
+            </div>
+            
+            <div class="charts" id="chartContainer" style="display: none;">
+                <canvas id="lineChart"></canvas>
+            </div>
+            <div class="date-picker">
+                <label for="start-date">Ημ/νια έναρξης: </label>
+                <input type="text" id="start-date" class="datepicker" placeholder="Start Date">
+                <label for="end-date">Ημ/νια λήξης: </label>
+                <input type="text" id="end-date" class="datepicker" placeholder="End Date">
+            </div>
+            <button class="btnC" id="showChartButton">Υπολόγισε</button>
+        </div>
 
 
     <!-- ola ta popup mexri edo mesas-->

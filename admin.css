@@ -294,6 +294,7 @@
     text-align: center;
     padding: 15px;
     font-size: 1.2em;
+    font-weight: 600;
 }
 
 .form-content {
@@ -358,4 +359,76 @@
 .reqs{
     padding-top: 5px;
     padding-bottom: 15px;
+}
+
+
+
+
+.dashboard-container {
+    font-family: roboto;
+    display: none;
+    width: 100%;
+    background-color: #f4f4f4;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.header {
+    background-color: #FA4343;
+    color: white;
+    width: 100%;
+    padding: 15px;
+    font-size: 1.5em;
+    border-radius: 10px 10px 0 0;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+
+.date-picker {
+    padding: 20px 0;
+}
+
+.date-picker label {
+    margin: 0 10px;
+    font-size: 1.2em;
+}
+
+.date-picker input {
+    margin: 0 10px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background-color: #eee;
+    color: #333;
+    text-align: center;
+    cursor: pointer;
+}
+.charts {
+    padding: 20px 0;
+    display: none; /* Initially hidden */
+    text-align: center;
+}
+
+.charts canvas {
+    max-width: 70%;
+    width: 90%;
+    height: 400px; /* Set a more reasonable height */
+    margin: 0 auto;
+    background-color: #f4f4f4;
+    border-radius: 10px;
+}
+
+.btnC {
+    width: 20%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 15px;
+    background-color: var(--kataRED);
 }
