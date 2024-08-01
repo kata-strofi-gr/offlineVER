@@ -36,7 +36,7 @@
                 <div class="menu-item-container">
                     <a href="#" class="menu-item">Δημιουργία</a>
                     <div class="dropdown-content">
-                        <a href="#" id="newsCreate">Δημιουργία αιτήματος</a>
+                        <a href="#" id="newsCreate">Δημιουργία ανακοίνωσης</a>
                         <a href="#" id="rescuerCreate">Δημιουργία διασώστη</a>
                     </div>
                 </div>
@@ -77,7 +77,7 @@
 
             <div class="form-container" id="newAithmata">
                 <div class="form-header">
-                    Νέο αίτημα
+                    Νέα ανακοίνωση
                 </div>
                 <div class="form-content">
                     <label for="type">Είδος</label>
@@ -90,15 +90,44 @@
         
                     <label for="quantity">Ποσότητα</label>
                     <input type="text" id="quantity" name="quantity" placeholder="Ποσότητα">
-        
+                    
+                    <div class="reqs"> 
+                    <label for="extraRequests">Έξτρα αιτήματα</label>
+                    <input type="number" id="extraRequests" name="extraRequests" placeholder="Αριθμός αιτημάτων">
+                    </div>
+                    <div id="additionalFields"></div>
+
                     <div class="form-buttons">
-                        <button type="button" class="btn extra" id="extraReq">Έξτρα αιτήματα</button>
+                        <button type="button" class="btn add-fields">Προσθήκη</button>
                         <button type="submit" class="btn submit">Υποβολή</button>
                     </div>
                 </div>
             </div>
+        
+
+
+
+        <div class="form-container" id="newDiasosths">
+            <div class="form-header">
+                Δημιουργία διασώστη
+            </div>
+            <div class="form-content">
+                <label for="field1">Όνομα χρήστη</label>
+                <input type="text" id="field1" name="field1" placeholder="aomakris">
+    
+                <label for="field2">Κωδικός πρόσβασης</label>
+                <input type="text" id="field2" name="field2" placeholder="taf1234">
+    
+                <div class="form-buttons">
+                    <button type="submit" class="btn submit">Υποβολή</button>
+                </div>
+            </div>
         </div>
 
+
+
+    <!-- ola ta popup mexri edo mesas-->
+    </div>
 
             <div class="boxesT">
                 <div class="offer-box" id="draggableBox">

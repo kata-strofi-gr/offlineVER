@@ -342,9 +342,10 @@
     border-radius: 15px;
 }
 
-.btn.extra {
+
+.btn.add-fields {
     background-color: #FF6B6B;
-}
+}       
 
 .btn.submit {
     background-color: #FA4343;
@@ -352,4 +353,9 @@
 
 .btn:hover {
     opacity: 0.9;
+}
+
+.reqs{
+    padding-top: 5px;
+    padding-bottom: 15px;
 }
