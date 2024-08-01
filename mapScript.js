@@ -134,13 +134,13 @@ function showStatistika() {
     //ta parakato kovontai
     var mapContainer = document.getElementById('mapContainerI');
     var contentSectionX = document.getElementById('newDiasosths');
-    
+    var contentSectionX2 = document.getElementById('newAithmata');
     //pernaei
     contentSection.style.display = 'block';
     //kovontai
     mapContainer.style.display = 'none';
     contentSectionX.style.display ='none';
-
+    contentSectionX2.style.display ='none';
 }
 
 //anakateuthinsi sthn admin othoni
