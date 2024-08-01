@@ -83,3 +83,26 @@ CALL AssignRequest(1, 1); -- Assigning first request to rescuer1
 CALL AssignRequest(2, 1); -- Assigning second request to rescuer1
 CALL AssignRequest(3, 1); -- Assigning third request to rescuer1
 CALL AssignRequest(4, 1); -- Assigning fourth request to rescuer1
+
+-- This next assignment should trigger the task limit check
+CALL AssignRequest(5, 1); -- Attempting to assign fifth request to rescuer1
+
+-- Example of offers being assigned to rescuers
+CALL AssignOffer(1, 2); -- Assigning first offer to rescuer1
+CALL AssignOffer(2, 2); -- Assigning second offer to rescuer1
+CALL AssignOffer(3, 2); -- Assigning third offer to rescuer1
+CALL AssignOffer(4, 2); -- Assigning fourth offer to rescuer1
+-- This next assignment should trigger the task limit check
+CALL AssignOffer(5, 2); -- Attempting to assign fifth offer to rescuer1
+
+-- Example of changing request status
+CALL ChangeRequestStatus(1, 'INPROGRESS'); -- Changing status of the first request to INPROGRESS
+CALL ChangeRequestStatus(2, 'INPROGRESS'); -- Changing status of the second request to INPROGRESS
+CALL ChangeRequestStatus(3, 'INPROGRESS'); -- Changing status of the third request to INPROGRESS
+CALL ChangeRequestStatus(4, 'INPROGRESS'); -- Changing status of the fourth request to INPROGRESS
+
+-- Example of changing offer status
+CALL ChangeOfferStatus(1, 'PENDING'); -- Changing status of the first offer to INPROGRESS
+CALL ChangeOfferStatus(2, 'PENDING'); -- Changing status of the second offer to INPROGRESS
+CALL ChangeOfferStatus(3, 'INPROGRESS'); -- Changing status of the third offer to INPROGRESS
+CALL ChangeOfferStatus(4, 'INPROGRESS'); -- Changing status of the fourth offer to INPROGRESS
