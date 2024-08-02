@@ -156,6 +156,46 @@
             <button class="btnC" id="showChartButton">Υπολόγισε</button>
         </div>
 
+        <div class="viewStockW" id="stockW">
+        <!-- Add these containers in the appropriate section of your admin.html file -->
+        <div class="data-container">
+            <div class="table-container">
+                <table id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>Κατηγορία</th>
+                            <th>Όνομα</th>
+                            <th>Περιγραφή</th>
+                            <th>Ποσότητα</th>
+                            <th>Τοποθεσία</th>
+                            <th>ID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Table rows will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="filter-container">
+                <div class="filter-header">
+                    Φιλτράρισμα
+                </div>
+                <div class="filter-content">
+                    <label for="filterType">Είδος</label>
+                    <select id="filterType">
+                        <option value="all">All</option>
+                        <option value="milk">Γάλατα</option>
+                        <option value="beer">Μπύρες</option>
+                        <!-- Add other options as needed -->
+                    </select>
+                </div>
+            </div>
+        </div>
+        </div>
+
+
+
+
 
     <!-- ola ta popup mexri edo mesas-->
     </div>

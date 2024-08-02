@@ -432,3 +432,98 @@
     border-radius: 15px;
     background-color: var(--kataRED);
 }
+
+
+
+/* Add these styles to your admin.css file */
+
+/* Container for data table and filter */
+.data-container {
+    font-family: roboto;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+/* Table container styles */
+.table-container {
+    flex: 3;
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 400px;
+    margin-right: 20px;
+    background-color: #f4f4f4;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+table {
+    
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+th, td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: #FA4343;
+    color: white;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #ffffff;
+}
+
+tbody tr:hover {
+    background-color: var(--kataRED);
+    color: white;
+}
+
+.viewStockW{
+    display: none;
+}
+/* Filter container styles */
+.filter-container {
+    font-family: var(--font-roboto);
+    flex: 1;
+    background-color: #f4f4f4;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 300px;
+}
+
+.filter-header {
+    background-color: #FA4343;
+    color: white;
+    padding:15px;
+    border-radius: 10px 10px 0 0;
+    text-align: center;
+    font-weight: bold;
+}
+
+.filter-content {
+    padding: 20px;
+}
+
+.filter-content label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.filter-content select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    appearance: none;
+    background: #f9f9f9 url('data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjNDAwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMCA2Ij4gPHBhdGggZD0iTTUgMEw5IDZIMkw1IDB6Ii8+IDwvc3ZnPg==') no-repeat right 10px center;
+    background-size: 10px;
+}
