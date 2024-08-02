@@ -7,7 +7,7 @@ CREATE DATABASE IF NOT EXISTS kata_strofh
 USE kata_strofh;
 
 
--- Procedure to create a new request
+-- Procedure to create a new requestcheck_warehouse_before_assign_request
 DELIMITER //
 CREATE PROCEDURE CreateRequest (
     IN p_CitizenID INT,
