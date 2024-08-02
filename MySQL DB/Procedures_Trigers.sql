@@ -1,25 +1,32 @@
-
-CREATE DATABASE IF NOT EXISTS kata_strofh
-    DEFAULT CHARACTER SET = 'utf8mb4'
-    DEFAULT COLLATE = 'utf8mb4_unicode_ci';
-
-
 USE kata_strofh;
-
 
 -- Procedure to create a new requestcheck_warehouse_before_assign_request
 DELIMITER //
-CREATE PROCEDURE CreateRequest (
-    IN p_CitizenID INT,
-    IN p_Item VARCHAR(100),
-    IN p_Quantity INT
+CREATE PROCEDURE CreateNewRequest(
+    IN citizenID INT,
+    IN itemName VARCHAR(100),
+    IN quantity INT,
+    IN status ENUM('PENDING', 'INPROGRESS', 'FINISHED')
 )
 BEGIN
-    INSERT INTO Requests (CitizenID, Item, Quantity, Status, DateCreated) 
-    VALUES (p_CitizenID, p_Item, p_Quantity, 'Pending', NOW());
-END;
-//
-DELIMITER ;
+    DECLARE itemID INT;
+    DECLARE requestID INT;
+    
+    SELECT ItemID INTO itemID FROM Items WHERE Name = itemName;
+    IF itemID IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Item not found';
+    ELSE
+        INSERT INTO Requests (CitizenID, Status, DateCreated)
+        VALUES (citizenID, status, NOW());
+        
+        SET requestID = LAST_INSERT_ID();
+        
+        INSERT INTO RequestItems (RequestID, ItemID, Quantity)
+        VALUES (requestID, itemID, quantity);
+    END IF;
+END //
+
+
 
 -- Procedure to create a new offer
 DELIMITER //

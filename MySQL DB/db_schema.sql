@@ -28,6 +28,7 @@ CREATE TABLE Citizen (
     Username VARCHAR(50) NOT NULL,
     Password VARCHAR(255) NOT NULL,
     Name VARCHAR(100) NOT NULL,
+    Surname VARCHAR(100) NOT NULL,
     Phone VARCHAR(15) NOT NULL,
     Latitude DECIMAL(10, 8) NOT NULL,
     Longitude DECIMAL(11, 8) NOT NULL,
