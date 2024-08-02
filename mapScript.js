@@ -254,7 +254,7 @@ const labels = ['Εβδομάδα 1', 'Εβδομάδα 2', 'Εβδομάδα 3'
 const newRequests = [30, 40, 35, 50, 55];
 const newOffers = [25, 35, 30, 45, 50];
 const completedRequests = [20, 30, 25, 40, 45];
-const completedOffers = [15, 25, 20, 35, 40];
+const completedOffers = [15, 25, 20, 35, 90];
 
 const data = {
     labels: labels,
@@ -396,4 +396,34 @@ document.getElementById('filterType').addEventListener('change', function() {
     }
 
     populateTable(filteredData);
+});
+
+
+//mobile version
+// Add this to your mapScript.js
+
+function toggleMenu() {
+    const menuBar = document.querySelector('.menu-bar');
+    menuBar.style.display = menuBar.style.display === 'flex' ? 'none' : 'flex';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const menuItems = document.querySelectorAll('.menu-item-container');
+
+    menuItems.forEach(item => {
+        item.addEventListener('click', function(event) {
+            if (window.innerWidth <= 768) {
+                event.stopPropagation(); // Prevent the click from closing the menu
+                menuItems.forEach(el => el !== this && el.classList.remove('active'));
+                this.classList.toggle('active');
+            }
+        });
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function() {
+        if (window.innerWidth <= 768) {
+            menuItems.forEach(item => item.classList.remove('active'));
+        }
+    });
 });

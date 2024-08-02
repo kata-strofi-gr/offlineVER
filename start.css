@@ -254,7 +254,7 @@ body {
     }
     .menuTmobile{
 
-        background-color: blueviolet;
+        color: var(--kataRED);
         grid-area: menuTmobile;
     }
     .newsT3{
@@ -285,7 +285,7 @@ body {
 .menu-toggle {
     font-size: 50px;
     cursor: pointer;
-    color: white;
+    color: var(--kataRED);
     display: flex;
     justify-content: center;
     align-items: center;

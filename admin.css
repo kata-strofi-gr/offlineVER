@@ -92,6 +92,7 @@
     width: 100%; /* Full width of the parent container */
     flex-wrap: wrap;
     margin-right: 10vh;
+    z-index: 999;
 }
 
 .menu-item {
@@ -136,6 +137,7 @@
 .mapView {
     position: relative;
     overflow: hidden; /* Ensure no overflow issues */
+    z-index: 2;
 }
 
 #map {
@@ -187,6 +189,10 @@
     background-color: #e03b3b;
 }
 
+.map-button:active{
+    background-color: white;
+    color:var(--kataRED)
+}
 
 .exitB{
     width: 500px;
@@ -369,7 +375,6 @@
     display: none;
     width: 100%;
     background-color: #f4f4f4;
-    padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     text-align: center;
@@ -424,6 +429,7 @@
 .btnC {
     width: 20%;
     padding: 10px;
+    margin-bottom: 15px;
     border: none;
     border-radius: 5px;
     color: white;
@@ -526,4 +532,160 @@ tbody tr:hover {
     appearance: none;
     background: #f9f9f9 url('data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjNDAwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMCA2Ij4gPHBhdGggZD0iTTUgMEw5IDZIMkw1IDB6Ii8+IDwvc3ZnPg==') no-repeat right 10px center;
     background-size: 10px;
+}
+
+
+/*mobile version*/
+.hamburger-menu {
+    display: none;
+    font-size: 2em;
+    background: none;
+    border: none;
+    color: #FA4343;
+    cursor: pointer;
+    padding: 10px;
+    z-index: 1001;
+}
+
+@media (max-width: 768px) {
+    .menu-bar {
+        display: none; /* Hide the menu bar */
+        flex-direction: column;
+        background-color: #f4f4f4;
+        position: absolute;
+        top: 50px;
+        right: 0;
+        width: 250px;
+        height: 350px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 10;
+        justify-content: flex-start;
+        padding-top: 15%;
+        border-radius: 15px;
+    }
+
+    .hamburger-menu {
+        display: block; /* Show the hamburger menu button */
+    }
+
+    .menu-bar a {
+        padding: 10px 20px;
+        text-align: left;
+    }
+
+    .separator {
+        display: none; /* Hide separators on mobile */
+    }
+    .menu-item-container {
+        position: relative;
+    }
+
+    .dropdown-content {
+        position: relative; /* Change position for mobile */
+        min-width: 100%;
+        box-shadow: none;
+    }
+
+    .menu-item-container.active .dropdown-content {
+        display: block;
+    }
+
+
+    .container{
+        display: grid;
+        grid-template-columns: 3fr 1fr;
+        grid-template-rows: auto auto auto auto;
+        grid-template-areas: 
+        "modeT modeT" 
+        "logoT menuT" 
+        "imapT imapT"
+        "boxesT" "boxesT";
+        height: auto;
+    
+    }
+
+    .modeT {
+        grid-area: modeT;
+    }
+
+    .logoT {
+        grid-area: logoT;
+    }
+
+    .menuT {
+        grid-area: menuT;
+        justify-content: flex-start;
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically */
+    }
+    .modeF{
+        font-size: small;
+    }
+    .imapT {
+        grid-area: imapT;
+    }
+
+    .boxesT {
+        grid-area: boxesT;
+    }
+    .offer-box {
+        width: 90%; /* Reduce width for mobile */
+        max-width: none;
+        left: 5%; /* Adjust positioning */
+        top: 10%;
+        transform: none; /* Reset transform */
+    }
+
+    .mapWtitle{
+        font-size: 1em;
+    }
+
+    #map {
+        width: 100%;
+        height: 20rem; /* Ensure sufficient height */
+        border-bottom: 2px solid #FA4343;
+    }
+
+    .map-button{
+        font-size: 0.9em;
+    }
+
+    .data-container {
+        flex-direction: column; /* Stack the containers vertically */
+    }
+
+    .table-container {
+        margin-right: 0; /* Remove right margin */
+        margin-bottom: 20px; /* Add bottom margin for spacing */
+    }
+
+    table {
+        font-size: 0.8em; /* Decrease font size */
+    }
+
+    .charts canvas {
+        width: 600px; /* Adjust to full width */
+        height: auto; /* Adjust height to maintain aspect ratio */
+        max-width: 100%;
+        max-height: 100%; /* Ensure it doesn't overflow */ /* Adjust height to maintain aspect ratio */
+        background-color: #f4f4f4;
+        border-radius: 10px;
+        
+    }
+    
+    .dashboard-container {
+        font-family: roboto;
+        display: none;
+        width: 100%;
+        height: 100%;
+        background-color: #f4f4f4;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        max-width: 100%;
+        
+    }
+    .date-picker{
+        scale: 0.8;
+    }
 }
