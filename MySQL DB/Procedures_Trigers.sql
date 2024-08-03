@@ -1,162 +1,193 @@
 USE kata_strofh;
 
--- Procedure to create a new requestcheck_warehouse_before_assign_request
+-- Procedure to create a new request 
 DELIMITER //
-
 CREATE PROCEDURE CreateNewRequest(
-    IN citizenID INT,
-    IN items JSON,
-    IN status ENUM('PENDING', 'INPROGRESS', 'FINISHED')
+    IN citizen_id INT,
+    IN item_details JSON
 )
 BEGIN
-    DECLARE requestID INT;
-    DECLARE itemID INT;
-    DECLARE itemName VARCHAR(100);
-    DECLARE itemQuantity INT;
-    DECLARE itemIndex INT DEFAULT 0;
-    DECLARE itemsCount INT;
+    DECLARE item_count INT;
+    DECLARE total_items INT;
+    DECLARE new_request_id INT;
 
-    -- Insert the new request
+    -- Calculate the number of items to be checked
+    SET total_items = JSON_LENGTH(item_details);
+
+    -- Create a temporary table to store item IDs and quantities
+    CREATE TEMPORARY TABLE TempItems (
+        ItemID INT,
+        Quantity INT
+    );
+
+    -- Insert item IDs and quantities into the temporary table
+    INSERT INTO TempItems (ItemID, Quantity)
+    SELECT i.ItemID, jt.quantity
+    FROM Items i
+    JOIN JSON_TABLE(item_details, "$[*]" COLUMNS (
+        item_name VARCHAR(255) PATH "$.item_name",
+        quantity INT PATH "$.quantity"
+    )) AS jt
+    ON i.Name = jt.item_name;
+
+    -- Check existence of all items by their IDs in the temporary table
+    SELECT COUNT(*) INTO item_count
+    FROM TempItems ti
+    JOIN Items i ON ti.ItemID = i.ItemID;
+
+    -- If not all items exist, raise an error
+    IF item_count <> total_items THEN
+        DROP TEMPORARY TABLE TempItems;
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'One or more items do not exist', MYSQL_ERRNO = 4001;
+    END IF;
+
+    -- Step 2: Insert a new request with status 'PENDING'
     INSERT INTO Requests (CitizenID, Status, DateCreated)
-    VALUES (citizenID, status, NOW());
+    VALUES (citizen_id, 'PENDING', NOW());
 
-    SET requestID = LAST_INSERT_ID();
+    -- Retrieve the new request ID
+    SET new_request_id = LAST_INSERT_ID();
 
-    -- Get the count of items in the JSON array
-    SET itemsCount = JSON_LENGTH(items);
+    -- Step 3: Associate items with the new request
+    INSERT INTO RequestItems (RequestID, ItemID, Quantity)
+    SELECT new_request_id, ItemID, Quantity
+    FROM TempItems;
+    -- Drop the temporary table
+    DROP TEMPORARY TABLE TempItems;
 
-    -- Loop through the items array
-    WHILE itemIndex < itemsCount DO
-        -- Extract item details
-        SET itemName = JSON_UNQUOTE(JSON_EXTRACT(items, CONCAT('$[', itemIndex, '].name')));
-        SET itemQuantity = CAST(JSON_UNQUOTE(JSON_EXTRACT(items, CONCAT('$[', itemIndex, '].quantity'))) AS UNSIGNED);
-
-        -- Get item ID from item name
-        SELECT ItemID INTO itemID FROM Items WHERE Name = itemName;
-
-        -- Check if item exists
-        IF itemID IS NULL THEN
-            SIGNAL SQLSTATE '45000' 
-             SET MESSAGE_TEXT = 'Item not found', MYSQL_ERRNO = 4001;
-        ELSE
-            INSERT INTO RequestItems (RequestID, ItemID, Quantity) VALUES (requestID, itemID, itemQuantity);
-        END IF;
-
-        SET itemIndex = itemIndex + 1;
-    END WHILE;
 END //
-
 DELIMITER ;
 
 
-
-
 -- Procedure to create a new offer
+
 DELIMITER //
 CREATE PROCEDURE CreateNewOffer(
-    IN citizenID INT,
-    IN items JSON,
-    IN status ENUM('PENDING', 'ACCEPTED', 'DECLINED', 'COMPLETED')
+    IN citizen_id INT,
+    IN items JSON
 )
 BEGIN
     DECLARE offerID INT;
-    DECLARE itemID INT;
-    DECLARE itemName VARCHAR(100);
-    DECLARE itemQuantity INT;
-    DECLARE itemIndex INT DEFAULT 0;
-    DECLARE itemsCount INT;
-    
-    -- Insert the new offer
+    DECLARE item_count INT;
+    DECLARE total_items INT;
+
+    -- Calculate the number of items to be checked
+    SET total_items = JSON_LENGTH(items);
+
+    -- Create a temporary table to store item IDs and quantities
+    CREATE TEMPORARY TABLE TempItems (
+        ItemID INT,
+        Quantity INT
+    );
+
+    -- Insert item IDs and quantities into the temporary table
+    INSERT INTO TempItems (ItemID, Quantity)
+    SELECT i.ItemID, jt.quantity
+    FROM Items i
+    JOIN JSON_TABLE(items, "$[*]" COLUMNS (
+        item_name VARCHAR(255) PATH "$.name",
+        quantity INT PATH "$.quantity"
+    )) AS jt
+    ON i.Name = jt.item_name;
+
+    -- Check existence of all items by their IDs in the temporary table
+    SELECT COUNT(*) INTO item_count
+    FROM TempItems ti
+    JOIN Items i ON ti.ItemID = i.ItemID;
+
+    -- If not all items exist, raise an error
+    IF item_count <> total_items THEN
+        DROP TEMPORARY TABLE TempItems;
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'One or more items do not exist', MYSQL_ERRNO = 4001;
+    END IF;
+
+    -- Step 2: Insert a new offer with the provided status
     INSERT INTO Offers (CitizenID, Status, DateCreated)
-    VALUES (citizenID, status, NOW());
-    
+    VALUES (citizen_id, 'PENDING', NOW());
+
+    -- Retrieve the new offer ID
     SET offerID = LAST_INSERT_ID();
-    
-    -- Get the count of items in the JSON array
-    SET itemsCount = JSON_LENGTH(items);
-    
-    -- Loop through the items array
-    WHILE itemIndex < itemsCount DO
-        -- Extract item details
-        SET itemName = JSON_UNQUOTE(JSON_EXTRACT(items, CONCAT('$[', itemIndex, '].name')));
-        SET itemQuantity = JSON_UNQUOTE(JSON_EXTRACT(items, CONCAT('$[', itemIndex, '].quantity')));
-        
-        -- Get item ID from item name
-        SELECT ItemID INTO itemID FROM Items WHERE Name = itemName;
-        
-        IF itemID IS NULL THEN
-            SIGNAL SQLSTATE '45000' 
-             SET MESSAGE_TEXT = 'Item not found', MYSQL_ERRNO = 4001;
-        ELSE
-            -- Insert into OfferItems
-            INSERT INTO OfferItems (OfferID, ItemID, Quantity)
-            VALUES (offerID, itemID, itemQuantity);
-        END IF;
-        
-        SET itemIndex = itemIndex + 1;
-    END WHILE;
+
+    -- Step 3: Associate items with the new offer
+    INSERT INTO OfferItems (OfferID, ItemID, Quantity)
+    SELECT offerID, ItemID, Quantity
+    FROM TempItems;
+
+    -- Drop the temporary table
+    DROP TEMPORARY TABLE TempItems;
 END //
 DELIMITER ;
 
 
 -- Procedure to create a new announcement
-
 DELIMITER //
-CREATE PROCEDURE CreateAnnouncement(
-    IN adminID INT,
+CREATE PROCEDURE CreateNewAnnouncement(
+    IN AdminID INT,
     IN items JSON
 )
 BEGIN
     DECLARE announcementID INT;
-    DECLARE itemID INT;
-    DECLARE itemName VARCHAR(100);
-    DECLARE itemQuantity INT;
-    DECLARE itemIndex INT DEFAULT 0;
-    DECLARE itemsCount INT;
-    
-    -- Insert the new announcement
+    DECLARE item_count INT;
+    DECLARE total_items INT;
+
+    -- Calculate the number of items to be checked
+    SET total_items = JSON_LENGTH(items);
+
+    -- Create a temporary table to store item IDs and quantities
+    CREATE TEMPORARY TABLE TempItemsAnn (
+        ItemID INT,
+        Quantity INT
+    );
+
+    -- Insert item IDs and quantities into the temporary table
+    INSERT INTO TempItemsAnn (ItemID, Quantity)
+    SELECT i.ItemID, jt.quantity
+    FROM Items i
+    JOIN JSON_TABLE(items, "$[*]" COLUMNS (
+        item_name VARCHAR(255) PATH "$.name",
+        quantity INT PATH "$.quantity"
+    )) AS jt
+    ON i.Name = jt.item_name;
+
+    -- Check existence of all items by their IDs in the temporary table
+    SELECT COUNT(*) INTO item_count
+    FROM TempItemsAnn ti
+    JOIN Items i ON ti.ItemID = i.ItemID;
+
+    -- If not all items exist, raise an error
+    IF item_count <> total_items THEN
+        DROP TEMPORARY TABLE TempItemsAnn;
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'One or more items do not exist', MYSQL_ERRNO = 4001;
+    END IF;
+
+    -- Step 2: Insert a new offer with the provided status
     INSERT INTO Announcements (AdminID, DateCreated)
-    VALUES (adminID, NOW());
-    
+    VALUES (AdminID, NOW());
+
+    -- Retrieve the new offer ID
     SET announcementID = LAST_INSERT_ID();
-    
-    -- Get the count of items in the JSON array
-    SET itemsCount = JSON_LENGTH(items);
-    
-    -- Loop through the items array
-    WHILE itemIndex < itemsCount DO
-        -- Extract item details
-        SET itemName = JSON_UNQUOTE(JSON_EXTRACT(items, CONCAT('$[', itemIndex, '].name')));
-        SET itemQuantity = JSON_UNQUOTE(JSON_EXTRACT(items, CONCAT('$[', itemIndex, '].quantity')));
-        
-        -- Get item ID from item name
-        SELECT ItemID INTO itemID FROM Items WHERE Name = itemName;
-        
-        IF itemID IS NULL THEN
-            SIGNAL SQLSTATE '45000' 
-             SET MESSAGE_TEXT = 'Item not found', MYSQL_ERRNO = 4001;
-        ELSE
-            -- Insert into AnnouncementItems
-            INSERT INTO AnnouncementItems (AnnouncementID, ItemID, Quantity)
-            VALUES (announcementID, itemID, itemQuantity);
-        END IF;
-        
-        SET itemIndex = itemIndex + 1;
-    END WHILE;
+
+    -- Step 3: Associate items with the new offer
+    INSERT INTO AnnouncementItems (AnnouncementID, ItemID, Quantity)
+    SELECT announcementID, ItemID, Quantity
+    FROM TempItemsAnn;
+
+    -- Drop the temporary table
+    DROP TEMPORARY TABLE TempItemsAnn;
+
 END //
 DELIMITER ;
+
 
 -- Procedure to create a new rescuer
 DELIMITER //
 CREATE PROCEDURE CreateNewRescuer(
     IN username VARCHAR(50),
-    IN password VARCHAR(255),
-    IN latitude DECIMAL(10, 8),
-    IN longitude DECIMAL(11, 8)
+    IN password VARCHAR(255)
 )
 BEGIN
-    INSERT INTO Rescuer (Username, Password, Latitude, Longitude)
-    VALUES (username, password, latitude, longitude);
+    INSERT INTO Rescuer (Username, Password)
+    VALUES (username, password);
 END //
 DELIMITER ;
 
@@ -177,6 +208,7 @@ BEGIN
 END //
 
 DELIMITER ;
+
 
 -- Procedure to assign a request to a rescuer
 DELIMITER //
@@ -203,111 +235,212 @@ BEGIN
 END;
 //
 
--- Procedure to change the status of a request  
+-- Procedure to Cancel a Request
 DELIMITER //
-CREATE PROCEDURE ChangeRequestStatus(
-    IN requestID INT,
-    IN newStatus ENUM('PENDING', 'INPROGRESS', 'FINISHED')
+
+CREATE PROCEDURE CancelRequest (
+    IN reqID INT
 )
 BEGIN
-    DECLARE oldStatus ENUM('PENDING', 'INPROGRESS', 'FINISHED');
-    SELECT Status INTO oldStatus FROM Requests WHERE RequestID = requestID;
-
-    IF oldStatus = 'INPROGRESS' AND newStatus = 'PENDING' THEN
-        UPDATE Requests
-        SET Status = newStatus, DateAssignedVehicle = NULL, RescuerID = NULL
-        WHERE RequestID = requestID;
-    ELSE
-        UPDATE Requests
-        SET Status = newStatus
-        WHERE RequestID = requestID;
-    END IF;
-
-    INSERT INTO RequestLog (RequestID, ChangeType, OldStatus, NewStatus)
-    VALUES (requestID, 'Status Change', oldStatus, newStatus);
+    UPDATE Requests
+    SET Status = 'PENDING', DateAssignedVehicle = NULL, RescuerID = NULL
+    WHERE RequestID = reqID;
 END //
+
 DELIMITER ;
 
-
--- Procedure to change the status of an offer
+-- Procedure to Cancel an Offer
 DELIMITER //
-CREATE PROCEDURE ChangeOfferStatus(
-    IN offerID INT,
-    IN newStatus ENUM('PENDING', 'ACCEPTED', 'DECLINED', 'COMPLETED')
+
+CREATE PROCEDURE CancelOffer (
+    IN offerID INT
 )
 BEGIN
-    DECLARE oldStatus ENUM('PENDING', 'ACCEPTED', 'DECLINED', 'COMPLETED');
-    SELECT Status INTO oldStatus FROM Offers WHERE OfferID = offerID;
-
-    IF oldStatus = 'ACCEPTED' AND newStatus = 'PENDING' THEN
-        UPDATE Offers
-        SET Status = newStatus, DateAssigned = NULL, RescuerID = NULL
-        WHERE OfferID = offerID;
-    ELSE
-        UPDATE Offers
-        SET Status = newStatus
-        WHERE OfferID = offerID;
-    END IF;
-
-    INSERT INTO OfferLog (OfferID, ChangeType, OldStatus, NewStatus)
-    VALUES (offerID, 'Status Change', oldStatus, newStatus);
+    UPDATE Offers
+    SET Status = 'PENDING', DateAssignedVehicle = NULL, RescuerID = NULL
+    WHERE OfferID = offerID;
 END //
+
 DELIMITER ;
 
- 
--- Trigger to check warehouse quantity before assigning a request
+
+
+
+
+
+
+
+-- Procedure to Mark a Request as Finished
 DELIMITER //
-CREATE TRIGGER BeforeInsertRequestItem
-BEFORE INSERT ON RequestItems
-FOR EACH ROW
+
+CREATE PROCEDURE FinishRequest (
+    IN reqID INT
+)
 BEGIN
-    DECLARE availableQty INT;
-    SELECT Quantity INTO availableQty FROM Warehouse WHERE ItemID = NEW.ItemID;
-    IF availableQty < NEW.Quantity THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Not enough items in the warehouse';
-    END IF;
+    UPDATE Requests
+    SET Status = 'FINISHED'
+    WHERE RequestID = reqID;
 END //
+
 DELIMITER ;
 
+-- Procedure to Mark an Offer as Finished
+DELIMITER //
+
+CREATE PROCEDURE FinishOffer (
+    IN offerID INT
+)
+BEGIN
+    UPDATE Offers
+    SET Status = 'FINISHED'
+    WHERE OfferID = offerID;
+END //
 
 
 -- Trigger to prevent rescuer assignment if they have reached the task limit for requests
 DELIMITER //
-CREATE TRIGGER BeforeAssignRescuerRequest
+
+CREATE TRIGGER BeforeAssignRescuerToRequest
 BEFORE UPDATE ON Requests
 FOR EACH ROW
 BEGIN
-    DECLARE requestCount INT;
-    DECLARE offerCount INT;
-    IF NEW.RescuerID IS NOT NULL THEN
-        SELECT COUNT(*) INTO requestCount FROM Requests WHERE RescuerID = NEW.RescuerID AND Status = 'INPROGRESS';
-        SELECT COUNT(*) INTO offerCount FROM Offers WHERE RescuerID = NEW.RescuerID AND Status = 'ACCEPTED';
-        IF (requestCount + offerCount) >= 4 THEN
-            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Rescuer has reached the maximum task limit';
+    DECLARE taskCount INT;
+
+    IF NEW.RescuerID IS NOT NULL AND NEW.Status != 'FINISHED' THEN
+        SELECT COUNT(*) INTO taskCount
+        FROM (
+            SELECT RescuerID FROM Requests WHERE RescuerID = NEW.RescuerID AND Status = 'INPROGRESS'
+            UNION ALL
+            SELECT RescuerID FROM Offers WHERE RescuerID = NEW.RescuerID AND Status = 'INPROGRESS'
+        ) AS RescuerTasks;
+
+        IF taskCount >= 4 THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Rescuer has reached the maximum number of tasks.';
         END IF;
     END IF;
 END //
+
 DELIMITER ;
 
 -- Trigger to prevent rescuer assignment if they have reached the task limit for offers
 DELIMITER //
-CREATE TRIGGER BeforeAssignRescuerOffer
+
+CREATE TRIGGER BeforeAssignRescuerToOffer
 BEFORE UPDATE ON Offers
 FOR EACH ROW
 BEGIN
-    DECLARE requestCount INT;
-    DECLARE offerCount INT;
-    IF NEW.RescuerID IS NOT NULL THEN
-        SELECT COUNT(*) INTO requestCount FROM Requests WHERE RescuerID = NEW.RescuerID AND Status = 'INPROGRESS';
-        SELECT COUNT(*) INTO offerCount FROM Offers WHERE RescuerID = NEW.RescuerID AND Status = 'ACCEPTED';
-        IF (requestCount + offerCount) >= 4 THEN
-            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Rescuer has reached the maximum task limit';
+    DECLARE taskCount INT;
+
+    IF NEW.RescuerID IS NOT NULL AND NEW.Status != 'FINISHED' THEN
+        SELECT COUNT(*) INTO taskCount
+        FROM (
+            SELECT RescuerID FROM Requests WHERE RescuerID = NEW.RescuerID AND Status = 'INPROGRESS'
+            UNION ALL
+            SELECT RescuerID FROM Offers WHERE RescuerID = NEW.RescuerID AND Status = 'INPROGRESS'
+        ) AS RescuerTasks;
+
+        IF taskCount >= 4 THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Rescuer has reached the maximum number of tasks.';
         END IF;
     END IF;
 END //
+
 DELIMITER ;
 
--- Trigger to log changes in Requests table
+-- Trigger to prevent reassignment of in-progress requests
+DELIMITER //
+
+CREATE TRIGGER PreventReassignInProgressRequest
+BEFORE UPDATE ON Requests
+FOR EACH ROW
+BEGIN
+    IF OLD.Status = 'INPROGRESS' AND OLD.RescuerID IS NOT NULL AND OLD.RescuerID != NEW.RescuerID THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'In-progress requests cannot be reassigned to another rescuer.';
+    END IF;
+END //
+
+DELIMITER ;
+
+-- Trigger to prevent reassignment of in-progress offers
+DELIMITER //
+
+CREATE TRIGGER PreventReassignInProgressOffer
+BEFORE UPDATE ON Offers
+FOR EACH ROW
+BEGIN
+    IF OLD.Status = 'INPROGRESS' AND OLD.RescuerID IS NOT NULL AND OLD.RescuerID != NEW.RescuerID THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'In-progress offers cannot be reassigned to another rescuer.';
+    END IF;
+END //
+
+DELIMITER ;
+
+-- Trigger to prevent pending requests from being marked as finished
+DELIMITER //
+
+CREATE TRIGGER PreventPendingRequestFinished
+BEFORE UPDATE ON Requests
+FOR EACH ROW
+BEGIN
+    IF OLD.Status = 'PENDING' AND NEW.Status = 'FINISHED' THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Pending requests cannot be marked as finished.';
+    END IF;
+END //
+
+DELIMITER ;
+
+-- Trigger to prevent pending offers from being marked as finished
+DELIMITER //
+
+CREATE TRIGGER PreventPendingOfferFinished
+BEFORE UPDATE ON Offers
+FOR EACH ROW
+BEGIN
+    IF OLD.Status = 'PENDING' AND NEW.Status = 'FINISHED' THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Pending offers cannot be marked as finished.';
+    END IF;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER PreventFinishedRequestAlteration
+BEFORE UPDATE ON Requests
+FOR EACH ROW
+BEGIN
+    IF OLD.Status = 'FINISHED' THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Finished requests cannot be altered.';
+    END IF;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER PreventFinishedOfferAlteration
+BEFORE UPDATE ON Offers
+FOR EACH ROW
+BEGIN
+    IF OLD.Status = 'FINISHED' THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Finished offers cannot be altered.';
+    END IF;
+END //
+
+DELIMITER ;
+
+
+-- for log tables we may use them to add functionality to the system
+
+/* -- Trigger to log changes in Requests table
 DELIMITER //
 CREATE TRIGGER AfterRequestUpdate
 AFTER UPDATE ON Requests
@@ -371,7 +504,7 @@ BEGIN
     INSERT INTO OfferHistory (OfferID, ChangeType, OldStatus, OldRescuerID)
     VALUES (OLD.OfferID, 'Delete', OLD.Status, OLD.RescuerID);
 END //
-DELIMITER ;
+DELIMITER ; */
 
 
 

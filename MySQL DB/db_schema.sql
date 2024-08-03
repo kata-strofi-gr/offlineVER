@@ -56,12 +56,12 @@ CREATE TABLE Warehouse (
 CREATE TABLE Requests (
     RequestID INT AUTO_INCREMENT PRIMARY KEY,
     CitizenID INT,
-    Status ENUM('PENDING', 'INPROGRESS', 'FINISHED') NOT NULL,
+    Status ENUM('PENDING', 'INPROGRESS', 'FINISHED') NOT NULL DEFAULT 'PENDING',
     DateCreated DATETIME NOT NULL,
     DateAssignedVehicle DATETIME,
     RescuerID INT,
     FOREIGN KEY (CitizenID) REFERENCES Citizen(CitizenID) ON DELETE CASCADE,
-    FOREIGN KEY (RescuerID) REFERENCES Rescuer(RescuerID) ON DELETE SET NULL,
+    FOREIGN KEY (RescuerID) REFERENCES Rescuer(RescuerID) ON DELETE CASCADE,
     INDEX (CitizenID),
     INDEX (RescuerID),
     INDEX (Status),
@@ -85,12 +85,12 @@ CREATE TABLE RequestItems (
 CREATE TABLE Offers (
     OfferID INT AUTO_INCREMENT PRIMARY KEY,
     CitizenID INT,
-    Status ENUM('PENDING', 'INPROGRESS', 'FINISHED') NOT NULL,
+    Status ENUM('PENDING', 'INPROGRESS', 'FINISHED') NOT NULL DEFAULT 'PENDING',
     DateCreated DATETIME NOT NULL,
     DateAssigned DATETIME,
     RescuerID INT,
     FOREIGN KEY (CitizenID) REFERENCES Citizen(CitizenID) ON DELETE CASCADE,
-    FOREIGN KEY (RescuerID) REFERENCES Rescuer(RescuerID) ON DELETE SET NULL,
+    FOREIGN KEY (RescuerID) REFERENCES Rescuer(RescuerID) ON DELETE CASCADE,
     INDEX (CitizenID),
     INDEX (RescuerID),
     INDEX (Status),
@@ -155,7 +155,7 @@ CREATE TABLE AnnouncementItems (
     INDEX (ItemID)
 ) ENGINE=InnoDB;
 
--- RequestHistory Table
+/* -- RequestHistory Table
 CREATE TABLE RequestHistory (
     HistoryID INT AUTO_INCREMENT PRIMARY KEY,
     RequestID INT,
@@ -165,7 +165,7 @@ CREATE TABLE RequestHistory (
     NewStatus ENUM('PENDING', 'INPROGRESS', 'FINISHED'),
     OldRescuerID INT,
     NewRescuerID INT,
-    FOREIGN KEY (RequestID) REFERENCES Requests(RequestID)
+    FOREIGN KEY (RequestID) REFERENCES Requests(RequestID) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- OfferHistory Table
@@ -174,12 +174,12 @@ CREATE TABLE OfferHistory (
     OfferID INT,
     ChangeType VARCHAR(50),
     ChangeTime DATETIME DEFAULT CURRENT_TIMESTAMP,
-    OldStatus ENUM('PENDING', 'ACCEPTED', 'DECLINED', 'COMPLETED'),
-    NewStatus ENUM('PENDING', 'ACCEPTED', 'DECLINED', 'COMPLETED'),
+    OldStatus ENUM('PENDING', 'INPROGRESS', 'FINISHED'),
+    NewStatus ENUM('PENDING', 'INPROGRESS', 'FINISHED'),
     OldRescuerID INT,
     NewRescuerID INT,
-    FOREIGN KEY (OfferID) REFERENCES Offers(OfferID)
-) ENGINE=InnoDB;
+    FOREIGN KEY (OfferID) REFERENCES Offers(OfferID) ON DELETE CASCADE
+) ENGINE=InnoDB; */
 
 
 DROP DATABASE kata_strofh;

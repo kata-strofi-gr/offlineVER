@@ -6,16 +6,17 @@ INSERT INTO Administrator (Username, Password) VALUES
 ('admin2', 'password2');
 
 -- Insert sample data into Rescuer table
-INSERT INTO Rescuer (Username, Password, Location) VALUES 
-('rescuer1', 'password1', 'Location1'),
-('rescuer2', 'password2', 'Location2'),
-('rescuer3', 'password3', 'Location3');
+INSERT INTO Rescuer (Username, Password) VALUES 
+('rescuer1', 'password1'),
+('rescuer2', 'password2'),
+('rescuer3', 'password3');
 
 -- Insert sample data into Citizen table
-INSERT INTO Citizen (Username, Password, Name, Phone, Location) VALUES 
-('citizen1', 'password1', 'John Doe', '1234567890', 'LocationA'),
-('citizen2', 'password2', 'Jane Doe', '0987654321', 'LocationB'),
-('citizen3', 'password3', 'Alice Smith', '1112223333', 'LocationC');
+INSERT INTO Citizen (Username, Password, Name, Surname, Phone, Latitude, Longitude)
+VALUES
+('citizen1', 'password1', 'John', 'Doe', '1234567890', 40.712776, -74.005974),
+('citiczen2', 'passcword2', 'Jacne', 'Smith', '0987624321', 33.052235, -118.243683),
+('citizen2', 'password2', 'Jane', 'Smith', '0987654321', 34.052235, -118.243683);
 
 -- Insert sample data into Items table
 INSERT INTO Items (Category, Name, Description) VALUES 
@@ -31,34 +32,73 @@ INSERT INTO Warehouse (ItemID, Quantity) VALUES
 
 
 -- Insert sample data into Requests table
-INSERT INTO Requests (CitizenID, ItemID, Quantity, Status, DateCreated) VALUES 
-(1, 1, 10, 'PENDING', NOW()), -- John Doe requesting Rice
-(2, 2, 5, 'PENDING', NOW()),  -- Jane Doe requesting Aspirin
-(3, 3, 2, 'PENDING', NOW()),  -- Alice Smith requesting Blanket
-(1, 2, 3, 'PENDING', NOW()),  -- John Doe requesting Aspirin
-(2, 3, 1, 'PENDING', NOW()),  -- Jane Doe requesting Blanket
-(3, 1, 5, 'PENDING', NOW());  -- Alice Smith requesting Rice
+INSERT INTO Requests (CitizenID, Status, DateCreated) VALUES 
+(1, 'PENDING', NOW()), -- John Doe requesting Rice
+(2, 'PENDING', NOW()),  -- Jane Doe requesting Aspirin
+(3, 'PENDING', NOW()),  -- Alice Smith requesting Blanket
+(1, 'PENDING', NOW()),  -- John Doe requesting Aspirin
+(2, 'PENDING', NOW()),  -- Jane Doe requesting Blanket
+(3, 'PENDING', NOW());  -- Alice Smith requesting Rice
+
+INSERT INTO RequestItems (RequestID, ItemID, Quantity) VALUES
+(1, 1, 10), -- John Doe requesting 10 units of Rice
+(2, 2, 5),  -- Jane Doe requesting 5 units of Aspirin
+(3, 3, 3),  -- Alice Smith requesting 3 units of Blanket
+(4, 2, 7),  -- John Doe requesting 7 units of Aspirin
+(5, 3, 10), -- Jane Doe requesting 10 units of Blanket
+(6, 1, 15); -- Alice Smith requesting 15 units of Rice
+
+INSERT INTO RequestItems (RequestID, ItemID, Quantity) VALUES
+(1, 1, 10); -- John Doe requesting 10 units of Rice
+
 
 -- Insert sample data into Offers table
-INSERT INTO Offers (CitizenID, ItemID, Quantity, Status, DateCreated) VALUES 
-(1, 1, 15, 'PENDING', NOW()), -- John Doe offering Rice
-(2, 2, 8, 'PENDING', NOW()),  -- Jane Doe offering Aspirin
-(3, 3, 4, 'PENDING', NOW()),  -- Alice Smith offering Blanket
-(1, 3, 10, 'PENDING', NOW()), -- John Doe offering Blanket
-(2, 1, 7, 'PENDING', NOW()),  -- Jane Doe offering Rice
-(3, 2, 2, 'PENDING', NOW());  -- Alice Smith offering Aspirin
+INSERT INTO Offers (CitizenID, Status, DateCreated) VALUES 
+(1, 'PENDING', NOW()), -- John Doe offering Rice
+(2, 'PENDING', NOW()),  -- Jane Doe offering Aspirin
+(3, 'PENDING', NOW()),  -- Alice Smith offering Blanket
+(1, 'PENDING', NOW()), -- John Doe offering Blanket
+(2, 'PENDING', NOW()),  -- Jane Doe offering Rice
+(3, 'PENDING', NOW());  -- Alice Smith offering Aspirin
+
+INSERT INTO OfferItems (OfferID, ItemID, Quantity) VALUES
+(1, 1, 20), -- John Doe offering 20 units of Rice
+(2, 2, 10),  -- Jane Doe offering 10 units of Aspirin
+(3, 3, 5),  -- Alice Smith offering 5 units of Blanket
+(4, 3, 7),  -- John Doe offering 7 units of Blanket
+(5, 1, 15), -- Jane Doe offering 15 units of Rice
+(6, 2, 20); -- Alice Smith offering 20 units of Aspirin
 
 -- Insert sample data into Vehicles table
-INSERT INTO Vehicles (RescuerID, CurrentLoad) VALUES 
-(1, 0), -- Vehicle for rescuer1
-(2, 0), -- Vehicle for rescuer2
-(3, 0); -- Vehicle for rescuer3
+INSERT INTO Vehicles (RescuerID, Latitude, Longitude) VALUES 
+(1, 37.774929, -122.419418), -- Rescuer 1 in San Francisco
+(2, 34.052235, -118.243683), -- Rescuer 2 in Los Angeles
+(3, 40.712776, -74.005974);  -- Rescuer 3 in New York
+
+-- Insert sample data into VehicleItems table
+INSERT INTO VehicleItems (VehicleID, ItemID, Quantity) VALUES
+(1, 1, 10), -- Vehicle 1 carrying 10 units of Item 1
+(1, 2, 5),  -- Vehicle 1 carrying 5 units of Item 2
+(2, 3, 7),  -- Vehicle 2 carrying 7 units of Item 3
+(2, 1, 15), -- Vehicle 2 carrying 15 units of Item 1
+(3, 2, 20), -- Vehicle 3 carrying 20 units of Item 2
+(3, 3, 10); -- Vehicle 3 carrying 10 units of Item 3
 
 -- Insert sample data into Announcements table
-INSERT INTO Announcements (AdminID, ItemID, DateCreated, Message) VALUES 
-(1, 1, NOW(), 'New shipment of rice available.'),
-(2, 2, NOW(), 'Aspirin is now in stock.'),
-(1, 3, NOW(), 'Warm blankets available for winter.');
+INSERT INTO Announcements (AdminID, DateCreated) VALUES 
+(1, '2023-01-01 10:00:00'), -- Admin 1 created an announcement on January 1, 2023
+(2, '2023-02-15 14:30:00'); -- Admin 2 created an announcement on February 15, 2023
+
+
+-- Insert sample data into AnnouncementItems table
+INSERT INTO AnnouncementItems (AnnouncementID, ItemID, Quantity) VALUES
+(1, 1, 10), -- Announcement 1 includes 10 units of Item 1
+(1, 2, 50), -- Announcement 1 includes 50 units of Item 2
+(2, 3, 75), -- Announcement 2 includes 75 units of Item 3
+(2, 1, 150); -- Announcement 2 includes 150 units of Item 1
+
+-- Test entry for CreateNewRequest procedure
+CALL CreateNewRequest(1, '[{"item_id": 7, "quantity": 5}, {"item_id": 2, "quantity": 3}]', 'INPROGRESS');
 
 
 
