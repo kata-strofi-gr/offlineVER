@@ -97,57 +97,47 @@ INSERT INTO AnnouncementItems (AnnouncementID, ItemID, Quantity) VALUES
 (2, 3, 75), -- Announcement 2 includes 75 units of Item 3
 (2, 1, 150); -- Announcement 2 includes 150 units of Item 1
 
+
 -- Test entry for CreateNewRequest procedure
-CALL CreateNewRequest(1, '[{"item_id": 7, "quantity": 5}, {"item_id": 2, "quantity": 3}]', 'INPROGRESS');
+CALL CreateNewRequest(1, '[{"item_name": "Rice", "quantity": 5}, {"item_name": "Rice", "quantity": 5}, {"item_name": "Rice", "quantity": 5}, {"item_name": "Rice", "quantity": 5}, {"item_name": "Rice", "quantity": 3}]');
 
+-- Test entry for CreateNewOffer procedure
+CALL CreateNewOffer(1, '[{"name": "Blanket", "quantity": 5}, {"name": "Rice", "quantity": 3}]');
 
+-- Test entry for CreateAnnouncement procedure
+CALL CreateNewAnnouncement(1, '[{"name": "Blanket", "quantity": 5}, {"name": "Rice", "quantity": 3}]');
 
--- Insert sample data into RequestLogs table
--- Logs can be generated based on updates to Requests
+-- Test entry to create a new rescuer
+CALL CreateNewRescuer('john_pdohoe', 'securepassword123');
 
-UPDATE Requests SET Status = 'INPROGRESS' WHERE RequestID = 1;
-UPDATE Requests SET Status = 'INPROGRESS' WHERE RequestID = 2;
-
-
-
--- Insert sample data into OfferLogs table
--- Logs can be generated based on updates to Offers
-UPDATE Offers SET Status = 'INPROGRESS' WHERE OfferID = 1;
-UPDATE Offers SET Status = 'INPROGRESS' WHERE OfferID = 2;
-
-
-
+-- Test entry to create a new citizen
+CALL CreateNewCitizen('jane_dgoe', 'securepassword456', 'Jane', 'Doe', '123-456-7890', 34.052235, -118.243683);
 
 -- Example of requests being assigned to rescuers
-CALL AssignRequest(1, 1); -- Assigning first request to rescuer1
-CALL AssignRequest(2, 1); -- Assigning second request to rescuer1
-CALL AssignRequest(3, 1); -- Assigning third request to rescuer1
-CALL AssignRequest(4, 1); -- Assigning fourth request to rescuer1
+CALL AssignRequest(1, 2); -- Assigning first request to rescuer1
+CALL AssignRequest(2, 3); -- Assigning second request to rescuer1
+CALL AssignRequest(4, 3); -- Assigning third request to rescuer1
+CALL AssignRequest(5, 1); -- Assigning fourth request to rescuer1
 
 -- This next assignment should trigger the task limit check
 CALL AssignRequest(5, 1); -- Attempting to assign fifth request to rescuer1
 
 -- Example of offers being assigned to rescuers
-CALL AssignOffer(1, 2); -- Assigning first offer to rescuer1
-CALL AssignOffer(2, 2); -- Assigning second offer to rescuer1
-CALL AssignOffer(3, 2); -- Assigning third offer to rescuer1
-CALL AssignOffer(4, 2); -- Assigning fourth offer to rescuer1
+CALL AssignOffer(1, 3); -- Assigning first offer to rescuer1
+CALL AssignOffer(2, 3); -- Assigning second offer to rescuer1
+CALL AssignOffer(3, 3); -- Assigning third offer to rescuer1
+CALL AssignOffer(5, 2); -- Assigning fourth offer to rescuer1
 -- This next assignment should trigger the task limit check
-CALL AssignOffer(5, 2); -- Attempting to assign fifth offer to rescuer1
+CALL AssignOffer(4, 2); -- Attempting to assign fifth offer to rescuer1
 
--- Example of changing request status
-CALL ChangeRequestStatus(1, 'INPROGRESS'); -- Changing status of the first request to INPROGRESS
-CALL ChangeRequestStatus(2, 'INPROGRESS'); -- Changing status of the second request to INPROGRESS
-CALL ChangeRequestStatus(3, 'INPROGRESS'); -- Changing status of the third request to INPROGRESS
-CALL ChangeRequestStatus(4, 'INPROGRESS'); -- Changing status of the fourth request to INPROGRESS
+CALL CancelRequest(1);
 
--- Example of changing offer status
-CALL ChangeOfferStatus(1, 'PENDING'); -- Changing status of the first offer to INPROGRESS
-CALL ChangeOfferStatus(2, 'PENDING'); -- Changing status of the second offer to INPROGRESS
-CALL ChangeOfferStatus(3, 'INPROGRESS'); -- Changing status of the third offer to INPROGRESS
-CALL ChangeOfferStatus(4, 'INPROGRESS'); -- Changing status of the fourth offer to INPROGRESS
+CALL CancelOffer(1);
+
+CALL FinishRequest(2);
+
+CALL FinishOffer(2);
 
 
-CALL CreateNewRequest(1, '[{"name": "Water", "quantity": 10}, {"name": "Food", "quantity": 5}]', 'PENDING');
-CALL CreateNewOffer(1, '[{"name": "Water", "quantity": 10}, {"name": "Food", "quantity": 5}]', 'PENDING');
-CALL CreateAnnouncement(1, '[{"name": "Water", "quantity": 10}, {"name": "Food", "quantity": 5}]');
+
+

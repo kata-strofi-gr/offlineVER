@@ -64,7 +64,6 @@ CREATE TABLE Requests (
     FOREIGN KEY (RescuerID) REFERENCES Rescuer(RescuerID) ON DELETE CASCADE,
     INDEX (CitizenID),
     INDEX (RescuerID),
-    INDEX (Status),
     INDEX (DateCreated),
     INDEX (DateAssignedVehicle)
 ) ENGINE=InnoDB;
@@ -87,15 +86,14 @@ CREATE TABLE Offers (
     CitizenID INT,
     Status ENUM('PENDING', 'INPROGRESS', 'FINISHED') NOT NULL DEFAULT 'PENDING',
     DateCreated DATETIME NOT NULL,
-    DateAssigned DATETIME,
+    DateAssignedVehicle DATETIME,
     RescuerID INT,
     FOREIGN KEY (CitizenID) REFERENCES Citizen(CitizenID) ON DELETE CASCADE,
     FOREIGN KEY (RescuerID) REFERENCES Rescuer(RescuerID) ON DELETE CASCADE,
     INDEX (CitizenID),
     INDEX (RescuerID),
-    INDEX (Status),
     INDEX (DateCreated),
-    INDEX (DateAssigned)
+    INDEX (DateAssignedVehicle)
 ) ENGINE=InnoDB;
 
 -- OfferItems Table to handle multiple items per offer

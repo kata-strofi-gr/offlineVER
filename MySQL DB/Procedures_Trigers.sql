@@ -230,7 +230,7 @@ CREATE PROCEDURE AssignOffer (
     IN p_RescuerID INT
 )
 BEGIN
-    UPDATE Offers SET RescuerID = p_RescuerID, Status = 'INPROGRESS', DateAssigned = NOW() 
+    UPDATE Offers SET RescuerID = p_RescuerID, Status = 'INPROGRESS', DateAssignedVehicle = NOW() 
     WHERE OfferID = p_OfferID;
 END;
 //
@@ -251,28 +251,21 @@ DELIMITER ;
 
 -- Procedure to Cancel an Offer
 DELIMITER //
-
 CREATE PROCEDURE CancelOffer (
-    IN offerID INT
+    IN p_offerID INT
 )
 BEGIN
+    -- Diagnostic message
+    SELECT 'CancelOffer called with OfferID =', p_offerID;
+    -- Update statement
     UPDATE Offers
     SET Status = 'PENDING', DateAssignedVehicle = NULL, RescuerID = NULL
-    WHERE OfferID = offerID;
+    WHERE OfferID = p_offerID;
 END //
-
 DELIMITER ;
-
-
-
-
-
-
-
 
 -- Procedure to Mark a Request as Finished
 DELIMITER //
-
 CREATE PROCEDURE FinishRequest (
     IN reqID INT
 )
@@ -281,25 +274,22 @@ BEGIN
     SET Status = 'FINISHED'
     WHERE RequestID = reqID;
 END //
-
 DELIMITER ;
 
 -- Procedure to Mark an Offer as Finished
 DELIMITER //
-
 CREATE PROCEDURE FinishOffer (
-    IN offerID INT
+    IN p_offerID INT
 )
 BEGIN
     UPDATE Offers
     SET Status = 'FINISHED'
-    WHERE OfferID = offerID;
+    WHERE OfferID = p_offerID;
 END //
-
+DELIMITER ;
 
 -- Trigger to prevent rescuer assignment if they have reached the task limit for requests
 DELIMITER //
-
 CREATE TRIGGER BeforeAssignRescuerToRequest
 BEFORE UPDATE ON Requests
 FOR EACH ROW
@@ -316,11 +306,10 @@ BEGIN
 
         IF taskCount >= 4 THEN
             SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Rescuer has reached the maximum number of tasks.';
+            SET MESSAGE_TEXT = 'Rescuer has reached the maximum number of tasks.', MYSQL_ERRNO = 6002;
         END IF;
     END IF;
 END //
-
 DELIMITER ;
 
 -- Trigger to prevent rescuer assignment if they have reached the task limit for offers
@@ -342,99 +331,90 @@ BEGIN
 
         IF taskCount >= 4 THEN
             SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Rescuer has reached the maximum number of tasks.';
+            SET MESSAGE_TEXT = 'Rescuer has reached the maximum number of tasks.', MYSQL_ERRNO = 6002;
         END IF;
     END IF;
 END //
-
 DELIMITER ;
 
 -- Trigger to prevent reassignment of in-progress requests
 DELIMITER //
-
 CREATE TRIGGER PreventReassignInProgressRequest
 BEFORE UPDATE ON Requests
 FOR EACH ROW
 BEGIN
     IF OLD.Status = 'INPROGRESS' AND OLD.RescuerID IS NOT NULL AND OLD.RescuerID != NEW.RescuerID THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'In-progress requests cannot be reassigned to another rescuer.';
+        SET MESSAGE_TEXT = 'In-progress requests cannot be reassigned to another rescuer.', MYSQL_ERRNO = 5003;
     END IF;
 END //
-
 DELIMITER ;
 
 -- Trigger to prevent reassignment of in-progress offers
 DELIMITER //
-
 CREATE TRIGGER PreventReassignInProgressOffer
 BEFORE UPDATE ON Offers
 FOR EACH ROW
 BEGIN
     IF OLD.Status = 'INPROGRESS' AND OLD.RescuerID IS NOT NULL AND OLD.RescuerID != NEW.RescuerID THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'In-progress offers cannot be reassigned to another rescuer.';
+        SET MESSAGE_TEXT = 'In-progress offers cannot be reassigned to another rescuer.', MYSQL_ERRNO = 5004;
     END IF;
 END //
-
 DELIMITER ;
 
 -- Trigger to prevent pending requests from being marked as finished
 DELIMITER //
-
 CREATE TRIGGER PreventPendingRequestFinished
 BEFORE UPDATE ON Requests
 FOR EACH ROW
 BEGIN
     IF OLD.Status = 'PENDING' AND NEW.Status = 'FINISHED' THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Pending requests cannot be marked as finished.';
+        SET MESSAGE_TEXT = 'Pending requests cannot be marked as finished.', MYSQL_ERRNO = 5005;
     END IF;
 END //
-
 DELIMITER ;
 
 -- Trigger to prevent pending offers from being marked as finished
 DELIMITER //
-
 CREATE TRIGGER PreventPendingOfferFinished
 BEFORE UPDATE ON Offers
 FOR EACH ROW
 BEGIN
     IF OLD.Status = 'PENDING' AND NEW.Status = 'FINISHED' THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Pending offers cannot be marked as finished.';
+        SET MESSAGE_TEXT = 'Pending offers cannot be marked as finished.', MYSQL_ERRNO = 5006;
     END IF;
 END //
-
 DELIMITER ;
 
-DELIMITER //
 
+-- Trigger to prevent finished requests from being altered
+DELIMITER //
 CREATE TRIGGER PreventFinishedRequestAlteration
 BEFORE UPDATE ON Requests
 FOR EACH ROW
 BEGIN
     IF OLD.Status = 'FINISHED' THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Finished requests cannot be altered.';
+        SET MESSAGE_TEXT = 'Finished requests cannot be altered.', MYSQL_ERRNO = 5007;  
     END IF;
 END //
-
 DELIMITER ;
 
-DELIMITER //
+-- Trigger to prevent finished offers from being altered
 
+DELIMITER //
 CREATE TRIGGER PreventFinishedOfferAlteration
 BEFORE UPDATE ON Offers
 FOR EACH ROW
 BEGIN
     IF OLD.Status = 'FINISHED' THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Finished offers cannot be altered.';
+        SET MESSAGE_TEXT = 'Finished offers cannot be altered.', MYSQL_ERRNO = 5008;
     END IF;
 END //
-
 DELIMITER ;
 
 
