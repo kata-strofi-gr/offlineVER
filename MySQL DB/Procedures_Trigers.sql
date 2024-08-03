@@ -38,7 +38,7 @@ BEGIN
     -- If not all items exist, raise an error
     IF item_count <> total_items THEN
         DROP TEMPORARY TABLE TempItems;
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'One or more items do not exist', MYSQL_ERRNO = 4001;
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'One or more items do not exist in the dB', MYSQL_ERRNO = 4001;
     END IF;
 
     -- Step 2: Insert a new request with status 'PENDING'
@@ -98,7 +98,7 @@ BEGIN
     -- If not all items exist, raise an error
     IF item_count <> total_items THEN
         DROP TEMPORARY TABLE TempItems;
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'One or more items do not exist', MYSQL_ERRNO = 4001;
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'One or more items do not exist in the dBt', MYSQL_ERRNO = 4001;
     END IF;
 
     -- Step 2: Insert a new offer with the provided status
@@ -157,7 +157,7 @@ BEGIN
     -- If not all items exist, raise an error
     IF item_count <> total_items THEN
         DROP TEMPORARY TABLE TempItemsAnn;
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'One or more items do not exist', MYSQL_ERRNO = 4001;
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'One or more items do not exist in the dB', MYSQL_ERRNO = 4001;
     END IF;
 
     -- Step 2: Insert a new offer with the provided status
@@ -183,13 +183,26 @@ DELIMITER ;
 DELIMITER //
 CREATE PROCEDURE CreateNewRescuer(
     IN username VARCHAR(50),
-    IN password VARCHAR(255)
+    IN password VARCHAR(255),
+    IN latitude DECIMAL(10, 8),
+    IN longitude DECIMAL(11, 8)
 )
 BEGIN
+    DECLARE new_rescuer_id INT;
+
+    -- Insert the new rescuer
     INSERT INTO Rescuer (Username, Password)
     VALUES (username, password);
+
+    -- Get the ID of the newly inserted rescuer
+    SET new_rescuer_id = LAST_INSERT_ID();
+
+    -- Insert the vehicle associated with the new rescuer
+    INSERT INTO Vehicles (RescuerID, Latitude, Longitude)
+    VALUES (new_rescuer_id, latitude, longitude);
 END //
 DELIMITER ;
+
 
 -- Procedure to create a new citizen
 DELIMITER //
@@ -237,7 +250,6 @@ END;
 
 -- Procedure to Cancel a Request
 DELIMITER //
-
 CREATE PROCEDURE CancelRequest (
     IN reqID INT
 )
@@ -345,7 +357,7 @@ FOR EACH ROW
 BEGIN
     IF OLD.Status = 'INPROGRESS' AND OLD.RescuerID IS NOT NULL AND OLD.RescuerID != NEW.RescuerID THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'In-progress requests cannot be reassigned to another rescuer.', MYSQL_ERRNO = 5003;
+        SET MESSAGE_TEXT = 'In-progress requests cannot be reassigned.', MYSQL_ERRNO = 5003;
     END IF;
 END //
 DELIMITER ;
@@ -358,7 +370,7 @@ FOR EACH ROW
 BEGIN
     IF OLD.Status = 'INPROGRESS' AND OLD.RescuerID IS NOT NULL AND OLD.RescuerID != NEW.RescuerID THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'In-progress offers cannot be reassigned to another rescuer.', MYSQL_ERRNO = 5004;
+        SET MESSAGE_TEXT = 'In-progress offers cannot be reassigned.', MYSQL_ERRNO = 5004;
     END IF;
 END //
 DELIMITER ;

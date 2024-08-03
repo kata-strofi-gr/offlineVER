@@ -19,8 +19,7 @@ The database schema is defined in `db_schema.sql` and includes the following tab
 - `VehicleItems`: Manages the items and quantities associated with each vehicle.
 - `Announcements`: Stores announcements made by administrators.
 - `AnnouncementItems`: Manages the items and quantities associated with each announcement.
-- `RequestHistory`: Tracks the history of requests.
-- `OfferHistory`: Tracks the history of offers.
+
 
 ## Stored Procedures and Triggers
 
@@ -33,25 +32,23 @@ The `Procedures_Trigers.sql` file contains stored procedures and triggers, inclu
    - **Parameters:** 
      - `citizenID INT`: ID of the citizen making the request.
      - `items JSON`: JSON array of items and their quantities.
-     - `status ENUM('PENDING', 'INPROGRESS', 'FINISHED')`: Status of the request.
-   - **Description:** Inserts a new request into the `Requests` table and its associated items into the `RequestItems` table.
+     - **Description:** Inserts a new request with status `PENDING` into the `Requests` table and associates items with the new request.
 
 2. **CreateNewOffer**
    - **Usage:** Create a new offer using item names.
    - **Parameters:** 
      - `citizenID INT`: ID of the citizen making the offer.
      - `items JSON`: JSON array of items and their quantities.
-     - `status ENUM('PENDING', 'ACCEPTED', 'DECLINED', 'COMPLETED')`: Status of the offer.
-   - **Description:** Inserts a new offer into the `Offers` table and its associated items into the `OfferItems` table.
+     - **Description:** Inserts a new offer with status `PENDING` into the `Offers` table and associates items with the new offer.
 
 3. **CreateNewRescuer**
-   - **Usage:** Create a new rescuer.
-   - **Parameters:**
+   - **Usage:** Create a new rescuer and associate a vehicle with the rescuer.
+   - **Parameters:** 
      - `username VARCHAR(50)`: Username of the rescuer.
      - `password VARCHAR(255)`: Password of the rescuer.
-     - `latitude DECIMAL(10, 8)`: Latitude of the rescuer's location.
-     - `longitude DECIMAL(11, 8)`: Longitude of the rescuer's location.
-   - **Description:** Inserts a new rescuer into the `Rescuer` table.
+     - `latitude DECIMAL(10, 8)`: Latitude where the vehicle is located.
+     - `longitude DECIMAL(11, 8)`: Longitude where the vehicle is located.
+     - **Description:** Inserts a new rescuer into the `Rescuer` table and associates a vehicle with the new rescuer, including the vehicle's latitude and longitude.
 
 4. **CreateNewCitizen**
    - **Usage:** Create a new citizen.
@@ -64,70 +61,102 @@ The `Procedures_Trigers.sql` file contains stored procedures and triggers, inclu
      - `longitude DECIMAL(11, 8)`: Longitude of the citizen's location.
    - **Description:** Inserts a new citizen into the `Citizen` table.
 
-5. **AssignRequestToRescuer**
-   - **Usage:** Assign a request to a rescuer.
-   - **Parameters:**
+5. **AssignRequest**
+   - **Usage:** Assign a rescuer to a request.
+   - **Parameters:** 
      - `requestID INT`: ID of the request.
      - `rescuerID INT`: ID of the rescuer.
-   - **Description:** Updates the request with the rescuer's ID and changes the status to 'INPROGRESS'.
+   - **Description:** Assigns a rescuer to the specified request and updates the request status to `INPROGRESS`.
 
-6. **AssignOfferToRescuer**
-   - **Usage:** Assign an offer to a rescuer.
-   - **Parameters:**
+6. **AssignOffer**
+   - **Usage:** Assign a rescuer to an offer.
+   - **Parameters:** 
      - `offerID INT`: ID of the offer.
      - `rescuerID INT`: ID of the rescuer.
-   - **Description:** Updates the offer with the rescuer's ID and changes the status to 'ACCEPTED'.
+   - **Description:** Assigns a rescuer to the specified offer and updates the offer status to `INPROGRESS`.
 
-7. **ChangeRequestStatus**
-   - **Usage:** Change the status of a request.
-   - **Parameters:**
+
+7. **CancelRequest**
+   - **Usage:** Cancel a request.
+   - **Parameters:** 
      - `requestID INT`: ID of the request.
-     - `newStatus ENUM('PENDING', 'INPROGRESS', 'FINISHED')`: New status of the request.
-   - **Description:** Updates the status of the request. If moving from 'INPROGRESS' to 'PENDING', sets `DateAssignedVehicle` and `RescuerID` to `NULL`.
+   - **Description:** Cancels the specified request and updates the request status to `CANCELLED`.
 
-8. **ChangeOfferStatus**
-   - **Usage:** Change the status of an offer.
-   - **Parameters:**
+
+8. **CancelOffer**
+   - **Usage:** Cancel an offer.
+   - **Parameters:** 
      - `offerID INT`: ID of the offer.
-     - `newStatus ENUM('PENDING', 'ACCEPTED', 'DECLINED', 'COMPLETED')`: New status of the offer.
-   - **Description:** Updates the status of the offer. If moving from 'ACCEPTED' to 'PENDING', sets `DateAssigned` and `RescuerID` to `NULL`.
+   - **Description:** Cancels the specified offer and updates the offer status to `CANCELLED`.
 
-9. **CreateAnnouncement**
+
+9. **FinishRequest**
+   - **Usage:** Mark a request as finished.
+   - **Parameters:** 
+     - `requestID INT`: ID of the request.
+   - **Description:** Marks the specified request as `FINISHED`.
+
+
+10. **FinishOffer**
+   - **Usage:** Mark an offer as finished.
+   - **Parameters:** 
+     - `offerID INT`: ID of the offer.
+   - **Description:** Marks the specified offer as `FINISHED`
+
+11. **CreateAnnouncement**
    - **Usage:** Create a new announcement.
    - **Parameters:**
      - `adminID INT`: ID of the administrator making the announcement.
      - `items JSON`: JSON array of items and their quantities.
    - **Description:** Inserts a new announcement into the `Announcements` table and its associated items into the `AnnouncementItems` table.
 date are reset.
-
 ### Triggers
 
-1. **BeforeInsertRequestItem**
-   - **Description:** Before inserting into `RequestItems`, checks if there are enough items in the warehouse. If not, an error is raised.
+1. **BeforeAssignRescuerToRequest**
+   - **Description:** Checks conditions before assigning a rescuer to a request. Ensures that the rescuer is not already assigned to more than a certain number of task (e.g., 4 tasks) and that the request is currently in a `PENDING` state.
 
-2. **AfterRequestUpdate**
-   - **Description:** After updating a request, logs the change into the `RequestHistory` table.
+2. **BeforeAssignRescuerToOffer**
+   - **Description:** Checks conditions before assigning a rescuer to an offer. Ensures that the rescuer is not already assigned to more than a certain number of tasks (e.g., 4 tasks) and that the offer is currently in a `PENDING` state.
 
-3. **AfterRequestInsert**
-   - **Description:** After inserting a new request, logs the insertion into the `RequestHistory` table.
+3. **PreventReassignInProgressRequest**
+   - **Description:** Prevents reassigning an `INPROGRESS` request to another rescuer.
 
-4. **AfterRequestDelete**
-   - **Description:** After deleting a request, logs the deletion into the `RequestHistory` table.
+4. **PreventReassignInProgressOffer**
+   - **Description:** Prevents reassigning an `INPROGRESS` offer to another rescuer.
 
-5. **AfterOfferUpdate**
-   - **Description:** After updating an offer, logs the change into the `OfferHistory` table.
+5. **PreventPendingRequestFinished**
+   - **Description:** Prevents changing the status of a `PENDING` request directly to `FINISHED`.
 
-6. **AfterOfferInsert**
-   - **Description:** After inserting a new offer, logs the insertion into the `OfferHistory` table.
+6. **PreventPendingOfferFinished**
+   - **Description:** Prevents changing the status of a `PENDING` offer directly to `FINISHED`.
 
-7. **AfterOfferDelete**
-   - **Description:** After deleting an offer, logs the deletion into the `OfferHistory` table.
+7. **PreventFinishedRequestAlteration**
+   - **Description:** Prevents any alteration of a `FINISHED` request.
 
-8. **BeforeAssignRescuerRequest**
-   - **Description:** Before updating a request, checks if the rescuer has reached their task limit (4 tasks). If so, an error is raised.
+8. **PreventFinishedOfferAlteration**
+   - **Description:** Prevents any alteration of a `FINISHED` offer
 
-9. **BeforeAssignRescuerOffer**
-   - **Description:** Before updating an offer, checks if the rescuer has reached their task limit (4 tasks). If so, an error is raised.
+### Custom Error Codes
+
+| Error Code | Description                                    |
+|------------|------------------------------------------------|
+| 4001       | One or more items do not exist in the dB       |
+|------------|------------------------------------------------|
+| 6002       |Rescuer has reached the maximum number of tasks.|
+|------------|------------------------------------------------|
+| 5003       | In-progress requests cannot be reassigned.     |
+|------------|------------------------------------------------|
+| 5004       | In-progress offers cannot be reassigned.       |
+|------------|------------------------------------------------|
+| 5005       | Pending requests cannot be marked as finished. |
+|------------|------------------------------------------------|
+| 5006       | Pending offers cannot be marked as finished.   |
+|------------|------------------------------------------------|
+| 5007       | Finished requests cannot be altered.           |
+|------------|------------------------------------------------|
+| 5008       | Finished offers cannot be altered.             |
+|------------|------------------------------------------------|
+
 
 ## Test Data
 

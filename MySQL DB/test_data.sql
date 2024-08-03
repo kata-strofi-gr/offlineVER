@@ -108,7 +108,7 @@ CALL CreateNewOffer(1, '[{"name": "Blanket", "quantity": 5}, {"name": "Rice", "q
 CALL CreateNewAnnouncement(1, '[{"name": "Blanket", "quantity": 5}, {"name": "Rice", "quantity": 3}]');
 
 -- Test entry to create a new rescuer
-CALL CreateNewRescuer('john_pdohoe', 'securepassword123');
+CALL CreateNewRescuer('johggn_pdohoe', 'securepassword123', 34.052235, 118.243683);
 
 -- Test entry to create a new citizen
 CALL CreateNewCitizen('jane_dgoe', 'securepassword456', 'Jane', 'Doe', '123-456-7890', 34.052235, -118.243683);
