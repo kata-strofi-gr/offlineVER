@@ -65,7 +65,6 @@ CREATE TABLE Requests (
     INDEX (CitizenID),
     INDEX (RescuerID),
     INDEX (Status),
-    INDEX (ItemID),
     INDEX (DateCreated),
     INDEX (DateAssignedVehicle)
 ) ENGINE=InnoDB;
@@ -82,7 +81,6 @@ CREATE TABLE RequestItems (
     INDEX (ItemID)
 ) ENGINE=InnoDB;
 
-
 -- Offers Table
 CREATE TABLE Offers (
     OfferID INT AUTO_INCREMENT PRIMARY KEY,
@@ -91,12 +89,11 @@ CREATE TABLE Offers (
     DateCreated DATETIME NOT NULL,
     DateAssigned DATETIME,
     RescuerID INT,
-    FOREIGN KEY (CitizenID) REFERENCES Citizen(CitizenID) ON DELETE CASCADE,E,
+    FOREIGN KEY (CitizenID) REFERENCES Citizen(CitizenID) ON DELETE CASCADE,
     FOREIGN KEY (RescuerID) REFERENCES Rescuer(RescuerID) ON DELETE SET NULL,
     INDEX (CitizenID),
     INDEX (RescuerID),
     INDEX (Status),
-    INDEX (ItemID),
     INDEX (DateCreated),
     INDEX (DateAssigned)
 ) ENGINE=InnoDB;
@@ -156,6 +153,32 @@ CREATE TABLE AnnouncementItems (
     FOREIGN KEY (ItemID) REFERENCES Items(ItemID) ON DELETE CASCADE,
     INDEX (AnnouncementID),
     INDEX (ItemID)
+) ENGINE=InnoDB;
+
+-- RequestHistory Table
+CREATE TABLE RequestHistory (
+    HistoryID INT AUTO_INCREMENT PRIMARY KEY,
+    RequestID INT,
+    ChangeType VARCHAR(50),
+    ChangeTime DATETIME DEFAULT CURRENT_TIMESTAMP,
+    OldStatus ENUM('PENDING', 'INPROGRESS', 'FINISHED'),
+    NewStatus ENUM('PENDING', 'INPROGRESS', 'FINISHED'),
+    OldRescuerID INT,
+    NewRescuerID INT,
+    FOREIGN KEY (RequestID) REFERENCES Requests(RequestID)
+) ENGINE=InnoDB;
+
+-- OfferHistory Table
+CREATE TABLE OfferHistory (
+    HistoryID INT AUTO_INCREMENT PRIMARY KEY,
+    OfferID INT,
+    ChangeType VARCHAR(50),
+    ChangeTime DATETIME DEFAULT CURRENT_TIMESTAMP,
+    OldStatus ENUM('PENDING', 'ACCEPTED', 'DECLINED', 'COMPLETED'),
+    NewStatus ENUM('PENDING', 'ACCEPTED', 'DECLINED', 'COMPLETED'),
+    OldRescuerID INT,
+    NewRescuerID INT,
+    FOREIGN KEY (OfferID) REFERENCES Offers(OfferID)
 ) ENGINE=InnoDB;
 
 

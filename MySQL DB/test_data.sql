@@ -106,3 +106,8 @@ CALL ChangeOfferStatus(1, 'PENDING'); -- Changing status of the first offer to I
 CALL ChangeOfferStatus(2, 'PENDING'); -- Changing status of the second offer to INPROGRESS
 CALL ChangeOfferStatus(3, 'INPROGRESS'); -- Changing status of the third offer to INPROGRESS
 CALL ChangeOfferStatus(4, 'INPROGRESS'); -- Changing status of the fourth offer to INPROGRESS
+
+
+CALL CreateNewRequest(1, '[{"name": "Water", "quantity": 10}, {"name": "Food", "quantity": 5}]', 'PENDING');
+CALL CreateNewOffer(1, '[{"name": "Water", "quantity": 10}, {"name": "Food", "quantity": 5}]', 'PENDING');
+CALL CreateAnnouncement(1, '[{"name": "Water", "quantity": 10}, {"name": "Food", "quantity": 5}]');
