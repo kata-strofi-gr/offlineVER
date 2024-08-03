@@ -34,24 +34,19 @@ BEGIN
         -- Get item ID from item name
         SELECT ItemID INTO itemID FROM Items WHERE Name = itemName;
 
-        -- Check if item exists      
+        -- Check if item exists
         IF itemID IS NULL THEN
-            -- print not signl eror asi itemID =1
-            SET requestID = LAST_INSERT_ID();
+            SIGNAL SQLSTATE '45000' 
+             SET MESSAGE_TEXT = 'Item not found', MYSQL_ERRNO = 4001;
+        ELSE
+            INSERT INTO RequestItems (RequestID, ItemID, Quantity) VALUES (requestID, itemID, itemQuantity);
         END IF;
-        INSERT INTO RequestItems (RequestID, ItemID, Quantity)
-        VALUES (requestID, itemID, itemQuantity);
-    
 
         SET itemIndex = itemIndex + 1;
     END WHILE;
 END //
 
 DELIMITER ;
-
-
-
-
 
 
 
@@ -90,7 +85,8 @@ BEGIN
         SELECT ItemID INTO itemID FROM Items WHERE Name = itemName;
         
         IF itemID IS NULL THEN
-            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = CONCAT('Item not found: ', itemName);
+            SIGNAL SQLSTATE '45000' 
+             SET MESSAGE_TEXT = 'Item not found', MYSQL_ERRNO = 4001;
         ELSE
             -- Insert into OfferItems
             INSERT INTO OfferItems (OfferID, ItemID, Quantity)
@@ -137,7 +133,8 @@ BEGIN
         SELECT ItemID INTO itemID FROM Items WHERE Name = itemName;
         
         IF itemID IS NULL THEN
-            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = CONCAT('Item not found: ', itemName);
+            SIGNAL SQLSTATE '45000' 
+             SET MESSAGE_TEXT = 'Item not found', MYSQL_ERRNO = 4001;
         ELSE
             -- Insert into AnnouncementItems
             INSERT INTO AnnouncementItems (AnnouncementID, ItemID, Quantity)
@@ -271,7 +268,6 @@ BEGIN
     END IF;
 END //
 DELIMITER ;
-
 
 
 

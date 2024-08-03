@@ -12,10 +12,15 @@ The database schema is defined in `db_schema.sql` and includes the following tab
 - `Items`: Stores information about items available for requests and offers.
 - `Warehouse`: Manages item quantities in the warehouse.
 - `Requests`: Manages requests made by citizens for specific items.
+- `RequestItems`: Manages the items and quantities associated with each request.
 - `Offers`: Manages offers made by citizens to provide specific items.
+- `OfferItems`: Manages the items and quantities associated with each offer.
 - `Vehicles`: Manages vehicles assigned to rescuers for delivering items.
+- `VehicleItems`: Manages the items and quantities associated with each vehicle.
 - `Announcements`: Stores announcements made by administrators.
-- `RequestLogs` and `OfferLogs`: Track the history of requests and offers.
+- `AnnouncementItems`: Manages the items and quantities associated with each announcement.
+- `RequestHistory`: Tracks the history of requests.
+- `OfferHistory`: Tracks the history of offers.
 
 ## Stored Procedures and Triggers
 
@@ -23,70 +28,110 @@ The `Procedures_Trigers.sql` file contains stored procedures and triggers, inclu
 
 ### Stored Procedures
 
-1. **CreateRequest**
-   - **Usage:** Create a new request.
+1. **CreateNewRequest**
+   - **Usage:** Create a new request using item names.
    - **Parameters:** 
-     - `p_CitizenID INT`: ID of the citizen making the request.
-     - `p_Item VARCHAR(100)`: Name of the item requested.
-     - `p_Quantity INT`: Quantity of the item requested.
-   - **Description:** Inserts a new request into the `Requests` table with a status of 'Pending'.
+     - `citizenID INT`: ID of the citizen making the request.
+     - `items JSON`: JSON array of items and their quantities.
+     - `status ENUM('PENDING', 'INPROGRESS', 'FINISHED')`: Status of the request.
+   - **Description:** Inserts a new request into the `Requests` table and its associated items into the `RequestItems` table.
 
-2. **CreateOffer**
-   - **Usage:** Create a new offer.
+2. **CreateNewOffer**
+   - **Usage:** Create a new offer using item names.
+   - **Parameters:** 
+     - `citizenID INT`: ID of the citizen making the offer.
+     - `items JSON`: JSON array of items and their quantities.
+     - `status ENUM('PENDING', 'ACCEPTED', 'DECLINED', 'COMPLETED')`: Status of the offer.
+   - **Description:** Inserts a new offer into the `Offers` table and its associated items into the `OfferItems` table.
+
+3. **CreateNewRescuer**
+   - **Usage:** Create a new rescuer.
    - **Parameters:**
-     - `p_CitizenID INT`: ID of the citizen making the offer.
-     - `p_Item VARCHAR(100)`: Name of the item offered.
-     - `p_Quantity INT`: Quantity of the item offered.
-   - **Description:** Inserts a new offer into the `Offers` table with a status of 'Pending'.
+     - `username VARCHAR(50)`: Username of the rescuer.
+     - `password VARCHAR(255)`: Password of the rescuer.
+     - `latitude DECIMAL(10, 8)`: Latitude of the rescuer's location.
+     - `longitude DECIMAL(11, 8)`: Longitude of the rescuer's location.
+   - **Description:** Inserts a new rescuer into the `Rescuer` table.
 
-3. **AssignRequest**
+4. **CreateNewCitizen**
+   - **Usage:** Create a new citizen.
+   - **Parameters:**
+     - `username VARCHAR(50)`: Username of the citizen.
+     - `password VARCHAR(255)`: Password of the citizen.
+     - `name VARCHAR(100)`: Name of the citizen.
+     - `phone VARCHAR(15)`: Phone number of the citizen.
+     - `latitude DECIMAL(10, 8)`: Latitude of the citizen's location.
+     - `longitude DECIMAL(11, 8)`: Longitude of the citizen's location.
+   - **Description:** Inserts a new citizen into the `Citizen` table.
+
+5. **AssignRequestToRescuer**
    - **Usage:** Assign a request to a rescuer.
    - **Parameters:**
-     - `p_RequestID INT`: ID of the request to be assigned.
-     - `p_RescuerID INT`: ID of the rescuer to whom the request is assigned.
-   - **Description:** Updates the `Requests` table to assign a rescuer and change the status to 'INPROGRESS'.
+     - `requestID INT`: ID of the request.
+     - `rescuerID INT`: ID of the rescuer.
+   - **Description:** Updates the request with the rescuer's ID and changes the status to 'INPROGRESS'.
 
-4. **AssignOffer**
+6. **AssignOfferToRescuer**
    - **Usage:** Assign an offer to a rescuer.
    - **Parameters:**
-     - `p_OfferID INT`: ID of the offer to be assigned.
-     - `p_RescuerID INT`: ID of the rescuer to whom the offer is assigned.
-   - **Description:** Updates the `Offers` table to assign a rescuer and change the status to 'INPROGRESS'.
+     - `offerID INT`: ID of the offer.
+     - `rescuerID INT`: ID of the rescuer.
+   - **Description:** Updates the offer with the rescuer's ID and changes the status to 'ACCEPTED'.
 
-5. **ChangeRequestStatus**
+7. **ChangeRequestStatus**
    - **Usage:** Change the status of a request.
    - **Parameters:**
-     - `p_RequestID INT`: ID of the request whose status is to be changed.
-     - `p_Status VARCHAR(20)`: New status of the request.
-   - **Description:** Updates the status of a request. If the status is 'PENDING', the rescuer assignment and date are reset.
+     - `requestID INT`: ID of the request.
+     - `newStatus ENUM('PENDING', 'INPROGRESS', 'FINISHED')`: New status of the request.
+   - **Description:** Updates the status of the request. If moving from 'INPROGRESS' to 'PENDING', sets `DateAssignedVehicle` and `RescuerID` to `NULL`.
 
-6. **ChangeOfferStatus**
+8. **ChangeOfferStatus**
    - **Usage:** Change the status of an offer.
    - **Parameters:**
-     - `p_OfferID INT`: ID of the offer whose status is to be changed.
-     - `p_Status VARCHAR(20)`: New status of the offer.
-   - **Description:** Updates the status of an offer. If the status is 'PENDING', the rescuer assignment and date are reset.
+     - `offerID INT`: ID of the offer.
+     - `newStatus ENUM('PENDING', 'ACCEPTED', 'DECLINED', 'COMPLETED')`: New status of the offer.
+   - **Description:** Updates the status of the offer. If moving from 'ACCEPTED' to 'PENDING', sets `DateAssigned` and `RescuerID` to `NULL`.
+
+9. **CreateAnnouncement**
+   - **Usage:** Create a new announcement.
+   - **Parameters:**
+     - `adminID INT`: ID of the administrator making the announcement.
+     - `items JSON`: JSON array of items and their quantities.
+   - **Description:** Inserts a new announcement into the `Announcements` table and its associated items into the `AnnouncementItems` table.
+date are reset.
 
 ### Triggers
 
-1. **check_warehouse_before_assign_request**
-   - **Description:** Before assigning a request, checks if there are enough items in the warehouse. If not, an error is raised.
+1. **BeforeInsertRequestItem**
+   - **Description:** Before inserting into `RequestItems`, checks if there are enough items in the warehouse. If not, an error is raised.
 
-2. **log_requests_changes**
-   - **Description:** After updating a request, logs the change into the `RequestLogs` table.
+2. **AfterRequestUpdate**
+   - **Description:** After updating a request, logs the change into the `RequestHistory` table.
 
-3. **log_offers_changes**
-   - **Description:** After updating an offer, logs the change into the `OfferLogs` table.
+3. **AfterRequestInsert**
+   - **Description:** After inserting a new request, logs the insertion into the `RequestHistory` table.
 
-4. **prevent_rescuer_task_overload**
+4. **AfterRequestDelete**
+   - **Description:** After deleting a request, logs the deletion into the `RequestHistory` table.
+
+5. **AfterOfferUpdate**
+   - **Description:** After updating an offer, logs the change into the `OfferHistory` table.
+
+6. **AfterOfferInsert**
+   - **Description:** After inserting a new offer, logs the insertion into the `OfferHistory` table.
+
+7. **AfterOfferDelete**
+   - **Description:** After deleting an offer, logs the deletion into the `OfferHistory` table.
+
+8. **BeforeAssignRescuerRequest**
    - **Description:** Before updating a request, checks if the rescuer has reached their task limit (4 tasks). If so, an error is raised.
 
-5. **prevent_rescuer_task_overload_offers**
+9. **BeforeAssignRescuerOffer**
    - **Description:** Before updating an offer, checks if the rescuer has reached their task limit (4 tasks). If so, an error is raised.
 
 ## Test Data
 
-The `test_data.sql` file provides sample data to populate the database for testing purposes. It includes sample administrators, rescuers, citizens, items, requests, offers, vehicles, and announcements.
+The `test_data.sql` file provides sample data to populate the database for testing purposes. It includes sample administrators, rescuers, citizens, items, requests, and offers.
 
 ## How to Use
 
@@ -112,3 +157,5 @@ The `test_data.sql` file provides sample data to populate the database for testi
 - `GET /api/offers`: Retrieve a list of offers.
 - `PUT /api/requests/:id/assign`: Assign a request to a rescuer.
 - `PUT /api/requests/:id/status`: Update the status of a request.
+- `PUT /api/offers/:id/assign`: Assign an offer to a rescuer.
+- `PUT /api/offers/:id/status`: Update the status of an offer.
