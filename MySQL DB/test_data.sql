@@ -1,22 +1,20 @@
 USE kata_strofh;
 
--- Insert sample data into Administrator table
-INSERT INTO Administrator (Username, Password) VALUES 
-('admin1', 'password1'),
-('admin2', 'password2');
+-- Test entry to create a new rescuer
+CALL CreateNewRescuer('john_dwoe', 'securepassword123', 34.052235, 118.243683);
+CALL CreateNewRescuer('Sjanec_doe', 'securepassworcd456', 37.774929, -122.419418);
+CALL CreateNewRescuer('ssmitDh', 'securepassword789', 40.712776, -74.005974);
 
--- Insert sample data into Rescuer table
-INSERT INTO Rescuer (Username, Password) VALUES 
-('rescuer1', 'password1'),
-('rescuer2', 'password2'),
-('rescuer3', 'password3');
+-- Test entry to create a new citizen
+CALL CreateNewCitizen('jane_doce', 'securepassword456', 'Jane', 'Doe', '123-456-7890', 34.052235, -118.243683);
+CALL CreateNewCitizen('john_dose', 'securepassword123', 'John', 'Doe', '987-654-3210', 37.774929, -122.419418);
+CALL CreateNewCitizen('alixce_smith', 'securepassword789', 'Alice', 'Smith', '555-555-5555', 40.712776, -74.005974);
 
--- Insert sample data into Citizen table
-INSERT INTO Citizen (Username, Password, Name, Surname, Phone, Latitude, Longitude)
-VALUES
-('citizen1', 'password1', 'John', 'Doe', '1234567890', 40.712776, -74.005974),
-('citiczen2', 'passcword2', 'Jacne', 'Smith', '0987624321', 33.052235, -118.243683),
-('citizen2', 'password2', 'Jane', 'Smith', '0987654321', 34.052235, -118.243683);
+-- Test entry to create a new admin
+CALL CreateNewAdmin('admin_user', 'adminpassword');
+CALL CreateNewAdmin('admin_muser2', 'adminpassword2');
+CALL CreateNewAdmin('admin_user3', 'adminpassword3');
+
 
 -- Insert sample data into Items table
 INSERT INTO Items (Category, Name, Description) VALUES 
@@ -107,28 +105,24 @@ CALL CreateNewOffer(1, '[{"name": "Blanket", "quantity": 5}, {"name": "Rice", "q
 -- Test entry for CreateAnnouncement procedure
 CALL CreateNewAnnouncement(1, '[{"name": "Blanket", "quantity": 5}, {"name": "Rice", "quantity": 3}]');
 
--- Test entry to create a new rescuer
-CALL CreateNewRescuer('johggn_pdohoe', 'securepassword123', 34.052235, 118.243683);
 
--- Test entry to create a new citizen
-CALL CreateNewCitizen('jane_dgoe', 'securepassword456', 'Jane', 'Doe', '123-456-7890', 34.052235, -118.243683);
 
 -- Example of requests being assigned to rescuers
 CALL AssignRequest(1, 2); -- Assigning first request to rescuer1
-CALL AssignRequest(2, 3); -- Assigning second request to rescuer1
-CALL AssignRequest(4, 3); -- Assigning third request to rescuer1
-CALL AssignRequest(5, 1); -- Assigning fourth request to rescuer1
+CALL AssignRequest(1, 3); -- Assigning second request to rescuer1
+CALL AssignRequest(1, 3); -- Assigning third request to rescuer1
+CALL AssignRequest(1, 1); -- Assigning fourth request to rescuer1
 
 -- This next assignment should trigger the task limit check
-CALL AssignRequest(5, 1); -- Attempting to assign fifth request to rescuer1
+CALL AssignRequest(1, 1); -- Attempting to assign fifth request to rescuer1
 
 -- Example of offers being assigned to rescuers
 CALL AssignOffer(1, 3); -- Assigning first offer to rescuer1
 CALL AssignOffer(2, 3); -- Assigning second offer to rescuer1
 CALL AssignOffer(3, 3); -- Assigning third offer to rescuer1
-CALL AssignOffer(5, 2); -- Assigning fourth offer to rescuer1
+CALL AssignOffer(4, 3); -- Assigning fourth offer to rescuer1
 -- This next assignment should trigger the task limit check
-CALL AssignOffer(4, 2); -- Attempting to assign fifth offer to rescuer1
+CALL AssignOffer(4, 3); -- Attempting to assign fifth offer to rescuer1
 
 CALL CancelRequest(1);
 

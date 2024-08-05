@@ -182,24 +182,30 @@ DELIMITER ;
 -- Procedure to create a new rescuer
 DELIMITER //
 CREATE PROCEDURE CreateNewRescuer(
-    IN username VARCHAR(50),
+    IN username VARCHAR(255),
     IN password VARCHAR(255),
-    IN latitude DECIMAL(10, 8),
-    IN longitude DECIMAL(11, 8)
+    IN latitude DOUBLE,
+    IN longitude DOUBLE
 )
 BEGIN
-    DECLARE new_rescuer_id INT;
+    DECLARE user_id INT;
+    DECLARE rescuer_id INT;
 
-    -- Insert the new rescuer
-    INSERT INTO Users (Username, Password)
-    VALUES (username, password);
+    -- Insert into user table
+    INSERT INTO Users (username, password ,Role ) VALUES (username, password, 'Rescuer');
 
-    -- Get the ID of the newly inserted rescuer
-    SET new_rescuer_id = LAST_INSERT_ID();
+    -- Retrieve the new user ID
+    SET user_id = LAST_INSERT_ID();
 
-    -- Insert the vehicle associated with the new rescuer
-    INSERT INTO Vehicles (RescuerID, Latitude, Longitude)
-    VALUES (new_rescuer_id, latitude, longitude);
+    -- Insert into Rescuer table
+    INSERT INTO Rescuer (UserID) VALUES (user_id);
+
+    -- Retrieve the new Rescuer ID
+    SET rescuer_id = LAST_INSERT_ID();
+
+    -- Insert into Vehicles table
+    INSERT INTO Vehicles (RescuerID, Latitude, Longitude) VALUES (rescuer_id, latitude, longitude);
+
 END //
 DELIMITER ;
 
@@ -207,19 +213,48 @@ DELIMITER ;
 -- Procedure to create a new citizen
 DELIMITER //
 CREATE PROCEDURE CreateNewCitizen(
-    IN username VARCHAR(50),
+    IN username VARCHAR(255),
     IN password VARCHAR(255),
-    IN name VARCHAR(100),
-    IN surname VARCHAR(100),
-    IN phone VARCHAR(15),
-    IN latitude DECIMAL(10, 8),
-    IN longitude DECIMAL(11, 8)
+    IN first_name VARCHAR(255),
+    IN last_name VARCHAR(255),
+    IN phone_number VARCHAR(255),
+    IN latitude DOUBLE,
+    IN longitude DOUBLE
 )
 BEGIN
-    INSERT INTO Citizen (Username, Password, Name, Surname, Phone, Latitude, Longitude)
-    VALUES (username, password, name, surname, phone, latitude, longitude);
-END //
+    DECLARE user_id INT;
 
+    -- Insert into user table
+    INSERT INTO Users (username, password ,Role) VALUES (username, password, 'Citizen');
+
+    -- Retrieve the new user ID
+    SET user_id = LAST_INSERT_ID();
+
+    -- Insert into Citizen table
+    INSERT INTO Citizen (UserID, Name, Surname, Phone, Latitude, Longitude)
+    VALUES (user_id, first_name, last_name, phone_number, latitude, longitude);
+END //
+DELIMITER ;
+
+
+-- Procedure to create a new admin
+DELIMITER //
+CREATE PROCEDURE CreateNewAdmin(
+    IN username VARCHAR(255),
+    IN password VARCHAR(255)
+)
+BEGIN
+    DECLARE user_id INT;
+
+    -- Insert into user table
+    INSERT INTO Users (username, password) VALUES (username, password);
+
+    -- Retrieve the new user ID
+    SET user_id = LAST_INSERT_ID();
+
+    -- Insert into Admin table
+    INSERT INTO Administrator (UserID) VALUES (user_id);
+END //
 DELIMITER ;
 
 

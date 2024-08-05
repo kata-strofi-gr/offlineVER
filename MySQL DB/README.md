@@ -7,6 +7,7 @@ This project is a disaster relief management system designed to streamline the p
 The database schema is defined in `db_schema.sql` and includes the following tables:
 
 - `Administrator`: Stores information about system administrators.
+- `user`: Stores information about all users (administrators, rescuers, and citizens).
 - `Rescuer`: Stores information about rescuers who handle requests.
 - `Citizen`: Stores information about citizens who can make requests and offers.
 - `Items`: Stores information about items available for requests and offers.
@@ -59,7 +60,7 @@ The `Procedures_Trigers.sql` file contains stored procedures and triggers, inclu
      - `phone VARCHAR(15)`: Phone number of the citizen.
      - `latitude DECIMAL(10, 8)`: Latitude of the citizen's location.
      - `longitude DECIMAL(11, 8)`: Longitude of the citizen's location.
-   - **Description:** Inserts a new citizen into the `Citizen` table.
+     - **Description:** Inserts a new citizen into the `Citizen` table and associates the citizen with a user account.
 
 5. **AssignRequest**
    - **Usage:** Assign a rescuer to a request.
@@ -68,7 +69,14 @@ The `Procedures_Trigers.sql` file contains stored procedures and triggers, inclu
      - `rescuerID INT`: ID of the rescuer.
    - **Description:** Assigns a rescuer to the specified request and updates the request status to `INPROGRESS`.
 
-6. **AssignOffer**
+6. **CreateNewAdmin**
+   - **Usage:** Create a new administrator.
+   - **Parameters:** 
+     - `username VARCHAR(255)`: Username of the new admin.
+     - `password VARCHAR(255)`: Password for the new admin.
+     - **Description:** Inserts a new admin into the `Admin` table and associates the admin with a user account.
+
+7. **AssignOffer**
    - **Usage:** Assign a rescuer to an offer.
    - **Parameters:** 
      - `offerID INT`: ID of the offer.
@@ -76,40 +84,41 @@ The `Procedures_Trigers.sql` file contains stored procedures and triggers, inclu
    - **Description:** Assigns a rescuer to the specified offer and updates the offer status to `INPROGRESS`.
 
 
-7. **CancelRequest**
+8. **CancelRequest**
    - **Usage:** Cancel a request.
    - **Parameters:** 
      - `requestID INT`: ID of the request.
    - **Description:** Cancels the specified request and updates the request status to `CANCELLED`.
 
 
-8. **CancelOffer**
+9. **CancelOffer**
    - **Usage:** Cancel an offer.
    - **Parameters:** 
      - `offerID INT`: ID of the offer.
    - **Description:** Cancels the specified offer and updates the offer status to `CANCELLED`.
 
 
-9. **FinishRequest**
+10. **FinishRequest**
    - **Usage:** Mark a request as finished.
    - **Parameters:** 
      - `requestID INT`: ID of the request.
    - **Description:** Marks the specified request as `FINISHED`.
 
 
-10. **FinishOffer**
+11. **FinishOffer**
    - **Usage:** Mark an offer as finished.
    - **Parameters:** 
      - `offerID INT`: ID of the offer.
    - **Description:** Marks the specified offer as `FINISHED`
 
-11. **CreateAnnouncement**
+12. **CreateAnnouncement**
    - **Usage:** Create a new announcement.
    - **Parameters:**
      - `adminID INT`: ID of the administrator making the announcement.
      - `items JSON`: JSON array of items and their quantities.
    - **Description:** Inserts a new announcement into the `Announcements` table and its associated items into the `AnnouncementItems` table.
 date are reset.
+
 ### Triggers
 
 1. **BeforeAssignRescuerToRequest**
