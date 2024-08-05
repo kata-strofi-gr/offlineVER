@@ -191,7 +191,7 @@ BEGIN
     DECLARE new_rescuer_id INT;
 
     -- Insert the new rescuer
-    INSERT INTO Rescuer (Username, Password)
+    INSERT INTO Users (Username, Password)
     VALUES (username, password);
 
     -- Get the ID of the newly inserted rescuer

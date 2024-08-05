@@ -5,34 +5,39 @@ CREATE DATABASE IF NOT EXISTS kata_strofh
 
 USE kata_strofh;
 
--- Administrator Table
-CREATE TABLE Administrator (
-    AdminID INT AUTO_INCREMENT PRIMARY KEY,
-    Username VARCHAR(60) NOT NULL,
+-- Users Table
+CREATE TABLE Users (
+    UserID INT AUTO_INCREMENT PRIMARY KEY,
+    Username VARCHAR(50) NOT NULL UNIQUE,
     Password VARCHAR(255) NOT NULL,
+    Role ENUM('Administrator', 'Rescuer', 'Citizen') NOT NULL,
     UNIQUE INDEX (Username)
 ) ENGINE=InnoDB;
 
+-- Administrator Table
+CREATE TABLE Administrator (
+    UserID INT,
+    AdminID INT AUTO_INCREMENT PRIMARY KEY,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
+) ENGINE=InnoDB;
 
 -- Rescuer Table
 CREATE TABLE Rescuer (
+    UserID INT,
     RescuerID INT AUTO_INCREMENT PRIMARY KEY,
-    Username VARCHAR(50) NOT NULL,
-    Password VARCHAR(255) NOT NULL,
-    UNIQUE INDEX (Username)
+    FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- Citizen Table
 CREATE TABLE Citizen (
+    UserID INT,
     CitizenID INT AUTO_INCREMENT PRIMARY KEY,
-    Username VARCHAR(50) NOT NULL,
-    Password VARCHAR(255) NOT NULL,
     Name VARCHAR(100) NOT NULL,
     Surname VARCHAR(100) NOT NULL,
     Phone VARCHAR(15) NOT NULL,
     Latitude DECIMAL(10, 8) NOT NULL,
     Longitude DECIMAL(11, 8) NOT NULL,
-    UNIQUE INDEX (Username)
+    FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- Items Table
