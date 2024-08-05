@@ -1,11 +1,3 @@
-// Initialize the map
-var map = L.map('map').setView([51.505, -0.09], 13);
-
-// Add a tile layer from OpenStreetMap
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19, // Adjusted maxZoom level
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(map);
 
 document.addEventListener("DOMContentLoaded", function () {
     const draggableBox = document.getElementById("draggableBox");
@@ -33,20 +25,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-// Create a custom icon for the marker
-var blueIcon = new L.Icon({
-    iconUrl: 'https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-blue.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41]
-});
-
-// Add a marker with the custom icon
-var marker = L.marker([51.505, -0.09], {icon: blueIcon}).addTo(map);
-
-// Get the popup element and close button
 var externalPopup = document.getElementById('draggableBox');
 var closePopup = document.getElementById('closeBox');
 
@@ -60,9 +38,7 @@ function closePopupFunction() {
     externalPopup.style.display = 'none';
 }
 
-// Add event listeners
-marker.on('click', openPopup);
-closePopup.addEventListener('click', closePopupFunction);
+
 
 // Optional: Open popup on page load
 // openPopup();
@@ -71,7 +47,7 @@ document.getElementById('aithmataaShow').addEventListener('click', function(e) {
     showaithmata();
 });
 
-document.getElementById('rescuerCreate').addEventListener('click', function(e) {
+document.getElementById('prosforescitShow').addEventListener('click', function(e) {
     e.preventDefault(); // Prevent default link behavior
     newDiasostis();
 });
