@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin</title>
+    <link rel="stylesheet" href="citizen.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+     <!-- Include jQuery -->
+     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+     <!-- Include jQuery UI CSS and JS for Datepicker -->
+     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+     <!-- Include Chart.js -->
+     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+
+
+
+
+</head>
+<body>
+    <div class="container">
+        <div class="modeT">
+            <div class="modeRectangle">
+                <div class="modeF">
+                    Συνδεδεμένος ως Admin
+                </div>
+            </div>
+        </div>
+        <div class="logoT">
+            <img class="RlogoBIG" alt="" src="kata-strofiF.svg" id="logoF">
+        </div>
+        <div class="menuT">
+            <button class="hamburger-menu" onclick="toggleMenu()">☰</button>
+            <nav class="menu-bar">
+                <a href="#" class="menu-item" id="aithmataaShow">Αιτήματα</a>
+                <span class="separator">|</span>
+                <a href="#" class="menu-item" id="prosforescitShow">Προσφορές</a>
+                <span class="separator">|</span>
+                <div class="menu-item-container">
+                    <a href="#" class="menu-item">Επιλογές</a>
+                    <div class="dropdown-content">
+                        <a href="#" id="loggout">Αποσύνδεση</a>
+                        <a href="#" id="other">Ότι θέλετε</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <div class="imapT">
+            
+
+
+            <div class="form-container" id="newAithmata2">
+                <div class="form-header">
+                    Νέα ανακοίνωση
+                </div>
+                <div class="form-content">
+                    <label for="type">Είδος</label>
+                    <select id="type" name="type">
+                        <option value="" disabled selected>Επιλέξτε είδος</option>
+                        <option value="option1">Μπυυρες</option>
+                        <option value="option2">Χορταρακι</option>
+                        <option value="option3">Χαρτακια</option>
+                    </select>
+        
+                    <label for="quantity">Ποσότητα</label>
+                    <input type="text" id="quantity" name="quantity" placeholder="Ποσότητα">
+                    
+                    <div class="reqs"> 
+                    <label for="extraRequests">Έξτρα αιτήματα</label>
+                    <input type="number" id="extraRequests" name="extraRequests" placeholder="Αριθμός αιτημάτων">
+                    </div>
+                    <div id="additionalFields"></div>
+
+                    <div class="form-buttons">
+                        <button type="button" class="btn add-fields">Προσθήκη</button>
+                        <button type="submit" class="btn submit">Υποβολή</button>
+                    </div>
+                </div>
+            </div>
+        
+
+
+
+        <div class="form-container" id="newDiasosths">
+            <div class="form-header">
+                Δημιουργία διασώστη
+            </div>
+            <div class="form-content">
+                <label for="field1">Όνομα χρήστη</label>
+                <input type="text" id="field1" name="field1" placeholder="aomakris">
+    
+                <label for="field2">Κωδικός πρόσβασης</label>
+                <input type="text" id="field2" name="field2" placeholder="taf1234">
+    
+                <div class="form-buttons">
+                    <button type="submit" class="btn submit">Υποβολή</button>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="dashboard-container" id="statistikoulia">
+            <div class="header">
+                Στατιστικά
+            </div>
+            
+            <div class="charts" id="chartContainer" style="display: none;">
+                <canvas id="lineChart"></canvas>
+            </div>
+            <div class="date-picker">
+                <label for="start-date">Ημ/νια έναρξης: </label>
+                <input type="text" id="start-date" class="datepicker" placeholder="Start Date">
+                <label for="end-date">Ημ/νια λήξης: </label>
+                <input type="text" id="end-date" class="datepicker" placeholder="End Date">
+            </div>
+            <button class="btnC" id="showChartButton">Υπολόγισε</button>
+        </div>
+
+        <div class="viewStockW" id="stockW">
+        <!-- Add these containers in the appropriate section of your admin.html file -->
+        <div class="data-container">
+            <div class="table-container">
+                <table id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>Κατηγορία</th>
+                            <th>Όνομα</th>
+                            <th>Περιγραφή</th>
+                            <th>Ποσότητα</th>
+                            <th>Τοποθεσία</th>
+                            <th>ID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Table rows will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="filter-container">
+                <div class="filter-header">
+                    Φιλτράρισμα
+                </div>
+                <div class="filter-content">
+                    <label for="filterType">Είδος</label>
+                    <select id="filterType">
+                        <option value="all">All</option>
+                        <option value="milk">Γάλατα</option>
+                        <option value="beer">Μπύρες</option>
+                        <!-- Add other options as needed -->
+                    </select>
+                </div>
+            </div>
+        </div>
+        </div>
+
+
+
+
+
+    <!-- ola ta popup mexri edo mesas-->
+    </div>
+
+            <div class="boxesT">
+                <div class="offer-box" id="draggableBox">
+                    <div class="offer-header">
+                        <span class="offer-title">Προσφορά</span>
+                        <span class="close-btn" id="closeBox">✖</span>
+                    </div>
+                    <div class="offer-details">
+                        <p><strong>Ονοματεπώνυμο:</strong> Αλέξης Στροφερός</p>
+                        <p><strong>Τηλέφωνο:</strong> 69435050505</p>
+                        <p><strong>Ημ/νία καταχώρησης:</strong> 5/5/505</p>
+                        <p><strong>Είδος:</strong> Macallan</p>
+                        <p><strong>Ποσότητα:</strong> 2 κούτες</p>
+                        <p><strong>Ημ/νία ανάληψης οχήματος:</strong> 9/9/998</p>
+                        <p><strong>Διακριτικό οχήματος:</strong> ZYZ0505</p>
+                    </div>
+                </div>
+                
+                
+            </div>   
+    </div>
+
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="citizen.js"></script>
+</body>
+</html>
