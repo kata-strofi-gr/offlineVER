@@ -1,70 +1,62 @@
 <?php
-session_start();
-include 'database.php';
+header('Content-Type: application/json');
+$servername = "localhost";
+$username = "root";
+$password = "enter passsword here"; // Change this to your MySQL password
+$dbname = "kata_strofh";
 
-// Define your secret key
-$secret_key = 'your-very-secure-and-random-secret-key';
-$encryption_key = base64_encode($secret_key);
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Decrypt the incoming data
-    $encrypted_data = $_POST['data'];
-    $decrypted_data = decrypt($encrypted_data, $encryption_key);
-    $credentials = json_decode($decrypted_data, true);
+// Check connection
+if ($conn->connect_error) {
+    error_log("Database connection failed: " . $conn->connect_error);
+    die(json_encode(['success' => false, 'message' => 'Database connection failed']));
+}
 
-    $username = $credentials['username'];
-    $password = $credentials['password'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $inputUsername = $_POST['username'];
+    $inputPassword = $_POST['password'];
 
-    $query = "SELECT * FROM Users WHERE Username = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param('s', $username);
+    error_log("Received login request for username: " . $inputUsername);
+
+    $sql = "SELECT UserID, Password, Role FROM Users WHERE Username = ?";
+    $stmt = $conn->prepare($sql);
+    
+    if ($stmt === false) {
+        error_log("SQL prepare failed: " . $conn->error);
+        die(json_encode(['success' => false, 'message' => 'Database error']));
+    }
+
+    $stmt->bind_param('s', $inputUsername);
     $stmt->execute();
-    $result = $stmt->get_result();
+    $stmt->store_result();
+    
+    error_log("Number of rows found: " . $stmt->num_rows);
 
-    if ($result->num_rows == 1) {
-        $user = $result->fetch_assoc();
-        if (password_verify($password, $user['Password'])) {
-            $_SESSION['user_id'] = $user['UserID'];
-            $_SESSION['username'] = $user['Username'];
-            $_SESSION['role'] = $user['Role'];
+    if ($stmt->num_rows > 0) {
+        $stmt->bind_result($userID, $storedPassword, $role);
+        $stmt->fetch();
+        
+        error_log("Fetched user data: userID=" . $userID . ", role=" . $role);
 
-            // Set cookies for authentication with 10-minute expiration
-            setcookie('user_id', $user['UserID'], time() + (10 * 60), "/", "", true, true);
-            setcookie('username', $user['Username'], time() + (10 * 60), "/", "", true, true);
-            setcookie('role', $user['Role'], time() + (10 * 60), "/", "", true, true);
-
-            // Determine redirect URL based on role
-            $redirectUrl = 'dashboard.php';
-            if ($user['Role'] == 'Administrator') {
-                $redirectUrl = 'admin.html';
-            }
-
-            // Prepare the success response
-            $response = json_encode(['success' => true, 'redirect' => $redirectUrl]);
-            $encrypted_response = encrypt($response, $encryption_key);
-            echo json_encode(['data' => $encrypted_response]);
+        if ($inputPassword === $storedPassword) {
+            error_log("Password verification successful for username: " . $inputUsername);
+            echo json_encode(['success' => true, 'role' => $role]);
         } else {
-            $response = json_encode(['success' => false, 'message' => 'Invalid password']);
-            $encrypted_response = encrypt($response, $encryption_key);
-            echo json_encode(['data' => $encrypted_response]);
+            error_log("Password verification failed for username: " . $inputUsername);
+            echo json_encode(['success' => false, 'message' => 'Invalid password']);
         }
     } else {
-        $response = json_encode(['success' => false, 'message' => 'Invalid username']);
-        $encrypted_response = encrypt($response, $encryption_key);
-        echo json_encode(['data' => $encrypted_response]);
+        error_log("Username not found: " . $inputUsername);
+        echo json_encode(['success' => false, 'message' => 'Username not found']);
     }
+    $stmt->close();
+} else {
+    error_log("Invalid request method: " . $_SERVER['REQUEST_METHOD']);
+    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
 }
 
-function encrypt($data, $key) {
-    $encryption_key = base64_decode($key);
-    $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));
-    $encrypted = openssl_encrypt($data, 'aes-256-cbc', $encryption_key, 0, $iv);
-    return base64_encode($encrypted . '::' . $iv);
-}
-
-function decrypt($data, $key) {
-    $encryption_key = base64_decode($key);
-    list($encrypted_data, $iv) = explode('::', base64_decode($data), 2);
-    return openssl_decrypt($encrypted_data, 'aes-256-cbc', $encryption_key, 0, $iv);
-}
+$conn->close();
 ?>
+
