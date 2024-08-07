@@ -36,7 +36,7 @@
             <nav class="menu-bar">
                 <a href="#" class="menu-item" id="aithmataaShow">Αιτήματα</a>
                 <span class="separator">|</span>
-                <a href="#" class="menu-item" id="prosforescitShow">Προσφορές</a>
+                <a href="#" class="menu-item" id="prosforessShow">Προσφορές</a>
                 <span class="separator">|</span>
                 <div class="menu-item-container">
                     <a href="#" class="menu-item">Επιλογές</a>
@@ -51,7 +51,7 @@
             
             <div class="form-container" id="newAithmata2">
                 <div class="form-header">
-                    Νέα ανακοίνωση
+                    Νέο αίτημα
                 </div>
                 <div class="form-content">
                     <label for="type">Είδος</label>
@@ -61,18 +61,26 @@
                         <option value="option2">Χορταρακι</option>
                         <option value="option3">Χαρτακια</option>
                     </select>
+                    
+                    <label for="category">Κατηγορία</label>
+                    <select id="category" name="type">
+                        <option value="" disabled selected>Επιλέξτε είδος</option>
+                        <option value="option1">Lager</option>
+                        <option value="option2">Ale</option>
+                        <option value="option3">Stout</option>
+                    </select>
         
-                    <label for="quantity">Ποσότητα</label>
-                    <input type="text" id="quantity" name="quantity" placeholder="Ποσότητα">
+                    <label for="searchStock">Αναζήτηση είδους</label>
+                    <input type="text" id="searchStock" name="searchStock" placeholder="πχ. ΓΑΛ">
                     
                     <div class="reqs"> 
-                    <label for="extraRequests">Έξτρα αιτήματα</label>
-                    <input type="number" id="extraRequests" name="extraRequests" placeholder="Αριθμός αιτημάτων">
+                    <label for="peopleNumb">Αριθμός ατόμων</label>
+                    <input type="number" id="peopleNumb" name="peopleNumb" placeholder="Συνολικά άτομα">
                     </div>
-                    <div id="additionalFields"></div>
+                    
 
                     <div class="form-buttons">
-                        <button type="button" class="btn add-fields">Προσθήκη</button>
+                        
                         <button type="submit" class="btn submit">Υποβολή</button>
                     </div>
                 </div>
@@ -117,19 +125,19 @@
             <button class="btnC" id="showChartButton">Υπολόγισε</button>
         </div>
 
-        <div class="viewStockW" id="stockW">
+        <div class="historyReq" id="historyR">
         <!-- Add these containers in the appropriate section of your admin.html file -->
         <div class="data-container">
             <div class="table-container">
                 <table id="dataTable">
                     <thead>
                         <tr>
+                            <th>Είδος</th>
                             <th>Κατηγορία</th>
-                            <th>Όνομα</th>
-                            <th>Περιγραφή</th>
                             <th>Ποσότητα</th>
-                            <th>Τοποθεσία</th>
-                            <th>ID</th>
+                            <th>Ημ/νια αποδοχής</th>
+                            <th>Ημ/νια ολοκλήρωσης</th>
+                        
                         </tr>
                     </thead>
                     <tbody>
@@ -137,23 +145,58 @@
                     </tbody>
                 </table>
             </div>
-            <div class="filter-container">
-                <div class="filter-header">
-                    Φιλτράρισμα
-                </div>
-                <div class="filter-content">
-                    <label for="filterType">Είδος</label>
-                    <select id="filterType">
-                        <option value="all">All</option>
-                        <option value="milk">Γάλατα</option>
-                        <option value="beer">Μπύρες</option>
-                        <!-- Add other options as needed -->
-                    </select>
-                </div>
-            </div>
+            
         </div>
         </div>
 
+        <div class="offergive" id="offerG">
+            <!-- Add these containers in the appropriate section of your admin.html file -->
+            <div class="data-container">
+                <div class="table-container">
+                    <table id="newDataTable">
+                        <thead>
+                            <tr>
+                                <th>Κατηγορία προσφοράς</th>
+                                <th>Ποσότητα προσφοράς</th>
+                                <th>Θα προσφέρετε?</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Table rows will be populated here by JavaScript -->
+                        </tbody>
+                    </table>
+                    
+                    
+                </div>
+                
+            </div>
+            </div>
+
+
+
+       <div class="offergiveHist" id="offerGH">
+        <!-- Add these containers in the appropriate section of your admin.html file -->
+        <div class="data-container">
+            <div class="table-container">
+                <table id="dataTable2">
+                    <thead>
+                        <tr>
+                            <th>Είδος Προσφοράς</th>
+                            <th>Κατηγορία Προσφοράς</th>
+                            <th>Ποσότητα Προσφοράς</th>
+                            <th>Ημ/νια αποδοχής</th>
+                            <th>Ημ/νια ολοκλήρωσης</th>
+                        
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Table rows will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
+            
+        </div>
+        </div>     
 
 
 

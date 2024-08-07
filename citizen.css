@@ -690,3 +690,16 @@ tbody tr:hover {
         scale: 0.8;
     }
 }
+
+
+.historyReq{
+    display: none;
+}
+
+.offergive{
+    display: none;
+}
+
+.offergiveHist{
+    display: none;
+}

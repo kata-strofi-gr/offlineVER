@@ -47,9 +47,9 @@ document.getElementById('aithmataaShow').addEventListener('click', function(e) {
     showaithmata();
 });
 
-document.getElementById('prosforescitShow').addEventListener('click', function(e) {
+document.getElementById('prosforessShow').addEventListener('click', function(e) {
     e.preventDefault(); // Prevent default link behavior
-    newDiasostis();
+    showprosfores();
 });
 
 //aposindesi dummy
@@ -65,136 +65,49 @@ document.getElementById('loggout').addEventListener('click', function(e) {
 function showaithmata() {
     //to parakato pernaei
     var contentSection = document.getElementById('newAithmata2');
+    var contentSection2 = document.getElementById('historyR');
+    var contentSection3 = document.getElementById('offerG');
+    var contentSection4 = document.getElementById('offerGH');
     //ta parakato kovontai
     
     //pernaei
     contentSection.style.display = 'block';
+    contentSection2.style.display = 'block';
     //kovontai
+    contentSection3.style.display = 'none';
+    contentSection4.style.display = 'none';
     
 }
 
-function newDiasostis() {
-    //to parakato pernaei
-    var contentSection = document.getElementById('newDiasosths');
-    //ta parakato kruvontai
-    var mapContainer = document.getElementById('mapContainerI');
-    var contentSectionX = document.getElementById('newAithmata');
-    var contentSectionX2 = document.getElementById('statistikoulia');
-    var contentSectionX3 = document.getElementById('chartContainer');
-    var contentSectionX4 = document.getElementById('stockW');
-    //pernaei
-    contentSection.style.display = 'block';
-    //kovontai
-    contentSectionX.style.display ='none';
-    contentSectionX2.style.display ='none';
-    contentSectionX3.style.display ='none';
-    contentSectionX4.style.display ='none';
-    mapContainer.style.display = 'none';
-}
+function showprosfores(){
+    var contentSection = document.getElementById('newAithmata2');
+    var contentSection2 = document.getElementById('historyR');
+    var contentSection3 = document.getElementById('offerG');
+    var contentSection4 = document.getElementById('offerGH');
 
-function showStatistika() {
-    //to parakato pernaei
-    var contentSection = document.getElementById('statistikoulia');
-    //ta parakato kovontai
-    var mapContainer = document.getElementById('mapContainerI');
-    var contentSectionX = document.getElementById('newDiasosths');
-    var contentSectionX2 = document.getElementById('newAithmata');
-    var contentSectionX4 = document.getElementById('stockW');
-    //pernaei
-    contentSection.style.display = 'block';
-    //kovontai
-    mapContainer.style.display = 'none';
-    contentSectionX.style.display ='none';
-    contentSectionX2.style.display ='none';
-    contentSectionX4.style.display ='none';
-}
+    contentSection3.style.display = 'block';
+    contentSection4.style.display = 'block';
 
-function showStockManage() {
-    //to parakato pernaei
-    var contentSection = document.getElementById('stockW');
-    //ta parakato kruvontai
-    var mapContainer = document.getElementById('mapContainerI');
-    var contentSectionX = document.getElementById('newAithmata');
-    var contentSectionX2 = document.getElementById('statistikoulia');
-    var contentSectionX3 = document.getElementById('chartContainer');
-    var contentSectionX4 = document.getElementById('newDiasosths');
-    //pernaei
-    contentSection.style.display = 'block';
-    //kovontai
-    contentSectionX.style.display ='none';
-    contentSectionX2.style.display ='none';
-    contentSectionX3.style.display ='none';
-    contentSectionX4.style.display ='none';
-    mapContainer.style.display = 'none';
+    contentSection.style.display = 'none';
+    contentSection2.style.display = 'none';
 }
 
 //anakateuthinsi sthn admin othoni
 document.getElementById('logoF').addEventListener('click', function(e) {
     e.preventDefault();
-    var mapContainer = document.getElementById('mapContainerI');
-    var contentSectionX = document.getElementById('newAithmata');
-    var contentSectionX2 = document.getElementById('statistikoulia');
-    var contentSection = document.getElementById('newDiasosths');
-    var contentSectionX3 = document.getElementById('chartContainer');
-    var contentSectionX4 = document.getElementById('stockW');
+    var contentSection = document.getElementById('newAithmata2');
+    var contentSection2 = document.getElementById('historyR')
+    var contentSection3 = document.getElementById('offerG');
+    var contentSection4 = document.getElementById('offerGH');
 
-    mapContainer.style.display = 'block';
+    
     contentSection.style.display = 'none';
-    contentSectionX.style.display = 'none';
-    contentSectionX2.style.display = 'none';
-    contentSectionX3.style.display = 'none';
-    contentSectionX4.style.display = 'none';
+    contentSection2.style.display = 'none';
+    contentSection3.style.display = 'none';
+    contentSection4.style.display = 'none';
+    
 });
 
-
-
-
-//extra aithmata
-document.addEventListener("DOMContentLoaded", function() {
-    var addButton = document.querySelector(".btn.add-fields");
-    var additionalFields = document.getElementById("additionalFields");
-
-    addButton.addEventListener("click", function() {
-        // Clear previous fields
-        additionalFields.innerHTML = '';
-
-        // Get the number of extra requests
-        var extraRequests = document.getElementById("extraRequests").value;
-        var extraCount = parseInt(extraRequests);
-
-        // Validate the input
-        if (isNaN(extraCount) || extraCount < 1) {
-            alert("Please enter a valid number of extra requests.");
-            return;
-        }
-
-        // Add new sets of fields based on the number entered
-        for (var i = 1; i <= extraCount; i++) {
-            var typeLabel = document.createElement("label");
-            typeLabel.textContent = "Είδος " + i;
-            var typeSelect = document.createElement("select");
-            typeSelect.name = "extraType" + i;
-            typeSelect.innerHTML = `
-                <option value="" disabled selected>Επιλέξτε είδος</option>
-                <option value="option1">Option 1</option>
-                <option value="option2">Option 2</option>
-                <option value="option3">Option 3</option>
-            `;
-
-            var quantityLabel = document.createElement("label");
-            quantityLabel.textContent = "Ποσότητα " + i;
-            var quantityInput = document.createElement("input");
-            quantityInput.type = "text";
-            quantityInput.name = "extraQuantity" + i;
-            quantityInput.placeholder = "Ποσότητα";
-
-            additionalFields.appendChild(typeLabel);
-            additionalFields.appendChild(typeSelect);
-            additionalFields.appendChild(quantityLabel);
-            additionalFields.appendChild(quantityInput);
-        }
-    });
-});
 
 
 
@@ -301,24 +214,21 @@ document.getElementById('showChartButton').addEventListener('click', function() 
 
 // Mock data for the table
 const mockData = [
-    
-        { category: 'Τρόφιμα', name: 'Ψωμί', description: '500g, Πακέτο', quantity: 100, location: 'Αποθήκη', id: 1 },
-        { category: 'Τρόφιμα', name: 'Ρύζι', description: '1kg, Σακούλα', quantity: 200, location: 'Αποθήκη', id: 2 },
-        { category: 'Τρόφιμα', name: 'Ζυμαρικά', description: '500g, Πακέτο', quantity: 150, location: 'Αποθήκη', id: 3 },
-        { category: 'Υγειονομικό Υλικό', name: 'Γάζες', description: '10τμχ, Πακέτο', quantity: 50, location: 'Αποθήκη', id: 4 },
-        { category: 'Υγειονομικό Υλικό', name: 'Αντισηπτικά', description: '100ml, Μπουκάλι', quantity: 75, location: 'Αποθήκη', id: 5 },
-        { category: 'Ρουχισμός', name: 'Κουβέρτες', description: '1τμχ, Φλις', quantity: 120, location: 'Αποθήκη', id: 6 },
-        { category: 'Ρουχισμός', name: 'Ρούχα', description: 'Διάφορα μεγέθη, Κουτί', quantity: 60, location: 'Αποθήκη', id: 7 },
-        { category: 'Νερό', name: 'Εμφιαλωμένο νερό', description: '1.5L, Μπουκάλι', quantity: 300, location: 'Αποθήκη', id: 8 },
-        { category: 'Φάρμακα', name: 'Παυσίπονα', description: '20τμχ, Κουτί', quantity: 100, location: 'Αποθήκη', id: 9 },
-        { category: 'Φάρμακα', name: 'Αντιβιοτικά', description: '10τμχ, Κουτί', quantity: 50, location: 'Αποθήκη', id: 10 },
-        { category: 'Τρόφιμα', name: 'Κονσέρβες', description: '400g, Κονσέρβα', quantity: 180, location: 'Αποθήκη', id: 11 },
-        { category: 'Υγειονομικό Υλικό', name: 'Μάσκες', description: '50τμχ, Πακέτο', quantity: 200, location: 'Αποθήκη', id: 12 },
-        { category: 'Νερό', name: 'Εμφιαλωμένο νερό', description: '500ml, Μπουκάλι', quantity: 500, location: 'Αποθήκη', id: 13 },
-        { category: 'Φάρμακα', name: 'Αντιφλεγμονώδη', description: '20τμχ, Κουτί', quantity: 70, location: 'Αποθήκη', id: 14 },
-        { category: 'Ρουχισμός', name: 'Κάλτσες', description: '10τμχ, Πακέτο', quantity: 90, location: 'Αποθήκη', id: 15 }
-    
-    
+    { type: 'Τρόφιμα', category: 'Ψωμί', quantity: 100, dateACC: '2024-01-01', dateCOL: '2024-01-10', id: 1 },
+    { type: 'Τρόφιμα', category: 'Ρύζι', quantity: 200, dateACC: '2024-01-02', dateCOL: '2024-01-11', id: 2 },
+    { type: 'Τρόφιμα', category: 'Ζυμαρικά', quantity: 150, dateACC: '2024-01-03', dateCOL: '2024-01-12', id: 3 },
+    { type: 'Υγειονομικό Υλικό', category: 'Γάζες', quantity: 50, dateACC: '2024-01-04', dateCOL: '2024-01-13', id: 4 },
+    { type: 'Υγειονομικό Υλικό', category: 'Αντισηπτικά', quantity: 75, dateACC: '2024-01-05', dateCOL: '2024-01-14', id: 5 },
+    { type: 'Ρουχισμός', category: 'Κουβέρτες', quantity: 120, dateACC: '2024-01-06', dateCOL: '2024-01-15', id: 6 },
+    { type: 'Ρουχισμός', category: 'Ρούχα', quantity: 60, dateACC: '2024-01-07', dateCOL: '2024-01-16', id: 7 },
+    { type: 'Νερό', category: 'Εμφιαλωμένο νερό', quantity: 300, dateACC: '2024-01-08', dateCOL: '2024-01-17', id: 8 },
+    { type: 'Φάρμακα', category: 'Παυσίπονα', quantity: 100, dateACC: '2024-01-09', dateCOL: '2024-01-18', id: 9 },
+    { type: 'Φάρμακα', category: 'Αντιβιοτικά', quantity: 50, dateACC: '2024-01-10', dateCOL: '2024-01-19', id: 10 },
+    { type: 'Τρόφιμα', category: 'Κονσέρβες', quantity: 180, dateACC: '2024-01-11', dateCOL: '2024-01-20', id: 11 },
+    { type: 'Υγειονομικό Υλικό', category: 'Μάσκες', quantity: 200, dateACC: '2024-01-12', dateCOL: '2024-01-21', id: 12 },
+    { type: 'Νερό', category: 'Εμφιαλωμένο νερό', quantity: 500, dateACC: '2024-01-13', dateCOL: '2024-01-22', id: 13 },
+    { type: 'Φάρμακα', category: 'Αντιφλεγμονώδη', quantity: 70, dateACC: '2024-01-14', dateCOL: '2024-01-23', id: 14 },
+    { type: 'Ρουχισμός', category: 'Κάλτσες', quantity: 90, dateACC: '2024-01-15', dateCOL: '2024-01-24', id: 15 }
     // Add more mock data as needed
 ];
 
@@ -329,31 +239,19 @@ function populateTable(data) {
     data.forEach(row => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
+            <td>${row.type}</td>
             <td>${row.category}</td>
-            <td>${row.name}</td>
-            <td>${row.description}</td>
             <td>${row.quantity}</td>
-            <td>${row.location}</td>
-            <td>${row.id}</td>
+            <td>${row.dateACC}</td>
+            <td>${row.dateCOL}</td>
         `;
         tableBody.appendChild(tr);
     });
 }
-
 // Populate table with initial mock data
 populateTable(mockData);
 
 // Filter functionality
-document.getElementById('filterType').addEventListener('change', function() {
-    const filterValue = this.value;
-    let filteredData = mockData;
-
-    if (filterValue !== 'all') {
-        filteredData = mockData.filter(row => row.category.toLowerCase() === filterValue.toLowerCase());
-    }
-
-    populateTable(filteredData);
-});
 
 
 //mobile version
@@ -384,3 +282,83 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+
+const newMockData = [
+    { category: 'Ψωμί', quantity: 100, id: 1 },
+    { category: 'Ρύζι', quantity: 200, id: 2 },
+    { category: 'Ζυμαρικά', quantity: 150, id: 3 },
+    { category: 'Γάζες', quantity: 50, id: 4 },
+    { category: 'Αντισηπτικά', quantity: 75, id: 5 },
+    { category: 'Κουβέρτες', quantity: 120, id: 6 },
+    { category: 'Ρούχα', quantity: 60, id: 7 },
+    { category: 'Εμφιαλωμένο νερό', quantity: 300, id: 8 },
+    { category: 'Παυσίπονα', quantity: 100, id: 9 },
+    { category: 'Αντιβιοτικά', quantity: 50, id: 10 },
+    { category: 'Κονσέρβες', quantity: 180, id: 11 },
+    { category: 'Μάσκες', quantity: 200, id: 12 },
+    { category: 'Εμφιαλωμένο νερό', quantity: 500, id: 13 },
+    { category: 'Αντιφλεγμονώδη', quantity: 70, id: 14 },
+    { category: 'Κάλτσες', quantity: 90, id: 15 }
+    // Add more mock data as needed
+];
+
+function populateNewTable(data) {
+    const tableBody = document.querySelector('#newDataTable tbody');
+    tableBody.innerHTML = '';
+
+    data.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${row.category}</td>
+            <td>${row.quantity}</td>
+            <td><input type="checkbox" data-id="${row.id}"></td>
+        `;
+        tableBody.appendChild(tr);
+    });
+}
+
+populateNewTable(newMockData);
+
+
+
+
+const mockData2 = [
+    { type: 'Τρόφιμα', category: 'Ψωμί', quantity: 100, dateACC: '2024-01-01', dateCOL: '2024-01-10', id: 1 },
+    { type: 'Τρόφιμα', category: 'Ρύζι', quantity: 200, dateACC: '2024-01-02', dateCOL: '2024-01-11', id: 2 },
+    { type: 'Τρόφιμα', category: 'Ζυμαρικά', quantity: 150, dateACC: '2024-01-03', dateCOL: '2024-01-12', id: 3 },
+    { type: 'Υγειονομικό Υλικό', category: 'Γάζες', quantity: 50, dateACC: '2024-01-04', dateCOL: '2024-01-13', id: 4 },
+    { type: 'Υγειονομικό Υλικό', category: 'Αντισηπτικά', quantity: 75, dateACC: '2024-01-05', dateCOL: '2024-01-14', id: 5 },
+    { type: 'Ρουχισμός', category: 'Κουβέρτες', quantity: 120, dateACC: '2024-01-06', dateCOL: '2024-01-15', id: 6 },
+    { type: 'Ρουχισμός', category: 'Ρούχα', quantity: 60, dateACC: '2024-01-07', dateCOL: '2024-01-16', id: 7 },
+    { type: 'Νερό', category: 'Εμφιαλωμένο νερό', quantity: 300, dateACC: '2024-01-08', dateCOL: '2024-01-17', id: 8 },
+    { type: 'Φάρμακα', category: 'Παυσίπονα', quantity: 100, dateACC: '2024-01-09', dateCOL: '2024-01-18', id: 9 },
+    { type: 'Φάρμακα', category: 'Αντιβιοτικά', quantity: 50, dateACC: '2024-01-10', dateCOL: '2024-01-19', id: 10 },
+    { type: 'Τρόφιμα', category: 'Κονσέρβες', quantity: 180, dateACC: '2024-01-11', dateCOL: '2024-01-20', id: 11 },
+    { type: 'Υγειονομικό Υλικό', category: 'Μάσκες', quantity: 200, dateACC: '2024-01-12', dateCOL: '2024-01-21', id: 12 },
+    { type: 'Νερό', category: 'Εμφιαλωμένο νερό', quantity: 500, dateACC: '2024-01-13', dateCOL: '2024-01-22', id: 13 },
+    { type: 'Φάρμακα', category: 'Αντιφλεγμονώδη', quantity: 70, dateACC: '2024-01-14', dateCOL: '2024-01-23', id: 14 },
+    { type: 'Ρουχισμός', category: 'Κάλτσες', quantity: 90, dateACC: '2024-01-15', dateCOL: '2024-01-24', id: 15 }
+    // Add more mock data as needed
+];
+
+function populateTable2(data) {
+    const tableBody = document.querySelector('#dataTable2 tbody');
+    tableBody.innerHTML = '';
+
+    data.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${row.type}</td>
+            <td>${row.category}</td>
+            <td>${row.quantity}</td>
+            <td>${row.dateACC}</td>
+            <td>${row.dateCOL}</td>
+        `;
+        tableBody.appendChild(tr);
+    });
+}
+// Populate table with initial mock data
+populateTable2(mockData2);
+
+// Filter functionality
