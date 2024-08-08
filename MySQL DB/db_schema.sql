@@ -185,4 +185,4 @@ CREATE TABLE OfferHistory (
 ) ENGINE=InnoDB; */
 
 
-DROP DATABASE kata_strofh;
+-- DROP DATABASE kata_strofh;
