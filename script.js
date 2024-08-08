@@ -66,8 +66,3 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 });
-
-document.getElementById('logDUMMY').addEventListener('click', function(e) {
-    e.preventDefault(); // Prevent default link behavior
-    window.location.href = 'http://127.0.0.1:5500/admin.html#';
-});
