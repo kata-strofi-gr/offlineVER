@@ -33,7 +33,9 @@ $vehicles_sql = "
         v.Longitude + 0.0001 AS VehicleLng,
         IFNULL(SUM(vi.Quantity), 0) AS `Load`,
         COUNT(DISTINCT req.RequestID) AS RequestCount,
-        COUNT(DISTINCT off.OfferID) AS OfferCount
+        COUNT(DISTINCT off.OfferID) AS OfferCount,
+        GROUP_CONCAT(DISTINCT req.RequestID) AS AssignedRequests,
+        GROUP_CONCAT(DISTINCT off.OfferID) AS AssignedOffers
     FROM Vehicles v
     JOIN Rescuer r ON v.RescuerID = r.RescuerID
     JOIN Users u ON r.UserID = u.UserID

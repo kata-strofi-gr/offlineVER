@@ -71,6 +71,47 @@ function fetchDataAndUpdateMap() {
         });
 }
 
+
+let drawnLines = []; // To keep track of drawn lines
+
+// Function to clear all lines from the map
+function clearLines() {
+    drawnLines.forEach(line => map.removeLayer(line));
+    drawnLines = [];
+}
+
+// Function to draw lines between vehicle and tasks
+function drawLines(vehicle, requests, offers) {
+    clearLines();
+
+    // Draw lines to assigned requests
+    if (vehicle.AssignedRequests) {
+        vehicle.AssignedRequests.split(',').forEach(reqID => {
+            const request = requests.find(r => r.RequestID == reqID);
+            if (request) {
+                const line = L.polyline([[vehicle.VehicleLat, vehicle.VehicleLng], [request.RequestLat, request.RequestLng]], {
+                    color: 'red'
+                }).addTo(map);
+                drawnLines.push(line);
+            }
+        });
+    }
+
+    // Draw lines to assigned offers
+    if (vehicle.AssignedOffers) {
+        vehicle.AssignedOffers.split(',').forEach(offerID => {
+            const offer = offers.find(o => o.OfferID == offerID);
+            if (offer) {
+                const line = L.polyline([[vehicle.VehicleLat, vehicle.VehicleLng], [offer.OfferLat, offer.OfferLng]], {
+                    color: 'blue'
+                }).addTo(map);
+                drawnLines.push(line);
+            }
+        });
+    }
+}
+
+
 // Function to update the map with base, vehicle, offer, and request data
 function updateMap(mapData) {
     const base = mapData.base;
@@ -115,6 +156,13 @@ function updateMap(mapData) {
                 ${request.RescuerUsername ? `<p><strong>Αναλήφθηκε από:</strong> ${request.RescuerUsername}</p>` : ''}
             `
             });
+            // Find and draw lines to the associated vehicle
+            if (request.RescuerID) {
+                const vehicle = mapData.vehicles.find(v => v.VehicleID == request.RescuerID);
+                if (vehicle) {
+                    drawLines(vehicle, mapData.requests, mapData.offers);
+                }
+            }
         });
         requestMarker.addTo(map);
     });
@@ -137,6 +185,14 @@ function updateMap(mapData) {
                 ${offer.RescuerUsername ? `<p><strong>Αναλήφθηκε από:</strong> ${offer.RescuerUsername}</p>` : ''}
             `
             });
+
+            // Find and draw lines to the associated vehicle
+            if (offer.RescuerID) {
+                const vehicle = mapData.vehicles.find(v => v.VehicleID == offer.RescuerID);
+                if (vehicle) {
+                    drawLines(vehicle, mapData.requests, mapData.offers);
+                }
+            }
         });
         offerMarker.addTo(map);
     });
@@ -156,6 +212,9 @@ function updateMap(mapData) {
                 <p><strong>Ενεργά Tasks:</strong> ${vehicle.ActiveTasks > 0 ? 'Ναι' : 'Όχι'}</p>
             `
             });
+
+            // Draw lines for the selected vehicle
+            drawLines(vehicle, mapData.requests, mapData.offers);
         });
         vehicleMarker.addTo(map);
     });
@@ -197,6 +256,7 @@ function confirmBaseLocation() {
         });
     }
 }
+
 
 // Function to cancel the base location update
 function cancelBaseLocation() {
