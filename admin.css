@@ -214,6 +214,35 @@
     margin: 0 auto; /* Center horizontally */
 }
 
+.request-box {
+    display: none;
+    flex-direction: column;
+    border-radius: 15px;
+    background-color: #1c3742;
+    color: white;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+    padding: 20px;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto; /* Center horizontally */
+}
+
+.vehicle-box {
+    display: none;
+    flex-direction: column;
+    border-radius: 15px;
+    background-color: #7d0438;
+    color: white;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+    padding: 20px;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto; /* Center horizontally */
+}
+
+
 .offer-header {
     display: flex;
     justify-content: space-between;

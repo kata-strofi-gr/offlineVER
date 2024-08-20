@@ -69,9 +69,9 @@ INSERT INTO OfferItems (OfferID, ItemID, Quantity) VALUES
 
 -- Insert sample data into Vehicles table
 INSERT INTO Vehicles (RescuerID, Latitude, Longitude) VALUES 
-(1, 37.774929, -122.419418), -- Rescuer 1 in San Francisco
-(2, 34.052235, -118.243683), -- Rescuer 2 in Los Angeles
-(3, 40.712776, -74.005974);  -- Rescuer 3 in New York
+(1, 37.774929, -12.419418), -- Rescuer 1 in San Francisco
+(2, 34.052235, -18.243683), -- Rescuer 2 in Los Angeles
+(3, 40.712776, -4.005974);  -- Rescuer 3 in New York
 
 -- Insert sample data into VehicleItems table
 INSERT INTO VehicleItems (VehicleID, ItemID, Quantity) VALUES
@@ -133,5 +133,8 @@ CALL FinishRequest(2);
 CALL FinishOffer(2);
 
 
+-- Insert initial base location
+INSERT INTO BaseLocation (BaseName, Latitude, Longitude)
+VALUES ('Main Base', 51.505, -0.08);
 
 
