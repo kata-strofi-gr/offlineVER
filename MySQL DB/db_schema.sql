@@ -101,6 +101,13 @@ CREATE TABLE Offers (
     INDEX (DateAssignedVehicle)
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS BaseLocation (
+    BaseID INT AUTO_INCREMENT PRIMARY KEY,
+    BaseName VARCHAR(100) NOT NULL,
+    Latitude DECIMAL(10, 8) NOT NULL,
+    Longitude DECIMAL(11, 8) NOT NULL
+);
+
 -- OfferItems Table to handle multiple items per offer
 CREATE TABLE OfferItems (
     OfferItemID INT AUTO_INCREMENT PRIMARY KEY,

@@ -1,39 +1,227 @@
-// Initialize the map
+// Initialize the map at a default position; this will be updated once the base location is fetched
+// Initialize the map at a default position; this will be updated once the base location is fetched
 var map = L.map('map').setView([51.505, -0.09], 13);
 
 // Add a tile layer from OpenStreetMap
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19, // Adjusted maxZoom level
+    maxZoom: 19,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-document.addEventListener("DOMContentLoaded", function () {
-    const draggableBox = document.getElementById("draggableBox");
-    let offsetX = 0, offsetY = 0, isDragging = false;
+var baseMarker; // To store the base marker
+var newBaseLatLng; // To store the new coordinates after dragging
 
-    draggableBox.addEventListener("mousedown", function (e) {
-        isDragging = true;
-        offsetX = e.clientX - draggableBox.getBoundingClientRect().left;
-        offsetY = e.clientY - draggableBox.getBoundingClientRect().top;
-        draggableBox.style.position = 'absolute';
-        draggableBox.style.zIndex = 1000;
-    });
+// Custom icons for different statuses and types
+var baseIcon = L.icon({
+    iconUrl: 'images/base-icon.png',  // Path to your custom icon
+    iconSize: [30, 45],
+    iconAnchor: [15, 45],
+    popupAnchor: [0, -45],
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    shadowSize: [50, 64],
+    shadowAnchor: [15, 64]
+});
 
-    document.addEventListener("mousemove", function (e) {
-        if (isDragging) {
-            draggableBox.style.left = `${e.clientX - offsetX}px`;
-            draggableBox.style.top = `${e.clientY - offsetY}px`;
+var pendingRequestIcon = L.icon({
+    iconUrl: 'images/pending-request-icon.png', // Replace with your icon path
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    shadowSize: [41, 41]
+});
+
+var inProgressRequestIcon = L.icon({
+    iconUrl: 'images/in-progress-request-icon.png', // Replace with your icon path
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    shadowSize: [41, 41]
+});
+
+var pendingOfferIcon = L.icon({
+    iconUrl: 'images/pending-offer-icon.png', // Replace with your icon path
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    shadowSize: [41, 41]
+});
+
+var inProgressOfferIcon = L.icon({
+    iconUrl: 'images/in-progress-offer-icon.png', // Replace with your icon path
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    shadowSize: [41, 41]
+});
+
+// Function to fetch data from the server and update the map
+function fetchDataAndUpdateMap() {
+    fetch('map_fetch.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error(data.error);
+                return;
+            }
+            updateMap(data);
+        })
+        .catch(error => {
+            console.error('Fetch Error:', error);
+        });
+}
+
+// Function to update the map with base, vehicle, offer, and request data
+function updateMap(mapData) {
+    const base = mapData.base;
+
+    // Set the map view to the base's location
+    map.setView([base.Latitude, base.Longitude], 13);
+
+    // Clear existing markers
+    map.eachLayer(function (layer) {
+        if (layer instanceof L.Marker) {
+            map.removeLayer(layer);
         }
     });
 
-    document.addEventListener("mouseup", function () {
-        isDragging = false;
+    // Add the base marker with the custom icon
+    baseMarker = L.marker([base.Latitude, base.Longitude], { icon: baseIcon, draggable: true })
+        .addTo(map)
+        .bindPopup(`<b>${base.BaseName}</b><br>Drag to change location.`)
+        .openPopup();
+
+    // Handle dragging of the base marker
+    baseMarker.on('dragend', function (event) {
+        newBaseLatLng = event.target.getLatLng();
+        showConfirmPopup(); // Show confirmation popup when dragging ends
     });
+
+    // Add request markers
+    mapData.requests.forEach(function (request) {
+        var icon = request.Status === 'PENDING' ? pendingRequestIcon : inProgressRequestIcon;
+        var requestMarker = L.marker([request.RequestLat, request.RequestLng], { icon: icon });
+
+        requestMarker.on('click', function () {
+            showPopup({
+                type: "request-box",
+                title: "Αίτημα",
+                details: `
+                    <p><strong>Ονοματεπώνυμο:</strong> ${request.Name}</p>
+                    <p><strong>Τηλέφωνο:</strong> ${request.Phone}</p>
+                `
+            });
+        });
+        requestMarker.addTo(map);
+    });
+
+    // Add offer markers
+    mapData.offers.forEach(function (offer) {
+        var icon = offer.Status === 'PENDING' ? pendingOfferIcon : inProgressOfferIcon;
+        var offerMarker = L.marker([offer.OfferLat, offer.OfferLng], { icon: icon });
+
+        offerMarker.on('click', function () {
+            showPopup({
+                type: "offer-box",
+                title: "Προσφορά",
+                details: `
+                    <p><strong>Ονοματεπώνυμο:</strong> ${offer.Name}</p>
+                    <p><strong>Τηλέφωνο:</strong> ${offer.Phone}</p>
+                `
+            });
+        });
+        offerMarker.addTo(map);
+    });
+
+    // Add vehicle markers
+    mapData.vehicles.forEach(function (vehicle) {
+        var vehicleMarker = L.marker([vehicle.VehicleLat, vehicle.VehicleLng], { icon: blueIcon });
+
+        vehicleMarker.on('click', function () {
+            showPopup({
+                type: "vehicle-box",
+                title: "Όχημα",
+                details: `
+                    <p><strong>Διακριτικό Οχήματος:</strong> ${vehicle.RescuerUsername}</p>
+                `
+            });
+        });
+        vehicleMarker.addTo(map);
+    });
+}
+
+
+// Function to show the confirmation popup
+function showConfirmPopup() {
+    const confirmationBox = document.getElementById('confirmationBox');
+    confirmationBox.style.display = 'block';
+}
+
+// Function to confirm the new base location
+function confirmBaseLocation() {
+    if (newBaseLatLng) {
+        // Send new base location to the server using Fetch API
+        fetch('update_base_location.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                latitude: newBaseLatLng.lat,
+                longitude: newBaseLatLng.lng
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Base location updated successfully!');
+                const confirmationBox = document.getElementById('confirmationBox');
+                confirmationBox.style.display = 'none';
+            } else {
+                alert('Failed to update base location. ' + (data.error ? data.error : ''));
+            }
+        })
+        .catch(error => {
+            alert('Failed to send data to the server. Error: ' + error.message);
+        });
+    }
+}
+
+// Function to cancel the base location update
+function cancelBaseLocation() {
+    const confirmationBox = document.getElementById('confirmationBox');
+    confirmationBox.style.display = 'none';
+    newBaseLatLng = null; // Reset the new location
+}
+
+// Function to show the vehicle popup
+function showPopup({ type, title, details }) {
+    const popup = document.getElementById('draggableBox');
+    popup.className = type;
+    const popupTitle = popup.querySelector('.offer-title');
+    const popupDetails = popup.querySelector('.offer-details');
+
+    popupTitle.innerHTML = title;
+    popupDetails.innerHTML = details;
+
+    popup.style.display = 'flex';
+}
+
+// Close button event for vehicle popup
+document.getElementById('closeBox').addEventListener('click', function () {
+    document.getElementById('draggableBox').style.display = 'none';
 });
 
+// Confirm button event for base location
+document.getElementById('confirmButton').addEventListener('click', confirmBaseLocation);
 
+// Cancel button event for base location
+document.getElementById('cancelButton').addEventListener('click', cancelBaseLocation);
 
-// Create a custom icon for the marker
+// Create a custom icon for the vehicle marker
 var blueIcon = new L.Icon({
     iconUrl: 'https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-blue.png',
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -43,8 +231,11 @@ var blueIcon = new L.Icon({
     shadowSize: [41, 41]
 });
 
-// Add a marker with the custom icon
-var marker = L.marker([51.505, -0.09], {icon: blueIcon}).addTo(map);
+// Initial fetch and update of the map
+fetchDataAndUpdateMap();
+
+// Fetch and update map data every 20 seconds
+setInterval(fetchDataAndUpdateMap, 20000);
 
 // Get the popup element and close button
 var externalPopup = document.getElementById('draggableBox');
@@ -66,34 +257,32 @@ closePopup.addEventListener('click', closePopupFunction);
 
 // Optional: Open popup on page load
 // openPopup();
-document.getElementById('stockManage').addEventListener('click', function(e) {
+document.getElementById('stockManage').addEventListener('click', function (e) {
     e.preventDefault(); // Prevent default link behavior
     showStockManage();
 });
-document.getElementById('stockStatus').addEventListener('click', function(e) {
+document.getElementById('stockStatus').addEventListener('click', function (e) {
     e.preventDefault(); // Prevent default link behavior
     showStockManage();
 });
-document.getElementById('statistikaShow').addEventListener('click', function(e) {
+document.getElementById('statistikaShow').addEventListener('click', function (e) {
     e.preventDefault(); // Prevent default link behavior
     showStatistika();
 });
-document.getElementById('newsCreate').addEventListener('click', function(e) {
+document.getElementById('newsCreate').addEventListener('click', function (e) {
     e.preventDefault(); // Prevent default link behavior
     newAithma();
 });
-document.getElementById('rescuerCreate').addEventListener('click', function(e) {
+document.getElementById('rescuerCreate').addEventListener('click', function (e) {
     e.preventDefault(); // Prevent default link behavior
     newDiasostis();
 });
 
-//aposindesi dummy
-document.getElementById('loggout').addEventListener('click', function(e) {
+// Logout dummy function
+document.getElementById('loggout').addEventListener('click', function (e) {
     e.preventDefault(); // Prevent default link behavior
     window.location.href = 'http://127.0.0.1:5500/start.html#';
 });
-
-
 
 
 //leitourgies parathiron apo to menu
