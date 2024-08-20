@@ -5,7 +5,7 @@ ini_set('display_errors', 1);
 header('Content-Type: application/json');
 $servername = "localhost";
 $username = "root";
-$password = "0r35t1s21802!";
+$password = "g";
 $dbname = "kata_strofh";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
