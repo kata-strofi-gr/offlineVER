@@ -638,7 +638,6 @@ document.getElementById('logoF').addEventListener('click', function(e) {
 
 
 
-
 //extra aithmata
 document.addEventListener("DOMContentLoaded", function() {
     var addButton = document.querySelector(".btn.add-fields");
