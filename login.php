@@ -1,18 +1,8 @@
 <?php
 header('Content-Type: application/json');
-$servername = "localhost";
-$username = "root";
-$password = "enter passsword here"; // Change this to your MySQL password
-$dbname = "kata_strofh";
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    error_log("Database connection failed: " . $conn->connect_error);
-    die(json_encode(['success' => false, 'message' => 'Database connection failed']));
-}
+// Include the database configuration file
+include 'db_config.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $inputUsername = $_POST['username'];

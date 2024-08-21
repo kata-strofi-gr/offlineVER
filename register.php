@@ -3,16 +3,10 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 header('Content-Type: application/json');
-$servername = "localhost";
-$username = "root";
-$password = "enter passsword here"; // Change this to your MySQL password
-$dbname = "kata_strofh";
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+// Include the database configuration file
+include 'db_config.php';
 
-if ($conn->connect_error) {
-    die(json_encode(['success' => false, 'message' => 'Database connection failed: ' . $conn->connect_error]));
-}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $inputUsername = $_POST['username'];
@@ -20,17 +14,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $firstName = $_POST['firstName'];
     $lastName = $_POST['lastName'];
     $phoneNumber = $_POST['phoneNumber'];
-    $latitude = $_POST['latitude'];
-    $longitude = $_POST['longitude'];
+    $latitude = isset($_POST['latitude']) ? $_POST['latitude'] : null;
+    $longitude = isset($_POST['longitude']) ? $_POST['longitude'] : null;
 
-    $hashedPassword = password_hash($inputPassword, PASSWORD_DEFAULT);
 
     $stmt = $conn->prepare("CALL CreateNewCitizen(?, ?, ?, ?, ?, ?, ?)");
     if ($stmt === false) {
         die(json_encode(['success' => false, 'message' => 'Prepare failed: ' . $conn->error]));
     }
 
-    $stmt->bind_param('sssssss', $inputUsername, $hashedPassword, $firstName, $lastName, $phoneNumber, $latitude, $longitude);
+    $stmt->bind_param('sssssss', $inputUsername, $inputPassword, $firstName, $lastName, $phoneNumber, $latitude, $longitude);
 
     if ($stmt->execute()) {
         echo json_encode(['success' => true, 'message' => 'User registered successfully']);

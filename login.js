@@ -38,6 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Registration pop-up toggle
     document.getElementById('registerLink').addEventListener('click', function() {
+        resetRegistrationForm(); // Reset the form to the first stage
         document.getElementById('contF').classList.remove('active');
         document.getElementById('registerPopup').classList.add('active');
     });
@@ -45,6 +46,45 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('exitRegisterButton').addEventListener('click', function() {
         document.getElementById('registerPopup').classList.remove('active');
     });
+
+    // Next button functionality to move to second stage
+    document.getElementById('nextButton').addEventListener('click', function() {
+        document.getElementById('firstStage').style.display = 'none';
+        document.getElementById('secondStage').style.display = 'block';
+        initializeMap();
+    });
+    
+    // Function to initialize Leaflet map
+    function initializeMap() {
+        var map = L.map('map').setView([37.978278, 23.727090], 13); // Default center and zoom level
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+        }).addTo(map);
+
+        var marker = L.marker([37.978278, 23.727090]).addTo(map); // Default marker location
+
+        map.on('click', function(e) {
+            var lat = e.latlng.lat;
+            var lng = e.latlng.lng;
+            marker.setLatLng(e.latlng); // Move marker to clicked location
+            document.getElementById('latitude').value = lat;
+            document.getElementById('longitude').value = lng;
+        });
+    }
+
+    // Function to reset the registration form
+    function resetRegistrationForm() {
+        document.getElementById('firstStage').style.display = 'block';
+        document.getElementById('secondStage').style.display = 'none';
+        document.getElementById('registerUsername').value = '';
+        document.getElementById('registerPassword').value = '';
+        document.getElementById('firstName').value = '';
+        document.getElementById('lastName').value = '';
+        document.getElementById('phoneNumber').value = '';
+        document.getElementById('latitude').value = '';
+        document.getElementById('longitude').value = '';
+    }
 
     // Register button functionality
     document.getElementById('registerButton').addEventListener('click', function() {

@@ -6,6 +6,8 @@
     <title>wGridbox</title>
     <link rel="stylesheet" href="start.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 </head>
 <body>
     <div class="container">
@@ -107,57 +109,49 @@
             </div>
         </div>
 
-        <!-- Registration Pop-up -->
-        <div class="container2" id="registerPopup">
-            <div class="popupback">
-                <div class="exitF">
-                    <div class="exit-button" id="exitRegisterButton"></div>
-                </div>
-                <div class="textF">
-                    <div class="popuptitle"> 
-                        Εγγραφή
-                    </div> 
-                </div>
-                <div class="userF">
-                    <div class="input-container">
-                        <input type="text" placeholder="Όνομα χρήστη" name="registerUsername" id="registerUsername">
-                    </div>
-                </div>
-                <div class="passF">
-                    <div class="input-container">
-                        <input type="password" placeholder="Κωδικός πρόσβασης" name="registerPassword" id="registerPassword">
-                    </div>
-                </div>
-                <div class="userF">
-                    <div class="input-container">
-                        <input type="text" placeholder="Όνομα" name="firstName" id="firstName">
-                    </div>
-                </div>
-                <div class="userF">
-                    <div class="input-container">
-                        <input type="text" placeholder="Επίθετο" name="lastName" id="lastName">
-                    </div>
-                </div>
-                <div class="userF">
-                    <div class="input-container">
-                        <input type="text" placeholder="Τηλέφωνο" name="phoneNumber" id="phoneNumber">
-                    </div>
-                </div>
-                <div class="userF">
-                    <div class="input-container">
-                        <input type="text" placeholder="Latitude" name="latitude" id="latitude">
-                    </div>
-                </div>
-                <div class="userF">
-                    <div class="input-container">
-                        <input type="text" placeholder="Longitude" name="longitude" id="longitude">
-                    </div>
-                </div>
-                <div class="logF">
-                    <button class="login-button" id="registerButton"> Εγγραφή </button>
-                </div>
+<!-- Registration Pop-up -->
+<div class="container2" id="registerPopup">
+    <div class="popupback">
+        <div class="exitF">
+            <div class="exit-button" id="exitRegisterButton"></div>
+        </div>
+        <div class="textF">
+            <div class="popuptitle"> 
+                Εγγραφή
+            </div> 
+        </div>
+        <div class="userF" id="firstStage">
+            <div class="input-container">
+                <input type="text" placeholder="Όνομα χρήστη" name="registerUsername" id="registerUsername">
+            </div>
+            <div class="input-container">
+                <input type="password" placeholder="Κωδικός πρόσβασης" name="registerPassword" id="registerPassword">
+            </div>
+            <div class="input-container">
+                <input type="text" placeholder="Όνομα" name="firstName" id="firstName">
+            </div>
+            <div class="input-container">
+                <input type="text" placeholder="Επίθετο" name="lastName" id="lastName">
+            </div>
+            <div class="input-container">
+                <input type="text" placeholder="Τηλέφωνο" name="phoneNumber" id="phoneNumber">
+            </div>
+            <div class="logF">
+                <button class="login-button" id="nextButton">Επόμενο</button>
             </div>
         </div>
+
+        <div class="userF" id="secondStage" style="display: none;">
+            <div id="map" style="width: 100%; height: 300px;"></div>
+            <input type="hidden" id="latitude" name="latitude">
+            <input type="hidden" id="longitude" name="longitude">
+            <div class="logF">
+                <button class="login-button" id="registerButton"> Εγγραφή </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
     <script src="script.js"></script>
     <script src="login.js"></script>
