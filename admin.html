@@ -73,13 +73,15 @@
                 <div class="sidebar" id="sidebar">
                 </div>
                 <div class="buttonArea">
-                    <button class="map-button">Αιτήματα αναληφθέντα</button>
-                    <button class="map-button">Αιτήματα εκκρεμή</button>
-                    <button class="map-button">Προσφορές</button>
-                    <button class="map-button">Οχήματα με task</button>
-                    <button class="map-button">Οχήματα χωρίς task</button>
-                    <button class="map-button">Σε εξέλιξη</button>
+                    <button class="map-button" id="toggleTakenRequests" data-filter="takenRequests">Αιτήματα αναληφθέντα</button>
+                    <button class="map-button" id="togglePendingRequests" data-filter="pendingRequests">Αιτήματα εκκρεμή</button>
+                    <button class="map-button" id="toggleOffers" data-filter="offers">Προσφορές</button>                    
+                    <button class="map-button" id="toggleActiveVehicles" data-filter="activeVehicles">Οχήματα με task</button>
+                    <button class="map-button" id="toggleInactiveVehicles" data-filter="inactiveVehicles">Οχήματα χωρίς task</button>
+                    <button class="map-button" id="toggleLines" data-filter="lines">Ευθείες Γραμμές</button>
+                    
                 </div>
+                
 
             </div>
 
@@ -108,7 +110,7 @@
 
                     <div class="form-buttons">
                         <button type="button" class="btn add-fields">Προσθήκη</button>
-                        <button type="submit" class="btn submit">Υποβολή</button>
+                        <button id="anasub" class="btn submit">Υποβολή</button>
                     </div>
                 </div>
             </div>
@@ -121,14 +123,14 @@
                 Δημιουργία διασώστη
             </div>
             <div class="form-content">
-                <label for="field1">Όνομα χρήστη</label>
-                <input type="text" id="field1" name="field1" placeholder="aomakris">
+                <label for="ddd">Όνομα χρήστη</label>
+                <input type="text" placeholder="aomakris" name="usernameR" id="usernameR">
     
-                <label for="field2">Κωδικός πρόσβασης</label>
-                <input type="text" id="field2" name="field2" placeholder="taf1234">
+                <label for="df">Κωδικός πρόσβασης</label>
+                <input type="text" placeholder="taf1234" name="passwordR" id="passwordR">
     
                 <div class="form-buttons">
-                    <button type="submit" class="btn submit">Υποβολή</button>
+                    <button id="submitRescuer" class="btn submit">Υποβολή</button>
                 </div>
             </div>
         </div>
@@ -177,17 +179,28 @@
                     Φιλτράρισμα
                 </div>
                 <div class="filter-content">
-                    <label for="filterType">Είδος</label>
-                    <select id="filterType">
-                        <option value="all">All</option>
-                        <option value="milk">Γάλατα</option>
-                        <option value="beer">Μπύρες</option>
+                    <label for="filterType">Κατηγορίες</label>
+                    <select id="filterType" multiple size="10">
+                      <!-- Options will be dynamically inserted here -->
                         <!-- Add other options as needed -->
                     </select>
                 </div>
             </div>
         </div>
         </div>
+
+
+    <!-- Popup for confirming base location move -->
+    <div id="confirmationBox" class="form-container">
+        <div class="form-header">Confirm Base Location</div>
+        <div class="form-content">
+            <p>Are you sure you want to move the base to this location?</p>
+            <div class="form-buttons">
+                <button id="confirmButton" class="btn submit">Confirm</button>
+                <button id="cancelButton" class="btn">Cancel</button>
+            </div>
+        </div>
+    </div>
 
     <!-- ola ta popup mexri edo mesas-->
     </div>
@@ -216,6 +229,8 @@
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="mapScript.js"></script>
+    <script src="create_rescuer.js"></script>
+    <script src="warehouse.js"></script>
     <script src="admin.js"></script>
 </body>
 </html>

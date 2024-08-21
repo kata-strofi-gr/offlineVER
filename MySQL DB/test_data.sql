@@ -1,14 +1,14 @@
 USE kata_strofh;
 
 -- Test entry to create a new rescuer
-CALL CreateNewRescuer('john_dwoe', 'securepassword123', 34.052235, 118.243683);
-CALL CreateNewRescuer('Sjanec_doe', 'securepassworcd456', 37.774929, -122.419418);
-CALL CreateNewRescuer('ssmitDh', 'securepassword789', 40.712776, -74.005974);
+CALL CreateNewRescuer('john_dwoe', 'securepassword123', 23.79206500, 23.79188600);
+CALL CreateNewRescuer('Sjanec_doe', 'securepassworcd456',38.04616300, 23.79643000);
+CALL CreateNewRescuer('ssmitDh', 'securepassword789', 38.04459300, 23.78110400);
 
 -- Test entry to create a new citizen
-CALL CreateNewCitizen('jane_doce', 'securepassword456', 'Jane', 'Doe', '123-456-7890', 34.052235, -118.243683);
-CALL CreateNewCitizen('john_dose', 'securepassword123', 'John', 'Doe', '987-654-3210', 37.774929, -122.419418);
-CALL CreateNewCitizen('alixce_smith', 'securepassword789', 'Alice', 'Smith', '555-555-5555', 40.712776, -74.005974);
+CALL CreateNewCitizen('jane_doce', 'securepassword456', 'Jane', 'Doe', '123-456-7890', 38.04161800, 23.78762700);
+CALL CreateNewCitizen('john_dose', 'securepassword123', 'John', 'Doe', '987-654-3210', 38.03932500, 23.79466300);
+CALL CreateNewCitizen('alixce_smith', 'securepassword789', 'Alice', 'Smith', '555-555-5555', 38.04173700, 23.79206500);
 
 -- Test entry to create a new admin
 CALL CreateNewAdmin('admin_user', 'adminpassword');
@@ -69,9 +69,9 @@ INSERT INTO OfferItems (OfferID, ItemID, Quantity) VALUES
 
 -- Insert sample data into Vehicles table
 INSERT INTO Vehicles (RescuerID, Latitude, Longitude) VALUES 
-(1, 37.774929, -122.419418), -- Rescuer 1 in San Francisco
-(2, 34.052235, -118.243683), -- Rescuer 2 in Los Angeles
-(3, 40.712776, -74.005974);  -- Rescuer 3 in New York
+(1, 37.774929, -12.419418), -- Rescuer 1 in San Francisco
+(2, 34.052235, -18.243683), -- Rescuer 2 in Los Angeles
+(3, 40.712776, -4.005974);  -- Rescuer 3 in New York
 
 -- Insert sample data into VehicleItems table
 INSERT INTO VehicleItems (VehicleID, ItemID, Quantity) VALUES
@@ -87,6 +87,9 @@ INSERT INTO Announcements (AdminID, DateCreated) VALUES
 (1, '2023-01-01 10:00:00'), -- Admin 1 created an announcement on January 1, 2023
 (2, '2023-02-15 14:30:00'); -- Admin 2 created an announcement on February 15, 2023
 
+-- Insert initial base location
+INSERT INTO BaseLocation (BaseName, Latitude, Longitude)
+VALUES ('Main Base', 38.04035147, 23.78224611);
 
 -- Insert sample data into AnnouncementItems table
 INSERT INTO AnnouncementItems (AnnouncementID, ItemID, Quantity) VALUES
@@ -111,7 +114,7 @@ CALL CreateNewAnnouncement(1, '[{"name": "Blanket", "quantity": 5}, {"name": "Ri
 CALL AssignRequest(1, 2); -- Assigning first request to rescuer1
 CALL AssignRequest(1, 3); -- Assigning second request to rescuer1
 CALL AssignRequest(1, 3); -- Assigning third request to rescuer1
-CALL AssignRequest(1, 1); -- Assigning fourth request to rescuer1
+CALL AssignRequest(7, 2); -- Assigning fourth request to rescuer1
 
 -- This next assignment should trigger the task limit check
 CALL AssignRequest(1, 1); -- Attempting to assign fifth request to rescuer1
@@ -131,6 +134,7 @@ CALL CancelOffer(1);
 CALL FinishRequest(2);
 
 CALL FinishOffer(2);
+
 
 
 

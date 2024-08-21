@@ -53,7 +53,6 @@ CREATE TABLE Items (
 CREATE TABLE Warehouse (
     ItemID INT,
     Quantity INT NOT NULL,
-    PRIMARY KEY (ItemID),
     FOREIGN KEY (ItemID) REFERENCES Items(ItemID) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
@@ -100,6 +99,13 @@ CREATE TABLE Offers (
     INDEX (DateCreated),
     INDEX (DateAssignedVehicle)
 ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS BaseLocation (
+    BaseID INT AUTO_INCREMENT PRIMARY KEY,
+    BaseName VARCHAR(100) NOT NULL,
+    Latitude DECIMAL(10, 8) NOT NULL,
+    Longitude DECIMAL(11, 8) NOT NULL
+);
 
 -- OfferItems Table to handle multiple items per offer
 CREATE TABLE OfferItems (
@@ -158,31 +164,9 @@ CREATE TABLE AnnouncementItems (
     INDEX (ItemID)
 ) ENGINE=InnoDB;
 
-/* -- RequestHistory Table
-CREATE TABLE RequestHistory (
-    HistoryID INT AUTO_INCREMENT PRIMARY KEY,
-    RequestID INT,
-    ChangeType VARCHAR(50),
-    ChangeTime DATETIME DEFAULT CURRENT_TIMESTAMP,
-    OldStatus ENUM('PENDING', 'INPROGRESS', 'FINISHED'),
-    NewStatus ENUM('PENDING', 'INPROGRESS', 'FINISHED'),
-    OldRescuerID INT,
-    NewRescuerID INT,
-    FOREIGN KEY (RequestID) REFERENCES Requests(RequestID) ON DELETE CASCADE
-) ENGINE=InnoDB;
 
--- OfferHistory Table
-CREATE TABLE OfferHistory (
-    HistoryID INT AUTO_INCREMENT PRIMARY KEY,
-    OfferID INT,
-    ChangeType VARCHAR(50),
-    ChangeTime DATETIME DEFAULT CURRENT_TIMESTAMP,
-    OldStatus ENUM('PENDING', 'INPROGRESS', 'FINISHED'),
-    NewStatus ENUM('PENDING', 'INPROGRESS', 'FINISHED'),
-    OldRescuerID INT,
-    NewRescuerID INT,
-    FOREIGN KEY (OfferID) REFERENCES Offers(OfferID) ON DELETE CASCADE
-) ENGINE=InnoDB; */
+-- DROP DATABASE kata_strofh;Status IN ('PENDING', 'INPROGRESS')
+GROUP BY v.VehicleID, u.Username, v.Latitude, v.Longitude;
 
 
--- DROP DATABASE kata_strofh;
+
