@@ -114,7 +114,7 @@ CALL CreateNewAnnouncement(1, '[{"name": "Blanket", "quantity": 5}, {"name": "Ri
 CALL AssignRequest(1, 2); -- Assigning first request to rescuer1
 CALL AssignRequest(1, 3); -- Assigning second request to rescuer1
 CALL AssignRequest(1, 3); -- Assigning third request to rescuer1
-CALL AssignRequest(1, 1); -- Assigning fourth request to rescuer1
+CALL AssignRequest(7, 2); -- Assigning fourth request to rescuer1
 
 -- This next assignment should trigger the task limit check
 CALL AssignRequest(1, 1); -- Attempting to assign fifth request to rescuer1

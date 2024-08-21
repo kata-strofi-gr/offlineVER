@@ -1,7 +1,7 @@
 <?php
 $servername = "localhost";
 $username = "root";
-$password = "dbpassword";
+$password = "0r35t1s21802!";
 $dbname = "kata_strofh";
 
 // Create connection
@@ -76,6 +76,7 @@ $requests_sql = "
         req.DateCreated,
         req.DateAssignedVehicle,
         u.Username AS RescuerUsername,
+        v.VehicleID AS AssignedVehicleID,
         c.Latitude AS RequestLat,
         c.Longitude AS RequestLng,
         GROUP_CONCAT(ri.ItemID) AS ItemIDs,
@@ -87,8 +88,9 @@ $requests_sql = "
     LEFT JOIN Users u ON r.UserID = u.UserID
     LEFT JOIN RequestItems ri ON req.RequestID = ri.RequestID
     LEFT JOIN Items i ON ri.ItemID = i.ItemID
+    LEFT JOIN Vehicles v ON r.RescuerID = v.RescuerID
     WHERE req.Status IN ('PENDING', 'INPROGRESS')
-    GROUP BY req.RequestID;
+    GROUP BY req.RequestID, req.RescuerID, c.CitizenID, c.Name, c.Phone, req.Status, req.DateCreated, req.DateAssignedVehicle, u.Username, v.VehicleID, c.Latitude, c.Longitude;
 ";
 
 $requests_result = $conn->query($requests_sql);
@@ -123,6 +125,7 @@ $offers_sql = "
         off.DateCreated,
         off.DateAssignedVehicle,
         u.Username AS RescuerUsername,
+        v.VehicleID AS AssignedVehicleID,
         c.Latitude AS OfferLat,
         c.Longitude AS OfferLng,
         GROUP_CONCAT(oi.ItemID) AS ItemIDs,
@@ -134,8 +137,9 @@ $offers_sql = "
     LEFT JOIN Users u ON r.UserID = u.UserID
     LEFT JOIN OfferItems oi ON off.OfferID = oi.OfferID
     LEFT JOIN Items i ON oi.ItemID = i.ItemID
+    LEFT JOIN Vehicles v ON r.RescuerID = v.RescuerID
     WHERE off.Status IN ('PENDING', 'INPROGRESS')
-    GROUP BY off.OfferID;
+    GROUP BY off.OfferID, off.RescuerID, c.CitizenID, c.Name, c.Phone, off.Status, off.DateCreated, off.DateAssignedVehicle, u.Username, v.VehicleID, c.Latitude, c.Longitude;
 ";
 
 $offers_result = $conn->query($offers_sql);
@@ -151,8 +155,8 @@ if ($offers_result->num_rows > 0) {
         $offerOffsets[$citizenID] += 1;
 
         // Apply the offset for offers
-        $row['OfferLat'] += $offerOffsets[$citizenID] * 0.0000608;
-        $row['OfferLng'] += $offerOffsets[$citizenID] * 0.0000600;
+        $row['OfferLat'] += $offerOffsets[$citizenID] * 0.0000678;
+        $row['OfferLng'] += $offerOffsets[$citizenID] * 0.0000570;
 
         $offers[] = $row;
     }

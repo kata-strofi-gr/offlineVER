@@ -2,7 +2,7 @@
 header('Content-Type: application/json');
 $servername = "localhost";
 $username = "root";
-$password = "dbpassword"; // Change this to your MySQL password
+$password = "0r35t1s21802!"; // Change this to your MySQL password
 $dbname = "kata_strofh";
 
 // Create connection

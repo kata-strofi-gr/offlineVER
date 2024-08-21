@@ -73,13 +73,15 @@
                 <div class="sidebar" id="sidebar">
                 </div>
                 <div class="buttonArea">
-                    <button class="map-button">Αιτήματα αναληφθέντα</button>
-                    <button class="map-button">Αιτήματα εκκρεμή</button>
-                    <button class="map-button">Προσφορές</button>
-                    <button class="map-button">Οχήματα με task</button>
-                    <button class="map-button">Οχήματα χωρίς task</button>
-                    <button class="map-button">Σε εξέλιξη</button>
+                    <button class="map-button" id="toggleTakenRequests" data-filter="takenRequests">Αιτήματα αναληφθέντα</button>
+                    <button class="map-button" id="togglePendingRequests" data-filter="pendingRequests">Αιτήματα εκκρεμή</button>
+                    <button class="map-button" id="toggleOffers" data-filter="offers">Προσφορές</button>                    
+                    <button class="map-button" id="toggleActiveVehicles" data-filter="activeVehicles">Οχήματα με task</button>
+                    <button class="map-button" id="toggleInactiveVehicles" data-filter="inactiveVehicles">Οχήματα χωρίς task</button>
+                    <button class="map-button" id="toggleLines" data-filter="lines">Ευθείες Γραμμές</button>
+                    
                 </div>
+                
 
             </div>
 
@@ -228,7 +230,7 @@
 
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <script src="mapScript.js"></script>
+    <script src="mapScriptcopy.js"></script>
     <script src="admin.js"></script>
 </body>
 </html>

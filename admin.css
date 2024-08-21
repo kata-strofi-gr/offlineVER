@@ -194,6 +194,16 @@
     color:var(--kataRED)
 }
 
+.map-button.active-filter {
+    background-color: white;
+    color:var(--kataRED)
+}
+
+.map-button.active-filter:hover {
+    background-color: #ad1919;
+    color: white;
+}
+
 .exitB{
     width: 500px;
     margin: 50px;
@@ -218,7 +228,7 @@
     display: none;
     flex-direction: column;
     border-radius: 15px;
-    background-color: #1c3742;
+    background-color: rgb(236, 186, 60);
     color: white;
     font-family: Arial, sans-serif;
     overflow: hidden;
@@ -232,7 +242,7 @@
     display: none;
     flex-direction: column;
     border-radius: 15px;
-    background-color: #7d0438;
+    background-color: #403DBF;
     color: white;
     font-family: Arial, sans-serif;
     overflow: hidden;

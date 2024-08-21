@@ -7,10 +7,27 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
+// Global variables to track markers, lines, and fil
+
 var baseMarker; // To store the base marker
 var newBaseLatLng; // To store the new coordinates after dragging
-let drawnLines = []; // To keep track of drawn lines
 let vehicleMarkers = {}; // To store vehicle locations
+let allMarkers = []; // Array to store all markers
+let inProgressMarkers = []; // Array to store in-progress request markers
+let pendingMarkers = []; // Array to store pending request markers
+let offerMarkers = []; // Array to store offer markers
+let activeVehicleMarkers = []; // Array to store active vehicle markers
+let inactiveVehicleMarkers = []; // Array to store inactive vehicle markers
+let drawnLines = []; // Array to store drawn lines
+
+let isInProgressFilterActive = false; // State to track if the in-progress filter is active
+let isPendingFilterActive = false; // State to track if the pending filter is active
+let isOfferFilterActive = false; // State to track if the offer filter is active
+let isActiveVehiclesFilterActive = false; // State to track if the active vehicles filter is active
+let isInactiveVehiclesFilterActive = false; // State to track if the inactive vehicles filter is active
+let isLinesFilterActive = false; // State to track if the lines filter is active
+
+let initialLoad = true; // Flag to check if it's the first load
 
 // Custom icons for different statuses and types
 var baseIcon = L.icon({
@@ -56,113 +73,18 @@ var blueIcon = new L.Icon({
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
 });
-// State to track the visibility of each layer type
-let filterStates = {
-    takenRequests: false,  // Initially hide taken requests
-    pendingRequests: false,  // Initially hide pending requests
-    offers: false,  // Initially hide offers
-    activeVehicles: false,  // Initially hide active vehicles
-    inactiveVehicles: false,  // Initially hide inactive vehicles
-    lines: false,  // Initially hide lines
-};
 
-// Function to update the visibility of layers based on filter states
-function updateLayerVisibility() {
-    map.eachLayer(function (layer) {
-        if (layer instanceof L.Marker) {
-            // Handle request markers
-            if (layer.options.icon === pendingRequestIcon) {
-                if (filterStates.pendingRequests) {
-                    map.removeLayer(layer);
-                } else {
-                    layer.addTo(map);
-                }
-            }
+let currentCenter; // To store the current center of the map
+let currentZoom;  // To store the current zoom level of the map
 
-            if (layer.options.icon === inProgressRequestIcon) {
-                if (filterStates.takenRequests) {
-                    map.removeLayer(layer);
-                } else {
-                    layer.addTo(map);
-                }
-            }
-
-            // Handle offer markers
-            if (layer.options.icon === pendingOfferIcon || layer.options.icon === inProgressOfferIcon) {
-                if (filterStates.offers) {
-                    map.removeLayer(layer);
-                } else {
-                    layer.addTo(map);
-                }
-            }
-
-            // Handle vehicle markers
-            if (layer.options.icon === blueIcon) {
-                const isActive = layer.options.active; // Assuming layer.options.active stores the active status of the vehicle
-                if ((filterStates.activeVehicles && isActive) || (filterStates.inactiveVehicles && !isActive)) {
-                    map.removeLayer(layer);
-                } else {
-                    layer.addTo(map);
-                }
-            }
-        }
-
-        // Handle polylines (lines) visibility
-        if (layer instanceof L.Polyline) {
-            if (filterStates.lines) {
-                map.removeLayer(layer);
-            } else {
-                layer.addTo(map);
-            }
-        }
-    });
-}
-
-// Ensure the filter toggling is done correctly
-function toggleFilter(filterName, buttonId) {
-    filterStates[filterName] = !filterStates[filterName];
-    updateLayerVisibility();
-
-    const button = document.getElementById(buttonId);
-    if (filterStates[filterName]) {
-        button.classList.add('active-filter'); // Add visual cue for active state
-    } else {
-        button.classList.remove('active-filter'); // Remove visual cue for inactive state
-    }
-
-    // Debugging output
-    console.log(`Filter '${filterName}' toggled: ${filterStates[filterName]}`);
-}
-// Event listeners for the toggle buttons
-document.getElementById('toggleTakenRequests').addEventListener('click', function () {
-    toggleFilter('takenRequests', 'toggleTakenRequests');
-});
-
-document.getElementById('togglePendingRequests').addEventListener('click', function () {
-    toggleFilter('pendingRequests', 'togglePendingRequests');
-});
-
-document.getElementById('toggleOffers').addEventListener('click', function () {
-    toggleFilter('offers', 'toggleOffers');
-});
-
-document.getElementById('toggleActiveVehicles').addEventListener('click', function () {
-    toggleFilter('activeVehicles', 'toggleActiveVehicles');
-});
-
-document.getElementById('toggleInactiveVehicles').addEventListener('click', function () {
-    toggleFilter('inactiveVehicles', 'toggleInactiveVehicles');
-});
-
-document.getElementById('toggleLines').addEventListener('click', function () {
-    toggleFilter('lines', 'toggleLines');
-});
-
-// Ensure the initial map update respects the filter states
-fetchDataAndUpdateMap();
-
-// Function to fetch data from the server and update the map
 function fetchDataAndUpdateMap() {
+
+    // Save the current center and zoom level before fetching the data
+    if (!initialLoad) {
+        currentCenter = map.getCenter();
+        currentZoom = map.getZoom();
+    }
+    
     fetch('map_fetch.php')
         .then(response => response.json())
         .then(data => {
@@ -171,7 +93,6 @@ function fetchDataAndUpdateMap() {
                 return;
             }
             updateMap(data);
-            updateLayerVisibility(); // Apply the current filter states after updating the map
         })
         .catch(error => {
             console.error('Fetch Error:', error);
@@ -184,6 +105,7 @@ function clearLines() {
     drawnLines.forEach(line => map.removeLayer(line));
     drawnLines = [];
 }
+
 
 // Function to draw lines between vehicle and tasks
 function drawLines(vehicle, requests, offers) {
@@ -216,6 +138,7 @@ function drawLines(vehicle, requests, offers) {
     }
 }
 
+
 // Function to draw a line between a request/offer and its assigned vehicle using VehicleID
 function drawLineToAssignedVehicle(marker, assignedVehicleID, vehicleMarkers) {
     clearLines(); // Clear existing lines
@@ -229,19 +152,33 @@ function drawLineToAssignedVehicle(marker, assignedVehicleID, vehicleMarkers) {
     }
 }
 
+
 // Function to update the map with base, vehicle, offer, and request data
 function updateMap(mapData) {
     const base = mapData.base;
+    
 
-    // Set the map view to the base's location
-    map.setView([base.Latitude, base.Longitude], 16);
+    // Clear previous markers and lines
+    allMarkers.forEach(marker => map.removeLayer(marker));
+    inProgressMarkers.forEach(marker => map.removeLayer(marker));
+    pendingMarkers.forEach(marker => map.removeLayer(marker));
+    offerMarkers.forEach(marker => map.removeLayer(marker));
+    activeVehicleMarkers.forEach(marker => map.removeLayer(marker));
+    inactiveVehicleMarkers.forEach(marker => map.removeLayer(marker));
+    drawnLines.forEach(line => map.removeLayer(line));
+    
+    allMarkers = []; // Reset the marker arrays
+    inProgressMarkers = [];
+    pendingMarkers = [];
+    offerMarkers = [];
+    activeVehicleMarkers = [];
+    inactiveVehicleMarkers = [];
+    drawnLines = [];
 
-    // Clear existing markers and lines
-    map.eachLayer(function (layer) {
-        if (layer instanceof L.Marker || layer instanceof L.Polyline) {
-            map.removeLayer(layer);
-        }
-    });
+    // Clear the base marker if it exists
+    if (baseMarker) {
+        map.removeLayer(baseMarker);
+    }
 
     // Add the base marker with the custom icon
     baseMarker = L.marker([base.Latitude, base.Longitude], { icon: baseIcon, draggable: true })
@@ -255,79 +192,35 @@ function updateMap(mapData) {
         showConfirmPopup(); // Show confirmation popup when dragging ends
     });
 
+    // If it's the initial load (browser refresh), set the map to the base location
+    if (initialLoad) {
+        map.setView([base.Latitude, base.Longitude], 16);
+        initialLoad = false; // Reset the flag after the initial load
+    } else {
+        // Reapply the saved center and zoom level after the update
+        if (currentCenter && currentZoom) {
+            map.setView(currentCenter, currentZoom);
+        }
+    }
+
+
     // Store vehicle locations for easy lookup
     mapData.vehicles.forEach(function (vehicle) {
         vehicleMarkers[vehicle.VehicleID] = { lat: vehicle.VehicleLat, lng: vehicle.VehicleLng };
-    });
 
-    // Add request markers
-    mapData.requests.forEach(function (request) {
-        var icon = request.Status === 'PENDING' ? pendingRequestIcon : inProgressRequestIcon;
-        var requestMarker = L.marker([request.RequestLat, request.RequestLng], { icon: icon });
+        // Determine if the vehicle is active or inactive
+        let vehicleMarker = L.marker([vehicle.VehicleLat, vehicle.VehicleLng], { icon: blueIcon });
 
-        requestMarker.on('click', function () {
-            clearLines(); // Clear lines when clicking a new marker
-            showPopup({
-                type: "request-box",
-                title: "Αίτημα",
-                details: `
-                <p><strong>Ονοματεπώνυμο:</strong> ${request.Name}</p>
-                <p><strong>Τηλέφωνο:</strong> ${request.Phone}</p>
-                <p><strong>Ημ/νια Καταχώρησης:</strong> ${request.DateCreated}</p>
-                <p><strong>Είδη:</strong> ${request.ItemNames}</p>
-                <p><strong>Ποσότητες:</strong> ${request.ItemQuantities}</p>
-                <p><strong>Ημ/νια Ανάληψης Οχήματος:</strong> ${request.DateAssignedVehicle}</p>
-                ${request.RescuerUsername ? `<p><strong>Αναλήφθηκε από:</strong> ${request.RescuerUsername}</p>` : ''}
-            `
-            });
-
-            // Draw a line to the assigned vehicle if in progress
-            if (request.Status === 'INPROGRESS' && request.AssignedVehicleID) {
-                drawLineToAssignedVehicle(requestMarker, request.AssignedVehicleID, vehicleMarkers);
-            }
-        });
-        // Show requests if the respective filters are disabled
-        if ((request.Status === 'PENDING' && !filterStates.pendingRequests) || 
-        (request.Status === 'INPROGRESS' && !filterStates.takenRequests)) {
-        requestMarker.addTo(map);
-     }
-    });
-
-    // Add offer markers
-    mapData.offers.forEach(function (offer) {
-        var icon = offer.Status === 'PENDING' ? pendingOfferIcon : inProgressOfferIcon;
-        var offerMarker = L.marker([offer.OfferLat, offer.OfferLng], { icon: icon });
-
-        offerMarker.on('click', function () {
-            clearLines(); // Clear lines when clicking a new marker
-            showPopup({
-                type: "offer-box",
-                title: "Προσφορά",
-                details: `
-                <p><strong>Ονοματεπώνυμο:</strong> ${offer.Name}</p>
-                <p><strong>Τηλέφωνο:</strong> ${offer.Phone}</p>
-                <p><strong>Ημ/νια Καταχώρησης:</strong> ${offer.DateCreated}</p>
-                <p><strong>Είδη:</strong> ${offer.ItemNames}</p>
-                <p><strong>Ποσότητες:</strong> ${offer.ItemQuantities}</p>
-                <p><strong>Ημ/νια Ανάληψης Οχήματος:</strong> ${offer.DateAssignedVehicle}</p>
-                ${offer.RescuerUsername ? `<p><strong>Αναλήφθηκε από:</strong> ${offer.RescuerUsername}</p>` : ''}
-            `
-            });
-
-            // Draw a line to the assigned vehicle if in progress
-            if (offer.Status === 'INPROGRESS' && offer.AssignedVehicleID) {
-                drawLineToAssignedVehicle(offerMarker, offer.AssignedVehicleID, vehicleMarkers);
-            }
-        });
-
-        // Show offers if the offers filter is disabled
-        if (!filterStates.offers) {
-            offerMarker.addTo(map);
+        if (vehicle.ActiveTasks > 0) {
+            activeVehicleMarkers.push(vehicleMarker);
+        } else {
+            inactiveVehicleMarkers.push(vehicleMarker);
         }
-    });
-    // Add vehicle markers
-    mapData.vehicles.forEach(function (vehicle) {
-        var vehicleMarker = L.marker([vehicle.VehicleLat, vehicle.VehicleLng], { icon: blueIcon });
+
+        if ((!isActiveVehiclesFilterActive || vehicle.ActiveTasks > 0) &&
+            (!isInactiveVehiclesFilterActive || vehicle.ActiveTasks === 0)) {
+            vehicleMarker.addTo(map);
+        }
 
         vehicleMarker.on('click', function () {
             clearLines(); // Clear lines when clicking a new marker
@@ -341,26 +234,192 @@ function updateMap(mapData) {
                 <p><strong>Ενεργά Tasks:</strong> ${vehicle.ActiveTasks > 0 ? 'Ναι' : 'Όχι'}</p>
             `
             });
-            // Draw lines for the selected vehicle
-            drawLines(vehicle, mapData.requests, mapData.offers);
-        });
 
-        // Show vehicles if the respective filters are disabled
-        if ((!vehicle.ActiveTasks && !filterStates.inactiveVehicles) || 
-            (vehicle.ActiveTasks && !filterStates.activeVehicles)) {
-            vehicleMarker.addTo(map);
-        }
+            // Draw lines only if the lines filter is not active
+            if (!isLinesFilterActive) {
+                drawLines(vehicle, mapData.requests, mapData.offers);
+            }
+        });
     });
 
-    // Draw lines if the filter is disabled
-    if (!filterStates.lines) {
-        mapData.vehicles.forEach(function (vehicle) {
-            drawLines(vehicle, mapData.requests, mapData.offers);
+    // Add request markers
+    mapData.requests.forEach(function (request) {
+        var icon = request.Status === 'PENDING' ? pendingRequestIcon : inProgressRequestIcon;
+        var requestMarker = L.marker([request.RequestLat, request.RequestLng], { icon: icon });
+
+        // Add to the respective arrays
+        allMarkers.push(requestMarker);
+        if (request.Status === 'INPROGRESS') {
+            inProgressMarkers.push(requestMarker);
+        } else if (request.Status === 'PENDING') {
+            pendingMarkers.push(requestMarker);
+        }
+
+        // Add marker to the map if the filters are not active or if it should be displayed
+        if ((!isInProgressFilterActive || request.Status !== 'INPROGRESS') &&
+            (!isPendingFilterActive || request.Status !== 'PENDING')) {
+            requestMarker.addTo(map);
+        }
+
+        requestMarker.on('click', function () {
+            clearLines(); // Clear lines when clicking a new marker
+            showPopup({
+                type: "request-box",
+                title: "Αίτημα",
+                details: `
+                <p><strong>Ονοματεπώνυμο:</strong> ${request.Name}</p>
+                <p><strong>Τηλέφωνο:</strong> ${request.Phone}</p>
+                <p><strong>Ημ/νια Καταχώρησης:</strong> ${request.DateCreated}</p>
+                <p><strong>Είδη:</strong> ${request.ItemNames}</p>
+                <p><strong>Ποσότητες:</strong> ${request.ItemQuantities}</p>
+                ${request.RescuerUsername ? `<p><strong>Ημ/νια Ανάληψης Οχήματος:</strong> ${request.DateAssignedVehicle}</p>` : ''}
+                ${request.RescuerUsername ? `<p><strong>Αναλήφθηκε από:</strong> ${request.RescuerUsername}</p>` : ''}
+            `
+            });
+
+            // Draw a line to the assigned vehicle if in progress
+            if (request.Status === 'INPROGRESS' && request.AssignedVehicleID && !isLinesFilterActive) {
+                drawLineToAssignedVehicle(requestMarker, request.AssignedVehicleID, vehicleMarkers);
+            }
         });
-    }
-    // Apply the current filter states immediately after loading data
-    updateLayerVisibility();
+    });
+
+    // Add offer markers
+    mapData.offers.forEach(function (offer) {
+        var icon = offer.Status === 'PENDING' ? pendingOfferIcon : inProgressOfferIcon;
+        var offerMarker = L.marker([offer.OfferLat, offer.OfferLng], { icon: icon });
+
+        // Add to the respective array
+        allMarkers.push(offerMarker);
+        offerMarkers.push(offerMarker);
+
+        // Add marker to the map if the filter is not active
+        if (!isOfferFilterActive) {
+            offerMarker.addTo(map);
+        }
+
+        offerMarker.on('click', function () {
+            clearLines(); // Clear lines when clicking a new marker
+            showPopup({
+                type: "offer-box",
+                title: "Προσφορά",
+                details: `
+                <p><strong>Ονοματεπώνυμο:</strong> ${offer.Name}</p>
+                <p><strong>Τηλέφωνο:</strong> ${offer.Phone}</p>
+                <p><strong>Ημ/νια Καταχώρησης:</strong> ${offer.DateCreated}</p>
+                <p><strong>Είδη:</strong> ${offer.ItemNames}</p>
+                <p><strong>Ποσότητες:</strong> ${offer.ItemQuantities}</p>
+                ${offer.DateAssignedVehicle ? `<p><strong>Ημ/νια Ανάληψης Οχήματος:</strong> ${offer.DateAssignedVehicle}</p>` : ''}
+                ${offer.RescuerUsername ? `<p><strong>Αναλήφθηκε από:</strong> ${offer.RescuerUsername}</p>` : ''}
+            `
+            });
+
+            // Draw a line to the assigned vehicle if in progress
+            if (offer.Status === 'INPROGRESS' && offer.AssignedVehicleID && !isLinesFilterActive) {
+                drawLineToAssignedVehicle(offerMarker, offer.AssignedVehicleID, vehicleMarkers);
+            }
+        });
+    });
+
 }
+
+// Function to toggle the filter for "Taken Requests"
+function toggleInProgressRequests() {
+    const button = document.getElementById('toggleTakenRequests');
+    
+    if (isInProgressFilterActive) {
+        inProgressMarkers.forEach(marker => marker.addTo(map)); // Re-add in-progress markers
+        button.classList.remove('active-filter');
+    } else {
+        inProgressMarkers.forEach(marker => map.removeLayer(marker)); // Remove in-progress markers
+        button.classList.add('active-filter');
+    }
+    
+    isInProgressFilterActive = !isInProgressFilterActive;
+}
+
+// Function to toggle the filter for "Pending Requests"
+function togglePendingRequests() {
+    const button = document.getElementById('togglePendingRequests');
+    
+    if (isPendingFilterActive) {
+        pendingMarkers.forEach(marker => marker.addTo(map)); // Re-add pending markers
+        button.classList.remove('active-filter');
+    } else {
+        pendingMarkers.forEach(marker => map.removeLayer(marker)); // Remove pending markers
+        button.classList.add('active-filter');
+    }
+    
+    isPendingFilterActive = !isPendingFilterActive;
+}
+
+// Function to toggle the filter for "Offers"
+function toggleOffers() {
+    const button = document.getElementById('toggleOffers');
+    
+    if (isOfferFilterActive) {
+        offerMarkers.forEach(marker => marker.addTo(map)); // Re-add offer markers
+        button.classList.remove('active-filter');
+    } else {
+        offerMarkers.forEach(marker => map.removeLayer(marker)); // Remove offer markers
+        button.classList.add('active-filter');
+    }
+    
+    isOfferFilterActive = !isOfferFilterActive;
+}
+
+// Function to toggle the filter for "Active Vehicles"
+function toggleActiveVehicles() {
+    const button = document.getElementById('toggleActiveVehicles');
+    
+    if (isActiveVehiclesFilterActive) {
+        activeVehicleMarkers.forEach(marker => marker.addTo(map)); // Re-add active vehicle markers
+        button.classList.remove('active-filter');
+    } else {
+        activeVehicleMarkers.forEach(marker => map.removeLayer(marker)); // Remove active vehicle markers
+        button.classList.add('active-filter');
+    }
+    
+    isActiveVehiclesFilterActive = !isActiveVehiclesFilterActive;
+}
+
+// Function to toggle the filter for "Inactive Vehicles"
+function toggleInactiveVehicles() {
+    const button = document.getElementById('toggleInactiveVehicles');
+    
+    if (isInactiveVehiclesFilterActive) {
+        inactiveVehicleMarkers.forEach(marker => marker.addTo(map)); // Re-add inactive vehicle markers
+        button.classList.remove('active-filter');
+    } else {
+        inactiveVehicleMarkers.forEach(marker => map.removeLayer(marker)); // Remove inactive vehicle markers
+        button.classList.add('active-filter');
+    }
+    
+    isInactiveVehiclesFilterActive = !isInactiveVehiclesFilterActive;
+}
+
+// Function to toggle the filter for "Lines"
+function toggleLines() {
+    const button = document.getElementById('toggleLines');
+    
+    if (isLinesFilterActive) {
+        drawnLines.forEach(line => line.addTo(map)); // Re-add lines
+        button.classList.remove('active-filter');
+    } else {
+        drawnLines.forEach(line => map.removeLayer(line)); // Remove lines
+        button.classList.add('active-filter');
+    }
+    
+    isLinesFilterActive = !isLinesFilterActive;
+}
+
+// Add event listeners for the toggle buttons
+document.getElementById('toggleTakenRequests').addEventListener('click', toggleInProgressRequests);
+document.getElementById('togglePendingRequests').addEventListener('click', togglePendingRequests);
+document.getElementById('toggleOffers').addEventListener('click', toggleOffers);
+document.getElementById('toggleActiveVehicles').addEventListener('click', toggleActiveVehicles);
+document.getElementById('toggleInactiveVehicles').addEventListener('click', toggleInactiveVehicles);
+document.getElementById('toggleLines').addEventListener('click', toggleLines);
 
 
 // Function to show the confirmation popup
@@ -436,8 +495,8 @@ document.getElementById('cancelButton').addEventListener('click', cancelBaseLoca
 // Initial fetch and update of the map
 fetchDataAndUpdateMap();
 
-// Fetch and update map data every 20 seconds
-setInterval(fetchDataAndUpdateMap, 20000);
+// Fetch and update map data every 10 seconds
+setInterval(fetchDataAndUpdateMap, 10000);
 
 // Get the popup element and close button
 var externalPopup = document.getElementById('draggableBox');
@@ -576,6 +635,7 @@ document.getElementById('logoF').addEventListener('click', function(e) {
     contentSectionX3.style.display = 'none';
     contentSectionX4.style.display = 'none';
 });
+
 
 
 
