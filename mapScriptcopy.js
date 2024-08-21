@@ -787,62 +787,6 @@ document.getElementById('showChartButton').addEventListener('click', function() 
 });
 
 
-// Mock data for the table
-const mockData = [
-    
-        { category: 'Τρόφιμα', name: 'Ψωμί', description: '500g, Πακέτο', quantity: 100, location: 'Αποθήκη', id: 1 },
-        { category: 'Τρόφιμα', name: 'Ρύζι', description: '1kg, Σακούλα', quantity: 200, location: 'Αποθήκη', id: 2 },
-        { category: 'Τρόφιμα', name: 'Ζυμαρικά', description: '500g, Πακέτο', quantity: 150, location: 'Αποθήκη', id: 3 },
-        { category: 'Υγειονομικό Υλικό', name: 'Γάζες', description: '10τμχ, Πακέτο', quantity: 50, location: 'Αποθήκη', id: 4 },
-        { category: 'Υγειονομικό Υλικό', name: 'Αντισηπτικά', description: '100ml, Μπουκάλι', quantity: 75, location: 'Αποθήκη', id: 5 },
-        { category: 'Ρουχισμός', name: 'Κουβέρτες', description: '1τμχ, Φλις', quantity: 120, location: 'Αποθήκη', id: 6 },
-        { category: 'Ρουχισμός', name: 'Ρούχα', description: 'Διάφορα μεγέθη, Κουτί', quantity: 60, location: 'Αποθήκη', id: 7 },
-        { category: 'Νερό', name: 'Εμφιαλωμένο νερό', description: '1.5L, Μπουκάλι', quantity: 300, location: 'Αποθήκη', id: 8 },
-        { category: 'Φάρμακα', name: 'Παυσίπονα', description: '20τμχ, Κουτί', quantity: 100, location: 'Αποθήκη', id: 9 },
-        { category: 'Φάρμακα', name: 'Αντιβιοτικά', description: '10τμχ, Κουτί', quantity: 50, location: 'Αποθήκη', id: 10 },
-        { category: 'Τρόφιμα', name: 'Κονσέρβες', description: '400g, Κονσέρβα', quantity: 180, location: 'Αποθήκη', id: 11 },
-        { category: 'Υγειονομικό Υλικό', name: 'Μάσκες', description: '50τμχ, Πακέτο', quantity: 200, location: 'Αποθήκη', id: 12 },
-        { category: 'Νερό', name: 'Εμφιαλωμένο νερό', description: '500ml, Μπουκάλι', quantity: 500, location: 'Αποθήκη', id: 13 },
-        { category: 'Φάρμακα', name: 'Αντιφλεγμονώδη', description: '20τμχ, Κουτί', quantity: 70, location: 'Αποθήκη', id: 14 },
-        { category: 'Ρουχισμός', name: 'Κάλτσες', description: '10τμχ, Πακέτο', quantity: 90, location: 'Αποθήκη', id: 15 }
-    
-    
-    // Add more mock data as needed
-];
-
-function populateTable(data) {
-    const tableBody = document.querySelector('#dataTable tbody');
-    tableBody.innerHTML = '';
-
-    data.forEach(row => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${row.category}</td>
-            <td>${row.name}</td>
-            <td>${row.description}</td>
-            <td>${row.quantity}</td>
-            <td>${row.location}</td>
-            <td>${row.id}</td>
-        `;
-        tableBody.appendChild(tr);
-    });
-}
-
-// Populate table with initial mock data
-populateTable(mockData);
-
-// Filter functionality
-document.getElementById('filterType').addEventListener('change', function() {
-    const filterValue = this.value;
-    let filteredData = mockData;
-
-    if (filterValue !== 'all') {
-        filteredData = mockData.filter(row => row.category.toLowerCase() === filterValue.toLowerCase());
-    }
-
-    populateTable(filteredData);
-});
-
 
 //mobile version
 // Add this to your mapScript.js

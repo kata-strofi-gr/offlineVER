@@ -179,11 +179,9 @@
                     Φιλτράρισμα
                 </div>
                 <div class="filter-content">
-                    <label for="filterType">Είδος</label>
-                    <select id="filterType">
-                        <option value="all">All</option>
-                        <option value="milk">Γάλατα</option>
-                        <option value="beer">Μπύρες</option>
+                    <label for="filterType">Κατηγορίες</label>
+                    <select id="filterType" multiple size="10">
+                      <!-- Options will be dynamically inserted here -->
                         <!-- Add other options as needed -->
                     </select>
                 </div>
@@ -231,6 +229,7 @@
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="mapScriptcopy.js"></script>
+    <script src="warehouse.js"></script>
     <script src="admin.js"></script>
 </body>
 </html>

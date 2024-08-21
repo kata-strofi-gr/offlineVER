@@ -53,7 +53,6 @@ CREATE TABLE Items (
 CREATE TABLE Warehouse (
     ItemID INT,
     Quantity INT NOT NULL,
-    PRIMARY KEY (ItemID),
     FOREIGN KEY (ItemID) REFERENCES Items(ItemID) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
@@ -166,21 +165,7 @@ CREATE TABLE AnnouncementItems (
 ) ENGINE=InnoDB;
 
 
--- DROP DATABASE kata_strofh;
-SELECT 
-    v.VehicleID,
-    u.Username AS RescuerUsername,
-    v.Latitude + 0.0001 AS VehicleLat,
-    v.Longitude + 0.0001 AS VehicleLng,
-    IFNULL(SUM(vi.Quantity), 0) AS Load,
-    COUNT(DISTINCT req.RequestID) AS RequestCount,
-    COUNT(DISTINCT off.OfferID) AS OfferCount
-FROM Vehicles v
-JOIN Rescuer r ON v.RescuerID = r.RescuerID
-JOIN Users u ON r.UserID = u.UserID
-LEFT JOIN VehicleItems vi ON v.VehicleID = vi.VehicleID
-LEFT JOIN Requests req ON req.RescuerID = r.RescuerID AND req.Status IN ('PENDING', 'INPROGRESS')
-LEFT JOIN Offers off ON off.RescuerID = r.RescuerID AND off.Status IN ('PENDING', 'INPROGRESS')
+-- DROP DATABASE kata_strofh;Status IN ('PENDING', 'INPROGRESS')
 GROUP BY v.VehicleID, u.Username, v.Latitude, v.Longitude;
 
 
