@@ -4,178 +4,259 @@ USE kata_strofh;
 DELIMITER //
 CREATE PROCEDURE CreateNewRequest(
     IN citizen_id INT,
-    IN item_details JSON
+    IN item_names VARCHAR(1000),  -- Comma-separated item names
+    IN quantities VARCHAR(1000)   -- Comma-separated quantities
 )
 BEGIN
-    DECLARE item_count INT;
+    DECLARE item_name VARCHAR(255);
+    DECLARE quantity INT;
     DECLARE total_items INT;
-    DECLARE new_request_id INT;
+    DECLARE request_id INT;
+    DECLARE i INT DEFAULT 1;
+    DECLARE found_item_id INT;
+    DECLARE item_count INT;
 
-    -- Calculate the number of items to be checked
-    SET total_items = JSON_LENGTH(item_details);
+    -- Calculate the total number of items from the comma-separated string
+    SET total_items = LENGTH(item_names) - LENGTH(REPLACE(item_names, ',', '')) + 1;
 
-    -- Create a temporary table to store item IDs and quantities
-    CREATE TEMPORARY TABLE TempItems (
-        ItemID INT,
-        Quantity INT
-    );
+    -- Initialize item count
+    SET item_count = 0;
 
-    -- Insert item IDs and quantities into the temporary table
-    INSERT INTO TempItems (ItemID, Quantity)
-    SELECT i.ItemID, jt.quantity
-    FROM Items i
-    JOIN JSON_TABLE(item_details, "$[*]" COLUMNS (
-        item_name VARCHAR(255) PATH "$.item_name",
-        quantity INT PATH "$.quantity"
-    )) AS jt
-    ON i.Name = jt.item_name;
+    -- Loop through the delimited item names and quantities to validate existence
+    WHILE i <= total_items DO
+        -- Extract the current item name
+        SET item_name = TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(item_names, ',', i), ',', -1));
 
-    -- Check existence of all items by their IDs in the temporary table
-    SELECT COUNT(*) INTO item_count
-    FROM TempItems ti
-    JOIN Items i ON ti.ItemID = i.ItemID;
+        -- Extract the current quantity and convert it to an integer
+        SET quantity = CAST(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(quantities, ',', i), ',', -1)) AS UNSIGNED);
 
-    -- If not all items exist, raise an error
+        -- Validate the existence of the item and get its ID
+        SELECT COUNT(*) INTO found_item_id
+        FROM Items
+        WHERE Name = item_name
+        LIMIT 1;
+
+        -- Ensure the item exists and the quantity is valid
+        IF found_item_id > 0 AND quantity > 0 THEN
+            -- Increment the item count for each valid item
+            SET item_count = item_count + 1;
+        END IF;
+
+        SET i = i + 1;
+    END WHILE;
+
+    -- Check if the number of valid items matches the total number of items
     IF item_count <> total_items THEN
-        DROP TEMPORARY TABLE TempItems;
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'One or more items do not exist in the dB', MYSQL_ERRNO = 4001;
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'One or more items do not exist in the database or invalid quantities provided', MYSQL_ERRNO = 4001;
     END IF;
 
-    -- Step 2: Insert a new request with status 'PENDING'
-    INSERT INTO Requests (CitizenID, Status, DateCreated)
-    VALUES (citizen_id, 'PENDING', NOW());
+    -- Insert a new request with the current date
+    INSERT INTO Requests (CitizenID,Status,DateCreated)
+    VALUES (citizen_id,'PENDING',NOW());
 
     -- Retrieve the new request ID
-    SET new_request_id = LAST_INSERT_ID();
+    SET request_id = LAST_INSERT_ID();
 
-    -- Step 3: Associate items with the new request
-    INSERT INTO RequestItems (RequestID, ItemID, Quantity)
-    SELECT new_request_id, ItemID, Quantity
-    FROM TempItems;
-    -- Drop the temporary table
-    DROP TEMPORARY TABLE TempItems;
+    -- Reset the loop counter
+    SET i = 1;
 
-END //
+    -- Loop again to insert each item into RequestItems
+    WHILE i <= total_items DO
+        -- Extract the current item name
+        SET item_name = TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(item_names, ',', i), ',', -1));
+
+        -- Extract the current quantity and convert it to an integer
+        SET quantity = CAST(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(quantities, ',', i), ',', -1)) AS UNSIGNED);
+
+        -- Get the ItemID for the current item name
+        SELECT ItemID INTO found_item_id
+        FROM Items
+        WHERE Name = item_name
+        LIMIT 1;
+
+        -- Insert the item into RequestItems
+        IF found_item_id > 0 AND quantity > 0 THEN
+            INSERT INTO RequestItems (RequestID, ItemID, Quantity)
+            VALUES (request_id, found_item_id, quantity);
+        END IF;
+
+        SET i = i + 1;
+    END WHILE;
+END;
+
 DELIMITER ;
 
 
 -- Procedure to create a new offer
-
 DELIMITER //
 CREATE PROCEDURE CreateNewOffer(
     IN citizen_id INT,
-    IN items JSON
+    IN item_names VARCHAR(1000),  -- Comma-separated item names
+    IN quantities VARCHAR(1000)   -- Comma-separated quantities
 )
 BEGIN
-    DECLARE offerID INT;
-    DECLARE item_count INT;
+    DECLARE item_name VARCHAR(255);
+    DECLARE quantity INT;
     DECLARE total_items INT;
+    DECLARE offer_id INT;
+    DECLARE i INT DEFAULT 1;
+    DECLARE found_item_id INT;
+    DECLARE item_count INT;
 
-    -- Calculate the number of items to be checked
-    SET total_items = JSON_LENGTH(items);
+    -- Calculate the total number of items from the comma-separated string
+    SET total_items = LENGTH(item_names) - LENGTH(REPLACE(item_names, ',', '')) + 1;
 
-    -- Create a temporary table to store item IDs and quantities
-    CREATE TEMPORARY TABLE TempItems (
-        ItemID INT,
-        Quantity INT
-    );
+    -- Initialize item count
+    SET item_count = 0;
 
-    -- Insert item IDs and quantities into the temporary table
-    INSERT INTO TempItems (ItemID, Quantity)
-    SELECT i.ItemID, jt.quantity
-    FROM Items i
-    JOIN JSON_TABLE(items, "$[*]" COLUMNS (
-        item_name VARCHAR(255) PATH "$.name",
-        quantity INT PATH "$.quantity"
-    )) AS jt
-    ON i.Name = jt.item_name;
+    -- Loop through the delimited item names and quantities to validate existence
+    WHILE i <= total_items DO
+        -- Extract the current item name
+        SET item_name = TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(item_names, ',', i), ',', -1));
 
-    -- Check existence of all items by their IDs in the temporary table
-    SELECT COUNT(*) INTO item_count
-    FROM TempItems ti
-    JOIN Items i ON ti.ItemID = i.ItemID;
+        -- Extract the current quantity and convert it to an integer
+        SET quantity = CAST(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(quantities, ',', i), ',', -1)) AS UNSIGNED);
 
-    -- If not all items exist, raise an error
+        -- Validate the existence of the item and get its ID
+        SELECT COUNT(*) INTO found_item_id
+        FROM Items
+        WHERE Name = item_name
+        LIMIT 1;
+
+        -- Ensure the item exists and the quantity is valid
+        IF found_item_id > 0 AND quantity > 0 THEN
+            -- Increment the item count for each valid item
+            SET item_count = item_count + 1;
+        END IF;
+
+        SET i = i + 1;
+    END WHILE;
+
+    -- Check if the number of valid items matches the total number of items
     IF item_count <> total_items THEN
-        DROP TEMPORARY TABLE TempItems;
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'One or more items do not exist in the dBt', MYSQL_ERRNO = 4001;
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'One or more items do not exist in the database or invalid quantities provided', MYSQL_ERRNO = 4001;
     END IF;
 
-    -- Step 2: Insert a new offer with the provided status
-    INSERT INTO Offers (CitizenID, Status, DateCreated)
-    VALUES (citizen_id, 'PENDING', NOW());
+    -- Insert a new offer with the current date
+    INSERT INTO Offers (CitizenID,Status,DateCreated)
+    VALUES (citizen_id,'PENDING',NOW());
 
     -- Retrieve the new offer ID
-    SET offerID = LAST_INSERT_ID();
+    SET offer_id = LAST_INSERT_ID();
 
-    -- Step 3: Associate items with the new offer
-    INSERT INTO OfferItems (OfferID, ItemID, Quantity)
-    SELECT offerID, ItemID, Quantity
-    FROM TempItems;
+    -- Reset the loop counter
+    SET i = 1;
 
-    -- Drop the temporary table
-    DROP TEMPORARY TABLE TempItems;
-END //
+    -- Loop again to insert each item into OfferItems
+    WHILE i <= total_items DO
+        -- Extract the current item name
+        SET item_name = TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(item_names, ',', i), ',', -1));
+
+        -- Extract the current quantity and convert it to an integer
+        SET quantity = CAST(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(quantities, ',', i), ',', -1)) AS UNSIGNED);
+
+        -- Get the ItemID for the current item name
+        SELECT ItemID INTO found_item_id
+        FROM Items
+        WHERE Name = item_name
+        LIMIT 1;
+
+        -- Insert the item into OfferItems
+        IF found_item_id > 0 AND quantity > 0 THEN
+            INSERT INTO OfferItems (OfferID, ItemID, Quantity)
+            VALUES (offer_id, found_item_id, quantity);
+        END IF;
+
+        SET i = i + 1;
+    END WHILE;
+END;
 DELIMITER ;
 
 
 -- Procedure to create a new announcement
 DELIMITER //
 CREATE PROCEDURE CreateNewAnnouncement(
-    IN AdminID INT,
-    IN items JSON
+    IN admin_id INT,
+    IN item_names VARCHAR(1000),  -- Comma-separated item names
+    IN quantities VARCHAR(1000)   -- Comma-separated quantities
 )
 BEGIN
-    DECLARE announcementID INT;
-    DECLARE item_count INT;
+    DECLARE item_name VARCHAR(255);
+    DECLARE quantity INT;
     DECLARE total_items INT;
+    DECLARE announcement_id INT;
+    DECLARE i INT DEFAULT 1;
+    DECLARE found_item_id INT;
+    DECLARE item_count INT;
 
-    -- Calculate the number of items to be checked
-    SET total_items = JSON_LENGTH(items);
+    -- Calculate the total number of items from the comma-separated string
+    SET total_items = LENGTH(item_names) - LENGTH(REPLACE(item_names, ',', '')) + 1;
 
-    -- Create a temporary table to store item IDs and quantities
-    CREATE TEMPORARY TABLE TempItemsAnn (
-        ItemID INT,
-        Quantity INT
-    );
+    -- Initialize item count
+    SET item_count = 0;
 
-    -- Insert item IDs and quantities into the temporary table
-    INSERT INTO TempItemsAnn (ItemID, Quantity)
-    SELECT i.ItemID, jt.quantity
-    FROM Items i
-    JOIN JSON_TABLE(items, "$[*]" COLUMNS (
-        item_name VARCHAR(255) PATH "$.name",
-        quantity INT PATH "$.quantity"
-    )) AS jt
-    ON i.Name = jt.item_name;
+    -- Loop through the delimited item names and quantities to validate existence
+    WHILE i <= total_items DO
+        -- Extract the current item name
+        SET item_name = TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(item_names, ',', i), ',', -1));
 
-    -- Check existence of all items by their IDs in the temporary table
-    SELECT COUNT(*) INTO item_count
-    FROM TempItemsAnn ti
-    JOIN Items i ON ti.ItemID = i.ItemID;
+        -- Extract the current quantity and convert it to an integer
+        SET quantity = CAST(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(quantities, ',', i), ',', -1)) AS UNSIGNED);
 
-    -- If not all items exist, raise an error
+        -- Validate the existence of the item and get its ID
+        SELECT COUNT(*) INTO found_item_id
+        FROM Items
+        WHERE Name = item_name
+        LIMIT 1;
+
+        -- Ensure the item exists and the quantity is valid
+        IF found_item_id > 0 AND quantity > 0 THEN
+            -- Increment the item count for each valid item
+            SET item_count = item_count + 1;
+        END IF;
+
+        SET i = i + 1;
+    END WHILE;
+
+    -- Check if the number of valid items matches the total number of items
     IF item_count <> total_items THEN
-        DROP TEMPORARY TABLE TempItemsAnn;
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'One or more items do not exist in the dB', MYSQL_ERRNO = 4001;
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'One or more items do not exist in the database or invalid quantities provided', MYSQL_ERRNO = 4001;
     END IF;
 
-    -- Step 2: Insert a new offer with the provided status
+    -- Insert a new announcement with the current date
     INSERT INTO Announcements (AdminID, DateCreated)
-    VALUES (AdminID, NOW());
+    VALUES (admin_id, NOW());
 
-    -- Retrieve the new offer ID
-    SET announcementID = LAST_INSERT_ID();
+    -- Retrieve the new announcement ID
+    SET announcement_id = LAST_INSERT_ID();
 
-    -- Step 3: Associate items with the new offer
-    INSERT INTO AnnouncementItems (AnnouncementID, ItemID, Quantity)
-    SELECT announcementID, ItemID, Quantity
-    FROM TempItemsAnn;
+    -- Reset the loop counter
+    SET i = 1;
 
-    -- Drop the temporary table
-    DROP TEMPORARY TABLE TempItemsAnn;
+    -- Loop again to insert each item into AnnouncementItems
+    WHILE i <= total_items DO
+        -- Extract the current item name
+        SET item_name = TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(item_names, ',', i), ',', -1));
 
-END //
+        -- Extract the current quantity and convert it to an integer
+        SET quantity = CAST(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(quantities, ',', i), ',', -1)) AS UNSIGNED);
+
+        -- Get the ItemID for the current item name
+        SELECT ItemID INTO found_item_id
+        FROM Items
+        WHERE Name = item_name
+        LIMIT 1;
+
+        -- Insert the item into AnnouncementItems
+        IF found_item_id > 0 AND quantity > 0 THEN
+            INSERT INTO AnnouncementItems (AnnouncementID, ItemID, Quantity)
+            VALUES (announcement_id, found_item_id, quantity);
+        END IF;
+
+        SET i = i + 1;
+    END WHILE;
+END;
+
 DELIMITER ;
 
 

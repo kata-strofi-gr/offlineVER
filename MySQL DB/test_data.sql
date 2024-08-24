@@ -100,13 +100,26 @@ INSERT INTO AnnouncementItems (AnnouncementID, ItemID, Quantity) VALUES
 
 
 -- Test entry for CreateNewRequest procedure
-CALL CreateNewRequest(1, '[{"item_name": "Rice", "quantity": 5}, {"item_name": "Rice", "quantity": 5}, {"item_name": "Rice", "quantity": 5}, {"item_name": "Rice", "quantity": 5}, {"item_name": "Rice", "quantity": 3}]');
+
+
+CALL CreateNewRequest(
+    2,                     -- Citizen ID
+    'Rice,Rice,Rice,Blanket,Blanket,Blanket,Blanket', -- Comma-separated item names
+    '100,50,70,33,33,696969,4'             -- Corresponding quantities
+);
 
 -- Test entry for CreateNewOffer procedure
-CALL CreateNewOffer(1, '[{"name": "Blanket", "quantity": 5}, {"name": "Rice", "quantity": 3}]');
+CALL CreateNewOffer(
+    2,                      -- Citizen ID
+    'Rice,Blanket,Blanket', -- Comma-separated item names
+    '69,5,3'           -- Corresponding quantities
+);
 
 -- Test entry for CreateAnnouncement procedure
-CALL CreateNewAnnouncement(1, '[{"name": "Blanket", "quantity": 5}, {"name": "Rice", "quantity": 3}]');
+CALL CreateNewAnnouncement(1, 
+    'Rice,Aspirin,Blanket', -- Comma-separated item names
+    '100,50,70'             -- Corresponding quantities
+);
 
 
 
