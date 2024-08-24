@@ -202,6 +202,82 @@
         </div>
     </div>
 
+
+    <div class="form-wrapper">
+    <div class="form-container" id="categoryItemForm">
+        <div class="form-header">Καθορισμός κατηγοριών-ειδών</div>
+        <div class="form-content">
+            <!-- Category Dropdown -->
+            <label for="category">Κατηγορία</label>
+            <select id="category" name="category">
+                <option value="" disabled selected>Επιλέξτε κατηγορία</option>
+                <option value="dummyCategory1">Νερά</option>
+                <option value="dummyCategory2">Όσπρια</option>
+                <option value="newCategory" id="newCategoryOption">Δημιουργία νέας κατηγορίας</option>
+            </select>
+    
+            <!-- Item Dropdown -->
+            <label for="item">Είδος</label>
+            <select id="item" name="item">
+                <option value="" disabled selected>Επιλέξτε είδος</option>
+                <option value="dummyItem1">Lorem</option>
+                <option value="dummyItem2">Ipsum</option>
+                <option value="newItem" id="newItemOption">Δημιουργία νέου είδους</option>
+            </select>
+    
+            <!-- Description Text Field -->
+            <label for="description">Περιγραφή</label>
+            <input type="text" id="description" name="description" placeholder="Περιγραφή">
+    
+            <!-- Quantity Text Field -->
+            <label for="quantity">Ποσότητα</label>
+            <input type="number" id="quantity" name="quantity" placeholder="Ποσότητα">
+    
+            <!-- Submit Button -->
+            <div class="form-buttons">
+                <button type="button" class="btn submit" id="submitCategoryItemForm">Υποβολή</button>
+            </div>
+        </div>
+    </div>
+    
+
+    <div class="form-container" id="simpleTextFieldForm">
+        <div class="form-header">Με κλήση προς usidas</div>
+        <div class="form-content">
+            <!-- Simple Text Field -->
+            
+            <input type="text" id="simpleText" name="simpleText" placeholder="Εισάγετε url/.json">
+    
+            <!-- Submit Button -->
+            <div class="form-buttons">
+                <button type="button" class="btn submit" id="submitTextFieldForm">Fetch</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="form-container" id="uploadFileForm">
+        <div class="form-header">Με ανέβασμα αρχείου</div>
+        <div class="form-content">
+            <!-- File Upload Field -->
+            
+            <div id="dropArea" class="drop-area">
+                <input type="file" id="fileUpload" name="fileUpload" style="display: none;">
+                <p class="uploadTEXT">Κλικ για να επιλέξετε αρχείο</p>
+            </div>
+    
+            <!-- Submit Button -->
+            <div class="form-buttons">
+                <button type="button" class="btn submit" id="submitFileForm">Υποβολή</button>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+
+
+
+
     <!-- ola ta popup mexri edo mesas-->
     </div>
 

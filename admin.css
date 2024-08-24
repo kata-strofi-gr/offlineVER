@@ -728,3 +728,78 @@ tbody tr:hover {
         scale: 0.8;
     }
 }
+
+
+/* Styling for the new form header */
+.form-header {
+    border-radius: 10px 10px 0 0; /* This is added to ensure a consistent rounded border */
+}
+
+/* Additional styles for the new form */
+
+#simpleTextFieldForm{
+    
+    max-height: 15rem;
+}
+
+#uploadFileForm{
+    
+    max-height: 15rem;
+}
+
+.form-content input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+
+
+/* Style for delete buttons */
+label button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    background-color: lightgrey;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+label button:hover {
+    background-color: var(--kataRED);
+}
+
+.drop-area{
+    background-color: lightgray;
+    border-radius: 15px;
+    height: 2rem;
+    margin-bottom: 30px;
+    width: 15rem;
+    
+}
+
+.uploadTEXT{
+    text-align: center;
+    font-size: medium;
+    color: white;
+}
+
+/* Container for forms to display side by side */
+/* Container for forms to display side by side */
+.form-wrapper {
+    display: flex;
+    gap: 20px; /* Adjust gap between forms as needed */
+    flex-wrap: wrap; /* Allows wrapping on smaller screens */
+}
+
+.form-container {
+    flex: 1; /* Ensures equal width for all forms */
+    min-width: 300px; /* Ensures minimum width to keep forms readable */
+}
+
+

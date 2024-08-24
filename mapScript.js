@@ -517,11 +517,11 @@ function closePopupFunction() {
 // openPopup();
 document.getElementById('stockManage').addEventListener('click', function (e) {
     e.preventDefault(); // Prevent default link behavior
-    showStockManage();
+    manageStock();
 });
 document.getElementById('stockStatus').addEventListener('click', function (e) {
     e.preventDefault(); // Prevent default link behavior
-    showStockManage();
+    showStock();
 });
 document.getElementById('statistikaShow').addEventListener('click', function (e) {
     e.preventDefault(); // Prevent default link behavior
@@ -553,6 +553,9 @@ function newAithma() {
     var contentSectionX2 = document.getElementById('statistikoulia');
     var contentSectionX3 = document.getElementById('chartContainer');
     var contentSectionX4 = document.getElementById('stockW');
+    var contentSectionX5 = document.getElementById('categoryItemForm');
+    var contentSectionX6 = document.getElementById('simpleTextFieldForm');
+    var contentSectionX7 = document.getElementById('uploadFileForm');
     //pernaei
     contentSection.style.display = 'block';
     //kovontai
@@ -561,6 +564,9 @@ function newAithma() {
     contentSectionX2.style.display ='none';
     contentSectionX3.style.display ='none';
     contentSectionX4.style.display ='none';
+    contentSectionX5.style.display ='none';
+    contentSectionX6.style.display ='none';
+    contentSectionX7.style.display ='none';
 }
 
 function newDiasostis() {
@@ -572,6 +578,9 @@ function newDiasostis() {
     var contentSectionX2 = document.getElementById('statistikoulia');
     var contentSectionX3 = document.getElementById('chartContainer');
     var contentSectionX4 = document.getElementById('stockW');
+    var contentSectionX5 = document.getElementById('categoryItemForm');
+    var contentSectionX6 = document.getElementById('simpleTextFieldForm');
+    var contentSectionX7 = document.getElementById('uploadFileForm');
     //pernaei
     contentSection.style.display = 'block';
     //kovontai
@@ -579,6 +588,9 @@ function newDiasostis() {
     contentSectionX2.style.display ='none';
     contentSectionX3.style.display ='none';
     contentSectionX4.style.display ='none';
+    contentSectionX5.style.display ='none';
+    contentSectionX6.style.display ='none';
+    contentSectionX7.style.display ='none';
     mapContainer.style.display = 'none';
 }
 
@@ -590,6 +602,9 @@ function showStatistika() {
     var contentSectionX = document.getElementById('newDiasosths');
     var contentSectionX2 = document.getElementById('newAithmata');
     var contentSectionX4 = document.getElementById('stockW');
+    var contentSectionX5 = document.getElementById('categoryItemForm');
+    var contentSectionX6 = document.getElementById('simpleTextFieldForm');
+    var contentSectionX7 = document.getElementById('uploadFileForm');
     //pernaei
     contentSection.style.display = 'block';
     //kovontai
@@ -597,9 +612,12 @@ function showStatistika() {
     contentSectionX.style.display ='none';
     contentSectionX2.style.display ='none';
     contentSectionX4.style.display ='none';
+    contentSectionX5.style.display ='none';
+    contentSectionX6.style.display ='none';
+    contentSectionX7.style.display ='none';
 }
 
-function showStockManage() {
+function showStock() {
     //to parakato pernaei
     var contentSection = document.getElementById('stockW');
     //ta parakato kruvontai
@@ -608,6 +626,10 @@ function showStockManage() {
     var contentSectionX2 = document.getElementById('statistikoulia');
     var contentSectionX3 = document.getElementById('chartContainer');
     var contentSectionX4 = document.getElementById('newDiasosths');
+    var contentSectionX5 = document.getElementById('categoryItemForm');
+    var contentSectionX6 = document.getElementById('simpleTextFieldForm');
+    var contentSectionX7 = document.getElementById('uploadFileForm');
+    
     //pernaei
     contentSection.style.display = 'block';
     //kovontai
@@ -616,8 +638,38 @@ function showStockManage() {
     contentSectionX3.style.display ='none';
     contentSectionX4.style.display ='none';
     mapContainer.style.display = 'none';
+    contentSectionX5.style.display ='none';
+    contentSectionX6.style.display ='none';
+    contentSectionX7.style.display ='none';
 }
 
+
+function manageStock() {
+    //to parakato pernaei
+    var contentSection = document.getElementById('stockW');
+    //ta parakato kruvontai
+    var mapContainer = document.getElementById('mapContainerI');
+    var contentSectionX = document.getElementById('newAithmata');
+    var contentSectionX2 = document.getElementById('statistikoulia');
+    var contentSectionX3 = document.getElementById('chartContainer');
+    var contentSectionX4 = document.getElementById('newDiasosths');
+    var contentSectionX5 = document.getElementById('categoryItemForm');
+    var contentSectionX6 = document.getElementById('simpleTextFieldForm');
+    var contentSectionX7 = document.getElementById('uploadFileForm');
+    
+    //pernaei
+    contentSectionX5.style.display ='block';
+    contentSectionX6.style.display ='block';
+    contentSectionX7.style.display ='block';
+    
+    //kovontai
+    contentSectionX.style.display ='none';
+    contentSectionX2.style.display ='none';
+    contentSectionX3.style.display ='none';
+    contentSectionX4.style.display ='none';
+    mapContainer.style.display = 'none';
+    contentSection.style.display = 'none';
+}
 //anakateuthinsi sthn admin othoni
 document.getElementById('logoF').addEventListener('click', function(e) {
     e.preventDefault();
@@ -627,6 +679,9 @@ document.getElementById('logoF').addEventListener('click', function(e) {
     var contentSection = document.getElementById('newDiasosths');
     var contentSectionX3 = document.getElementById('chartContainer');
     var contentSectionX4 = document.getElementById('stockW');
+    var contentSectionX5 = document.getElementById('categoryItemForm');
+    var contentSectionX6 = document.getElementById('simpleTextFieldForm');
+    var contentSectionX7 = document.getElementById('uploadFileForm');
 
     mapContainer.style.display = 'block';
     contentSection.style.display = 'none';
@@ -634,6 +689,9 @@ document.getElementById('logoF').addEventListener('click', function(e) {
     contentSectionX2.style.display = 'none';
     contentSectionX3.style.display = 'none';
     contentSectionX4.style.display = 'none';
+    contentSectionX5.style.display ='none';
+    contentSectionX6.style.display ='none';
+    contentSectionX7.style.display ='none';
 });
 
 
@@ -812,6 +870,115 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('click', function() {
         if (window.innerWidth <= 768) {
             menuItems.forEach(item => item.classList.remove('active'));
+        }
+    });
+});
+
+
+//gia diaxeirish va
+document.addEventListener('DOMContentLoaded', function () {
+    function addNewOption(dropdownId, newOptionValue) {
+        const dropdown = document.getElementById(dropdownId);
+
+        // Create a new option element
+        const newOption = document.createElement('option');
+        newOption.text = newOptionValue;
+        newOption.value = newOptionValue;
+
+        // Insert before 'new' option
+        dropdown.add(newOption, dropdown.options[dropdown.options.length - 1]);
+    }
+
+    function handleDropdownChange(dropdownId, newOptionText) {
+        const dropdown = document.getElementById(dropdownId);
+
+        if (dropdown.value === `new${dropdownId.charAt(0).toUpperCase() + dropdownId.slice(1)}`) {
+            const newOption = prompt(`Enter new ${newOptionText} name:`);
+            if (newOption) {
+                addNewOption(dropdownId, newOption);
+            }
+            dropdown.value = ''; // Reset dropdown
+        }
+    }
+
+    // Event listener for category dropdown
+    document.getElementById('category').addEventListener('change', function () {
+        handleDropdownChange('category', 'category');
+    });
+
+    // Event listener for item dropdown
+    document.getElementById('item').addEventListener('change', function () {
+        handleDropdownChange('item', 'item');
+    });
+
+    // Delete selected option
+    function deleteSelectedOption(dropdownId) {
+        const dropdown = document.getElementById(dropdownId);
+        dropdown.options[dropdown.selectedIndex].remove();
+    }
+
+    // Adding a delete button
+    const categoryDeleteButton = document.createElement('button');
+    categoryDeleteButton.textContent = '🗑️';
+    categoryDeleteButton.onclick = function () {
+        deleteSelectedOption('category');
+    };
+    document.querySelector('label[for="category"]').appendChild(categoryDeleteButton);
+
+    const itemDeleteButton = document.createElement('button');
+    itemDeleteButton.textContent = '🗑️';
+    itemDeleteButton.onclick = function () {
+        deleteSelectedOption('item');
+    };
+    document.querySelector('label[for="item"]').appendChild(itemDeleteButton);
+
+    // Submit button action
+    document.getElementById('submitCategoryItemForm').addEventListener('click', function () {
+        alert('Form submitted!');
+    });
+});
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const dropArea = document.getElementById('dropArea');
+    const fileInput = document.getElementById('fileUpload');
+
+    // Event listener for drag-and-drop functionality
+    dropArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropArea.classList.add('dragover');
+    });
+
+    dropArea.addEventListener('dragleave', () => {
+        dropArea.classList.remove('dragover');
+    });
+
+    dropArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropArea.classList.remove('dragover');
+        const files = e.dataTransfer.files;
+        fileInput.files = files; // Assign dropped files to input element
+    });
+
+    dropArea.addEventListener('click', () => {
+        fileInput.click(); // Trigger file input click on drop area click
+    });
+
+    fileInput.addEventListener('change', () => {
+        // Show selected file name or handle multiple files
+        const files = fileInput.files;
+        if (files.length) {
+            alert(`Selected file: ${files[0].name}`);
+        }
+    });
+
+    // Submit button action for file upload form
+    document.getElementById('submitFileForm').addEventListener('click', function () {
+        if (fileInput.files.length > 0) {
+            alert('File submitted: ' + fileInput.files[0].name);
+            // Perform any additional submission actions here
+        } else {
+            alert('Please upload a file before submitting.');
         }
     });
 });
