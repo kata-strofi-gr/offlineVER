@@ -30,13 +30,13 @@ INSERT INTO Warehouse (ItemID, Quantity) VALUES
 
 
 -- Insert sample data into Requests table
-INSERT INTO Requests (CitizenID, Status, DateCreated) VALUES 
-(1, 'PENDING', NOW()), -- John Doe requesting Rice
-(2, 'PENDING', NOW()),  -- Jane Doe requesting Aspirin
-(3, 'PENDING', NOW()),  -- Alice Smith requesting Blanket
-(1, 'PENDING', NOW()),  -- John Doe requesting Aspirin
-(2, 'PENDING', NOW()),  -- Jane Doe requesting Blanket
-(3, 'PENDING', NOW());  -- Alice Smith requesting Rice
+INSERT INTO Requests (CitizenID,NumberofPeople,Status, DateCreated) VALUES 
+(1,1, 'PENDING', NOW()), -- John Doe requesting Rice
+(2,1, 'PENDING', NOW()),  -- Jane Doe requesting Aspirin
+(3,1, 'PENDING', NOW()),  -- Alice Smith requesting Blanket
+(1,1, 'PENDING', NOW()),  -- John Doe requesting Aspirin
+(2,1, 'PENDING', NOW()),  -- Jane Doe requesting Blanket
+(3,1, 'PENDING', NOW());  -- Alice Smith requesting Rice
 
 INSERT INTO RequestItems (RequestID, ItemID, Quantity) VALUES
 (1, 1, 10), -- John Doe requesting 10 units of Rice
@@ -103,7 +103,8 @@ INSERT INTO AnnouncementItems (AnnouncementID, ItemID, Quantity) VALUES
 
 
 CALL CreateNewRequest(
-    2,                     -- Citizen ID
+    2,      
+    10,               -- Citizen ID
     'Rice,Rice,Rice,Blanket,Blanket,Blanket,Blanket', -- Comma-separated item names
     '100,50,70,33,33,696969,4'             -- Corresponding quantities
 );
@@ -127,13 +128,13 @@ CALL CreateNewAnnouncement(1,
 CALL AssignRequest(1, 2); -- Assigning first request to rescuer1
 CALL AssignRequest(1, 3); -- Assigning second request to rescuer1
 CALL AssignRequest(1, 3); -- Assigning third request to rescuer1
-CALL AssignRequest(7, 2); -- Assigning fourth request to rescuer1
+CALL AssignRequest(89, 1); -- Assigning fourth request to rescuer1
 
 -- This next assignment should trigger the task limit check
 CALL AssignRequest(1, 1); -- Attempting to assign fifth request to rescuer1
 
 -- Example of offers being assigned to rescuers
-CALL AssignOffer(1, 3); -- Assigning first offer to rescuer1
+CALL AssignOffer(30, 3); -- Assigning first offer to rescuer1
 CALL AssignOffer(2, 3); -- Assigning second offer to rescuer1
 CALL AssignOffer(3, 3); -- Assigning third offer to rescuer1
 CALL AssignOffer(4, 3); -- Assigning fourth offer to rescuer1
@@ -144,9 +145,9 @@ CALL CancelRequest(1);
 
 CALL CancelOffer(1);
 
-CALL FinishRequest(2);
+CALL FinishRequest(89);
 
-CALL FinishOffer(2);
+CALL FinishOffer(30);
 
 
 

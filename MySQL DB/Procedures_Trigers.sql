@@ -4,6 +4,7 @@ USE kata_strofh;
 DELIMITER //
 CREATE PROCEDURE CreateNewRequest(
     IN citizen_id INT,
+    IN NumberofPeople INT,
     IN item_names VARCHAR(1000),  -- Comma-separated item names
     IN quantities VARCHAR(1000)   -- Comma-separated quantities
 )
@@ -51,8 +52,8 @@ BEGIN
     END IF;
 
     -- Insert a new request with the current date
-    INSERT INTO Requests (CitizenID,Status,DateCreated)
-    VALUES (citizen_id,'PENDING',NOW());
+    INSERT INTO Requests (CitizenID,NumberofPeople,Status,DateCreated)
+    VALUES (citizen_id,NumberofPeople,'PENDING',NOW());
 
     -- Retrieve the new request ID
     SET request_id = LAST_INSERT_ID();
@@ -399,7 +400,7 @@ CREATE PROCEDURE FinishRequest (
 )
 BEGIN
     UPDATE Requests
-    SET Status = 'FINISHED'
+    SET Status = 'FINISHED' , DateFinished = NOW()
     WHERE RequestID = reqID;
 END //
 DELIMITER ;
@@ -411,7 +412,7 @@ CREATE PROCEDURE FinishOffer (
 )
 BEGIN
     UPDATE Offers
-    SET Status = 'FINISHED'
+    SET Status = 'FINISHED',  DateFinished = NOW()
     WHERE OfferID = p_offerID;
 END //
 DELIMITER ;
@@ -544,75 +545,6 @@ BEGIN
     END IF;
 END //
 DELIMITER ;
-
-
--- for log tables we may use them to add functionality to the system
-
-/* -- Trigger to log changes in Requests table
-DELIMITER //
-CREATE TRIGGER AfterRequestUpdate
-AFTER UPDATE ON Requests
-FOR EACH ROW
-BEGIN
-    INSERT INTO RequestHistory (RequestID, ChangeType, OldStatus, NewStatus, OldRescuerID, NewRescuerID)
-    VALUES (OLD.RequestID, 'Update', OLD.Status, NEW.Status, OLD.RescuerID, NEW.RescuerID);
-END //
-DELIMITER ;
-
--- Trigger to log insertions in Requests table
-DELIMITER //
-CREATE TRIGGER AfterRequestInsert
-AFTER INSERT ON Requests
-FOR EACH ROW
-BEGIN
-    INSERT INTO RequestHistory (RequestID, ChangeType, NewStatus, NewRescuerID)
-    VALUES (NEW.RequestID, 'Insert', NEW.Status, NEW.RescuerID);
-END //
-DELIMITER ;
-
--- Trigger to log deletions in Requests table
-DELIMITER //
-CREATE TRIGGER AfterRequestDelete
-AFTER DELETE ON Requests
-FOR EACH ROW
-BEGIN
-    INSERT INTO RequestHistory (RequestID, ChangeType, OldStatus, OldRescuerID)
-    VALUES (OLD.RequestID, 'Delete', OLD.Status, OLD.RescuerID);
-END //
-DELIMITER ;
-
--- Trigger to log changes in Offers table
-DELIMITER //
-CREATE TRIGGER AfterOfferUpdate
-AFTER UPDATE ON Offers
-FOR EACH ROW
-BEGIN
-    INSERT INTO OfferHistory (OfferID, ChangeType, OldStatus, NewStatus, OldRescuerID, NewRescuerID)
-    VALUES (OLD.OfferID, 'Update', OLD.Status, NEW.Status, OLD.RescuerID, NEW.RescuerID);
-END //
-DELIMITER ;
-
--- Trigger to log insertions in Offers table
-DELIMITER //
-CREATE TRIGGER AfterOfferInsert
-AFTER INSERT ON Offers
-FOR EACH ROW
-BEGIN
-    INSERT INTO OfferHistory (OfferID, ChangeType, NewStatus, NewRescuerID)
-    VALUES (NEW.OfferID, 'Insert', NEW.Status, NEW.RescuerID);
-END //
-DELIMITER ;
-
--- Trigger to log deletions in Offers table
-DELIMITER //
-CREATE TRIGGER AfterOfferDelete
-AFTER DELETE ON Offers
-FOR EACH ROW
-BEGIN
-    INSERT INTO OfferHistory (OfferID, ChangeType, OldStatus, OldRescuerID)
-    VALUES (OLD.OfferID, 'Delete', OLD.Status, OLD.RescuerID);
-END //
-DELIMITER ; */
 
 
 

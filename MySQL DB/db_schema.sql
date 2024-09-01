@@ -61,8 +61,10 @@ CREATE TABLE Requests (
     RequestID INT AUTO_INCREMENT PRIMARY KEY,
     CitizenID INT,
     Status ENUM('PENDING', 'INPROGRESS', 'FINISHED') NOT NULL DEFAULT 'PENDING',
+    NumberofPeople INT NOT NULL,
     DateCreated DATETIME NOT NULL,
     DateAssignedVehicle DATETIME,
+    DateFinished DATETIME,
     RescuerID INT,
     FOREIGN KEY (CitizenID) REFERENCES Citizen(CitizenID) ON DELETE CASCADE,
     FOREIGN KEY (RescuerID) REFERENCES Rescuer(RescuerID) ON DELETE CASCADE,
@@ -84,6 +86,7 @@ CREATE TABLE RequestItems (
     INDEX (ItemID)
 ) ENGINE=InnoDB;
 
+
 -- Offers Table
 CREATE TABLE Offers (
     OfferID INT AUTO_INCREMENT PRIMARY KEY,
@@ -91,6 +94,7 @@ CREATE TABLE Offers (
     Status ENUM('PENDING', 'INPROGRESS', 'FINISHED') NOT NULL DEFAULT 'PENDING',
     DateCreated DATETIME NOT NULL,
     DateAssignedVehicle DATETIME,
+    DateFinished DATETIME,
     RescuerID INT,
     FOREIGN KEY (CitizenID) REFERENCES Citizen(CitizenID) ON DELETE CASCADE,
     FOREIGN KEY (RescuerID) REFERENCES Rescuer(RescuerID) ON DELETE CASCADE,
@@ -99,6 +103,8 @@ CREATE TABLE Offers (
     INDEX (DateCreated),
     INDEX (DateAssignedVehicle)
 ) ENGINE=InnoDB;
+
+
 
 CREATE TABLE IF NOT EXISTS BaseLocation (
     BaseID INT AUTO_INCREMENT PRIMARY KEY,
