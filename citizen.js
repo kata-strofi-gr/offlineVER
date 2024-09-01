@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", function () {
     const draggableBox = document.getElementById("draggableBox");
     let offsetX = 0, offsetY = 0, isDragging = false;
@@ -21,9 +20,29 @@ document.addEventListener("DOMContentLoaded", function () {
     document.addEventListener("mouseup", function () {
         isDragging = false;
     });
+
+    let requestItems = [];
+
+    function fetchRequestData() {
+        const xhr = new XMLHttpRequest();
+        let userID = sessionStorage.getItem('userID');
+        xhr.open('GET', 'fetch_citizen_request.php/' + userID, true);
+
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                requestItems = JSON.parse(xhr.responseText);
+                populateTable(requestItems);
+            } else {
+                console.error('Failed to fetch data');
+            }
+        };
+
+        xhr.send();
+    };
+
+    fetchRequestData();
+
 });
-
-
 
 var externalPopup = document.getElementById('draggableBox');
 var closePopup = document.getElementById('closeBox');
@@ -37,8 +56,6 @@ function openPopup() {
 function closePopupFunction() {
     externalPopup.style.display = 'none';
 }
-
-
 
 // Optional: Open popup on page load
 // openPopup();
@@ -57,9 +74,6 @@ document.getElementById('loggout').addEventListener('click', function(e) {
     e.preventDefault(); // Prevent default link behavior
     window.location.href = 'http://127.0.0.1:5500/start.html#';
 });
-
-
-
 
 //leitourgies parathiron apo to menu
 function showaithmata() {
@@ -107,10 +121,6 @@ document.getElementById('logoF').addEventListener('click', function(e) {
     contentSection4.style.display = 'none';
     
 });
-
-
-
-
 
 $(function() {
     $(".datepicker").datepicker({
@@ -211,27 +221,6 @@ document.getElementById('showChartButton').addEventListener('click', function() 
     chartInstance = new Chart(ctx, config);  // Create a new chart instance
 });
 
-
-// Mock data for the table
-const mockData = [
-    { type: 'Τρόφιμα', category: 'Ψωμί', quantity: 100, dateACC: '2024-01-01', dateCOL: '2024-01-10', id: 1 },
-    { type: 'Τρόφιμα', category: 'Ρύζι', quantity: 200, dateACC: '2024-01-02', dateCOL: '2024-01-11', id: 2 },
-    { type: 'Τρόφιμα', category: 'Ζυμαρικά', quantity: 150, dateACC: '2024-01-03', dateCOL: '2024-01-12', id: 3 },
-    { type: 'Υγειονομικό Υλικό', category: 'Γάζες', quantity: 50, dateACC: '2024-01-04', dateCOL: '2024-01-13', id: 4 },
-    { type: 'Υγειονομικό Υλικό', category: 'Αντισηπτικά', quantity: 75, dateACC: '2024-01-05', dateCOL: '2024-01-14', id: 5 },
-    { type: 'Ρουχισμός', category: 'Κουβέρτες', quantity: 120, dateACC: '2024-01-06', dateCOL: '2024-01-15', id: 6 },
-    { type: 'Ρουχισμός', category: 'Ρούχα', quantity: 60, dateACC: '2024-01-07', dateCOL: '2024-01-16', id: 7 },
-    { type: 'Νερό', category: 'Εμφιαλωμένο νερό', quantity: 300, dateACC: '2024-01-08', dateCOL: '2024-01-17', id: 8 },
-    { type: 'Φάρμακα', category: 'Παυσίπονα', quantity: 100, dateACC: '2024-01-09', dateCOL: '2024-01-18', id: 9 },
-    { type: 'Φάρμακα', category: 'Αντιβιοτικά', quantity: 50, dateACC: '2024-01-10', dateCOL: '2024-01-19', id: 10 },
-    { type: 'Τρόφιμα', category: 'Κονσέρβες', quantity: 180, dateACC: '2024-01-11', dateCOL: '2024-01-20', id: 11 },
-    { type: 'Υγειονομικό Υλικό', category: 'Μάσκες', quantity: 200, dateACC: '2024-01-12', dateCOL: '2024-01-21', id: 12 },
-    { type: 'Νερό', category: 'Εμφιαλωμένο νερό', quantity: 500, dateACC: '2024-01-13', dateCOL: '2024-01-22', id: 13 },
-    { type: 'Φάρμακα', category: 'Αντιφλεγμονώδη', quantity: 70, dateACC: '2024-01-14', dateCOL: '2024-01-23', id: 14 },
-    { type: 'Ρουχισμός', category: 'Κάλτσες', quantity: 90, dateACC: '2024-01-15', dateCOL: '2024-01-24', id: 15 }
-    // Add more mock data as needed
-];
-
 function populateTable(data) {
     const tableBody = document.querySelector('#dataTable tbody');
     tableBody.innerHTML = '';
@@ -239,17 +228,15 @@ function populateTable(data) {
     data.forEach(row => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td>${row.type}</td>
-            <td>${row.category}</td>
-            <td>${row.quantity}</td>
-            <td>${row.dateACC}</td>
-            <td>${row.dateCOL}</td>
-        `;
+            <td>${row.Name}</td>
+            <td>${row.Category}</td>
+            <td>${row.Quantity}</td>
+            <td>${row.DateCreated}</td>
+            <td>${row.DateAssignedVehicle}</td> 
+        `; //TODO: dates are messed up
         tableBody.appendChild(tr);
     });
 }
-// Populate table with initial mock data
-populateTable(mockData);
 
 // Filter functionality
 
@@ -319,8 +306,6 @@ function populateNewTable(data) {
 }
 
 populateNewTable(newMockData);
-
-
 
 
 const mockData2 = [
