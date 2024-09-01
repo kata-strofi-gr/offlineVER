@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     let requestItems = [];
+    let offerItems = [];
 
     function fetchRequestData() {
         const xhr = new XMLHttpRequest();
@@ -40,7 +41,25 @@ document.addEventListener("DOMContentLoaded", function () {
         xhr.send();
     };
 
+    function fetchOfferData() {
+        const xhr = new XMLHttpRequest();
+        let userID = sessionStorage.getItem('userID');
+        xhr.open('GET', 'fetch_citizen_offer.php/' + userID, true);
+
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                offerItems = JSON.parse(xhr.responseText);
+                populateTable2(offerItems);
+            } else {
+                console.error('Failed to fetch data');
+            }
+        };
+
+        xhr.send();
+    };
+
     fetchRequestData();
+    fetchOfferData();
 
 });
 
@@ -334,12 +353,12 @@ function populateTable2(data) {
     data.forEach(row => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td>${row.type}</td>
-            <td>${row.category}</td>
-            <td>${row.quantity}</td>
-            <td>${row.dateACC}</td>
-            <td>${row.dateCOL}</td>
-        `;
+            <td>${row.Name}</td>
+            <td>${row.Category}</td>
+            <td>${row.Quantity}</td>
+            <td>${row.DateCreated}</td>
+            <td>${row.DateAssignedVehicle}</td> 
+        `; //TODO: dates are messed up
         tableBody.appendChild(tr);
     });
 }
