@@ -14,8 +14,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     try {
                         var response = JSON.parse(xhr.responseText);
                         if (response.success) {
+                            sessionStorage.setItem('userID', response.userID);
+
                             if (response.role === 'Administrator') {
                                 window.location.href = 'admin.html';
+                            } else if (response.role === 'Citizen') {
+                                window.location.href = 'citizen.html';
                             } else {
                                 window.location.href = 'blank.html';
                             }

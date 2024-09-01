@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($inputPassword === $storedPassword) {
             error_log("Password verification successful for username: " . $inputUsername);
-            echo json_encode(['success' => true, 'role' => $role]);
+            echo json_encode(['success' => true, 'role' => $role, 'userID' => $userID]);
         } else {
             error_log("Password verification failed for username: " . $inputUsername);
             echo json_encode(['success' => false, 'message' => 'Invalid password']);
