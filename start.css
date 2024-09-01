@@ -69,7 +69,8 @@
 .RlogoBIG {
     margin-left: 10vh;
     height: auto;
-    width: 30vh; /* Maintain aspect ratio */    
+    width: 30vh; /* Maintain aspect ratio */ 
+    cursor: pointer;   
 }
 
 /* Responsive size adjustments for .GRmapstart */

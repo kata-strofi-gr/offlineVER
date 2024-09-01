@@ -79,6 +79,7 @@
     width: 30vh; /* Maintain aspect ratio */    
     margin: 0; /* Removes any default margin */
     padding: 0; /* Removes any default padding */
+    cursor: pointer;
 }
 
 
