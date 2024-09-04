@@ -31,28 +31,28 @@ let initialLoad = true; // Flag to check if it's the first load
 
 // Custom icons for different statuses and types
 var baseIcon = L.icon({
-    iconUrl: 'markers/base.svg',  // Path to your custom icon
+    iconUrl: '../markers/base.svg',  // Path to your custom icon
     iconSize: [35, 50],
     iconAnchor: [15, 45],
     popupAnchor: [0, -45],
 });
 
 var pendingRequestIcon = L.icon({
-    iconUrl: 'markers/pendingRequestIcon_red.svg',
+    iconUrl: '../markers/pendingRequestIcon_red.svg',
     iconSize: [35, 50],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
 });
 
 var inProgressRequestIcon = L.icon({
-    iconUrl: 'markers/inProgressRequestIcon_green.svg',
+    iconUrl: '../markers/inProgressRequestIcon_green.svg',
     iconSize: [35, 50],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
 });
 
 var pendingOfferIcon = L.icon({
-    iconUrl: 'markers/pendingOfferIcon_orange.svg', // Replace with your icon path
+    iconUrl: '../markers/pendingOfferIcon_orange.svg', // Replace with your icon path
     iconSize: [35, 50],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
@@ -60,7 +60,7 @@ var pendingOfferIcon = L.icon({
 });
 
 var inProgressOfferIcon = L.icon({
-    iconUrl: 'markers/inProgressOfferIcon_blue.svg', // Replace with your icon path
+    iconUrl: '../markers/inProgressOfferIcon_blue.svg', // Replace with your icon path
     iconSize: [35, 50],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
@@ -68,7 +68,7 @@ var inProgressOfferIcon = L.icon({
 
 // Create a custom icon for the vehicle marker
 var blueIcon = new L.Icon({
-    iconUrl: 'markers/vehicle.svg', // Replace with your icon path
+    iconUrl: '../markers/vehicle.svg', // Replace with your icon path
     iconSize: [35, 50],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],

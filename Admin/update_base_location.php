@@ -1,7 +1,7 @@
 <?php
 
 // Include the database configuration file
-include 'db_config.php';
+include '../db_config.php';
 
 // Get the JSON input
 $data = json_decode(file_get_contents('php://input'), true);

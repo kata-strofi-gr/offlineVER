@@ -2,7 +2,7 @@
 header('Content-Type: application/json');
 
 // Include the database configuration file
-include 'db_config.php';
+include '../db_config.php';
 
 $sql = "
     SELECT 

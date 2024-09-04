@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             sessionStorage.setItem('userID', response.userID);
 
                             if (response.role === 'Administrator') {
-                                window.location.href = 'admin.html';
+                                window.location.href = 'Admin/admin.html';
                             } else if (response.role === 'Citizen') {
                                 window.location.href = 'citizen.html';
                             } else {
