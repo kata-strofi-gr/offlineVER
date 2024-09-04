@@ -28,6 +28,7 @@ CREATE TABLE Rescuer (
     FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+
 -- Citizen Table
 CREATE TABLE Citizen (
     UserID INT,
@@ -45,7 +46,8 @@ CREATE TABLE Items (
     ItemID INT AUTO_INCREMENT PRIMARY KEY,
     Category VARCHAR(50) NOT NULL,
     Name VARCHAR(100) NOT NULL,
-    Description VARCHAR(500) NOT NULL,
+    DetailName VARCHAR(100),
+    DetailValue VARCHAR(100),
     UNIQUE INDEX (Name)
 ) ENGINE=InnoDB;
 

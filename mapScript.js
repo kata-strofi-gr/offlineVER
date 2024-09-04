@@ -695,55 +695,6 @@ document.getElementById('logoF').addEventListener('click', function(e) {
 });
 
 
-
-//extra aithmata
-document.addEventListener("DOMContentLoaded", function() {
-    var addButton = document.querySelector(".btn.add-fields");
-    var additionalFields = document.getElementById("additionalFields");
-
-    addButton.addEventListener("click", function() {
-        // Clear previous fields
-        additionalFields.innerHTML = '';
-
-        // Get the number of extra requests
-        var extraRequests = document.getElementById("extraRequests").value;
-        var extraCount = parseInt(extraRequests);
-
-        // Validate the input
-        if (isNaN(extraCount) || extraCount < 1) {
-            alert("Please enter a valid number of extra requests.");
-            return;
-        }
-
-        // Add new sets of fields based on the number entered
-        for (var i = 1; i <= extraCount; i++) {
-            var typeLabel = document.createElement("label");
-            typeLabel.textContent = "Είδος " + i;
-            var typeSelect = document.createElement("select");
-            typeSelect.name = "extraType" + i;
-            typeSelect.innerHTML = `
-                <option value="" disabled selected>Επιλέξτε είδος</option>
-                <option value="option1">Option 1</option>
-                <option value="option2">Option 2</option>
-                <option value="option3">Option 3</option>
-            `;
-
-            var quantityLabel = document.createElement("label");
-            quantityLabel.textContent = "Ποσότητα " + i;
-            var quantityInput = document.createElement("input");
-            quantityInput.type = "text";
-            quantityInput.name = "extraQuantity" + i;
-            quantityInput.placeholder = "Ποσότητα";
-
-            additionalFields.appendChild(typeLabel);
-            additionalFields.appendChild(typeSelect);
-            additionalFields.appendChild(quantityLabel);
-            additionalFields.appendChild(quantityInput);
-        }
-    });
-});
-
-
 $(function() {
     $(".datepicker").datepicker({
         dateFormat: "yy-mm-dd",
@@ -873,7 +824,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
-
 
 //gia diaxeirish va
 document.addEventListener('DOMContentLoaded', function () {

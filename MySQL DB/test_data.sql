@@ -17,10 +17,11 @@ CALL CreateNewAdmin('admin_user3', 'adminpassword3');
 
 
 -- Insert sample data into Items table
-INSERT INTO Items (Category, Name, Description) VALUES 
-('Food', 'Rice', 'A staple food item'),
-('Medicine', 'Aspirin', 'Pain relief medicine'),
-('Clothing', 'Blanket', 'Warm blanket for cold weather');
+INSERT INTO Items (Category, Name, DetailName, DetailValue) VALUES 
+('Food', 'Rice',  'volume' , '1kg bag of rice'),
+('Medicine', 'Aspirin', 'Pack of', '4'),
+('Clothing', 'Blanket', 'Warm blanket for cold weather', '1');
+
 
 -- Insert sample data into Warehouse table
 INSERT INTO Warehouse (ItemID, Quantity) VALUES 
