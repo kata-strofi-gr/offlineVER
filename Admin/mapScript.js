@@ -536,12 +536,6 @@ document.getElementById('rescuerCreate').addEventListener('click', function (e) 
     newDiasostis();
 });
 
-// Logout dummy function
-document.getElementById('loggout').addEventListener('click', function (e) {
-    e.preventDefault(); // Prevent default link behavior
-    window.location.href = 'http://127.0.0.1:5500/start.html#';
-});
-
 
 //leitourgies parathiron apo to menu
 function newAithma() {

@@ -14,9 +14,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     try {
                         var response = JSON.parse(xhr.responseText);
                         if (response.success) {
-                            sessionStorage.setItem('userID', response.userID);
+                           //sessionStorage.setItem('userID', response.userID);
 
                             if (response.role === 'Administrator') {
+
+                                // Set a cookie for 20 minutes (active session)
+                                setCookie('admin_session', 'active', 20);
+                                // Store the admin ID in localStorage
+                                localStorage.setItem('admin_id', response.userID);
+                                
                                 window.location.href = 'Admin/admin.html';
                             } else if (response.role === 'Citizen') {
                                 window.location.href = 'citizen.html';
@@ -39,6 +45,17 @@ document.addEventListener('DOMContentLoaded', function() {
         var data = 'username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password);
         xhr.send(data);
     });
+
+    // Function to set a cookie
+    function setCookie(name, value, minutes) {
+        var expires = "";
+        if (minutes) {
+            var date = new Date();
+            date.setTime(date.getTime() + (minutes * 60 * 1000)); // Convert minutes to milliseconds
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + value + expires + "; path=/";
+    }
 
     // Registration pop-up toggle
     document.getElementById('registerLink').addEventListener('click', function() {
