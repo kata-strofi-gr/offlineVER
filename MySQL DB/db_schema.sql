@@ -174,7 +174,4 @@ CREATE TABLE AnnouncementItems (
 
 
 -- DROP DATABASE kata_strofh;Status IN ('PENDING', 'INPROGRESS')
-GROUP BY v.VehicleID, u.Username, v.Latitude, v.Longitude;
-
-
 
