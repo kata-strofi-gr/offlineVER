@@ -180,7 +180,7 @@ CREATE TABLE AnnouncementItems (
 ) ENGINE=InnoDB;
 
 
--- DROP DATABASE kata_strofh;Status IN ('PENDING', 'INPROGRESS')
+-- DROP DATABASE kata_strofh;
 
 
 

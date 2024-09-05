@@ -1,5 +1,5 @@
 <?php
-include 'db_connect.php';
+include '../db_config.php';
 
 header('Content-Type: application/json');
 
@@ -63,7 +63,10 @@ function processJsonData($jsonData, $conn) {
 
         // Check for duplicates in the database
         if (!itemExists($itemName, $conn)) {
-            insertItem($itemName, $newCategoryId, $detailName, $detailValue, $conn);
+            $itemId =insertItem($itemName, $newCategoryId, $detailName, $detailValue, $conn);
+
+            // Add 5 of the new item to the Warehouse
+            addItemToWarehouse($itemId, 5, $conn);
         }
     }
 
@@ -114,6 +117,14 @@ function insertItem($itemName, $categoryId, $detailName, $detailValue, $conn) {
     $query = "INSERT INTO Items (CategoryID, Name, DetailName, DetailValue) VALUES (?, ?, ?, ?)";
     $stmt = $conn->prepare($query);
     $stmt->bind_param('isss', $categoryId, $itemName, $detailName, $detailValue);
+    $stmt->execute();
+    return $stmt->insert_id;  // Return the new item ID
+}
+
+function addItemToWarehouse($itemId, $quantity, $conn) {
+    $query = "INSERT INTO Warehouse (ItemID, Quantity) VALUES (?, ?)";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param('ii', $itemId, $quantity);
     $stmt->execute();
 }
 
