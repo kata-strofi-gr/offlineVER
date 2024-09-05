@@ -15,19 +15,30 @@ CALL CreateNewAdmin('admin_user', 'adminpassword');
 CALL CreateNewAdmin('admin_muser2', 'adminpassword2');
 CALL CreateNewAdmin('admin_user3', 'adminpassword3');
 
+-- Insert test data into Category table
+INSERT INTO Category (CategoryName) VALUES
+('Food'),
+('Medicine'),
+('Clothing');
 
--- Insert sample data into Items table
-INSERT INTO Items (Category, Name, DetailName, DetailValue) VALUES 
-('Food', 'Rice',  'volume' , '1kg bag of rice'),
-('Medicine', 'Aspirin', 'Pack of', '4'),
-('Clothing', 'Blanket', 'Warm blanket for cold weather', '1');
+-- Insert test data into Items table
+INSERT INTO Items (CategoryID, Name, DetailName, DetailValue) VALUES
+(1, 'Rice', 'volume', '1kg bag of rice'),
+(1, 'Bread', 'quantity', '1 loaf of bread'),
+(2, 'Aspirin', 'Pack of', '4'),
+(2, 'Band-Aid', 'Pack of', '10'),
+(3, 'Shirt', 'Size', 'M'),
+(3, 'Jacket', 'Size', 'L');
 
 
--- Insert sample data into Warehouse table
-INSERT INTO Warehouse (ItemID, Quantity) VALUES 
-(1, 100), -- Rice
-(2, 50),  -- Aspirin
-(3, 75);  -- Blanket
+-- Insert test data into Warehouse table
+INSERT INTO Warehouse (ItemID, Quantity) VALUES
+(1, 100), -- 100 units of Rice
+(2, 50),  -- 50 units of Bread
+(3, 70),  -- 70 units of Aspirin
+(4, 33),  -- 33 units of Band-Aid
+(5, 33),  -- 33 units of Shirt
+(6, 696969); -- 696969 units of Jacket
 
 
 -- Insert sample data into Requests table

@@ -41,14 +41,21 @@ CREATE TABLE Citizen (
     FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+-- Category Table
+CREATE TABLE Category (
+    CategoryID INT AUTO_INCREMENT PRIMARY KEY,
+    CategoryName VARCHAR(50) NOT NULL
+) ENGINE=InnoDB;
+
 -- Items Table
 CREATE TABLE Items (
     ItemID INT AUTO_INCREMENT PRIMARY KEY,
-    Category VARCHAR(50) NOT NULL,
+    CategoryID INT NOT NULL,
     Name VARCHAR(100) NOT NULL,
     DetailName VARCHAR(100),
     DetailValue VARCHAR(100),
-    UNIQUE INDEX (Name)
+    UNIQUE INDEX (Name),
+    FOREIGN KEY (CategoryID) REFERENCES Category(CategoryID) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- Warehouse Table
@@ -174,4 +181,6 @@ CREATE TABLE AnnouncementItems (
 
 
 -- DROP DATABASE kata_strofh;Status IN ('PENDING', 'INPROGRESS')
+
+
 

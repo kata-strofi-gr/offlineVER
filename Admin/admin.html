@@ -211,32 +211,29 @@
                 <label for="category">Κατηγορία</label>
                 <select id="category" name="category">
                     <option value="" disabled selected>Επιλέξτε κατηγορία</option>
-                    <option value="dummyCategory1">Νερά</option>
-                    <option value="dummyCategory2">Όσπρια</option>
-                    <option value="newCategory" id="newCategoryOption">Δημιουργία νέας κατηγορίας</option>
                 </select>
         
                 <!-- Item Dropdown -->
                 <label for="item">Είδος</label>
                 <select id="item" name="item">
                     <option value="" disabled selected>Επιλέξτε είδος</option>
-                    <option value="dummyItem1">Lorem</option>
-                    <option value="dummyItem2">Ipsum</option>
-                    <option value="newItem" id="newItemOption">Δημιουργία νέου είδους</option>
                 </select>
         
                 <!-- Description Text Field -->
-                <label for="description">Περιγραφή</label>
-                <input type="text" id="description" name="description" placeholder="Περιγραφή">
-        
-                <!-- Quantity Text Field -->
-                <label for="quantity">Ποσότητα</label>
-                <input type="number" id="quantity" name="quantity" placeholder="Ποσότητα">
-        
-                <!-- Submit Button -->
-                <div class="form-buttons">
-                    <button type="button" class="btn submit" id="submitCategoryItemForm">Υποβολή</button>
-                </div>
+                <label for="DetailName">Detail Name</label>
+                <input type="text" id="DetailName" name="DetailName">
+                <!-- Description Text Field -->
+                <label for="DetailValue">Detail Value</label>
+                <input type="text" id="DetailValue" name="DetailValue">
+                
+                <label for="quantityy">Ποσότητα</label>
+                <input type="number" id="quantityy" name="quantityy" min="1" required>
+                
+                <!-- Submit button to update item details -->
+                <!-- Create button to create a new category or item -->
+                <button id="CreateeButton" class="btn submit">Δημιουργία Item</button>
+                <button id="submitButton" class="btn submit">Ανανεωση</button>
+
             </div>
         </div>
         
@@ -303,6 +300,7 @@
     <script src="admin.js"></script>
     <script src="create_rescuer.js"></script>
     <script src="warehouse.js"></script>
+    <script src="warehouse_management.js"></script>
     <script src="admin.js"></script>
     <script src="statistics.js"></script>
     <script src="ancouments.js"></script>
