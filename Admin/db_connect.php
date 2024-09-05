@@ -2,9 +2,9 @@
 // db_config.php
 
 $host = 'localhost';
-$db = 'kata_strofh';
+$db = 'kata_strofhh';
 $user = 'root';
-$pass = 's!';
+$pass = 'ssss!';
 $charset = 'utf8mb4';
 
 $conn = new mysqli($host, $user, $pass, $db);
