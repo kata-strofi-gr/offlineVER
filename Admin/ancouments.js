@@ -86,7 +86,6 @@ function addDynamicFields() {
     }
 }
 
-// Fetch and populate only the original item dropdown on page load
 document.addEventListener('DOMContentLoaded', function () {
     fetchAndPopulateItems(); // Populate the original dropdown when the page loads
 
@@ -113,6 +112,13 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
+        // Get admin ID from localStorage (set during login)
+        const adminID = localStorage.getItem('admin_id'); 
+        if (!adminID) {
+            alert('Admin ID not found. Please log in again.');
+            return;
+        }
+
         // Send the data to the server via AJAX
         const xhr = new XMLHttpRequest();
         xhr.open('POST', 'createannouncement.php', true);
@@ -134,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function () {
         };
 
         // Prepare the data to be sent to the server
-        const data = JSON.stringify({ adminID: 1, items: items }); // Assuming adminID is 1, replace with actual admin ID
+        const data = JSON.stringify({ adminID: adminID, items: items });
         xhr.send(data);
     });
 });

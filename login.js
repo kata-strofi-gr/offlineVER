@@ -14,19 +14,28 @@ document.addEventListener('DOMContentLoaded', function() {
                     try {
                         var response = JSON.parse(xhr.responseText);
                         if (response.success) {
-                           //sessionStorage.setItem('userID', response.userID);
+
+                            // Store the UserID and specific ID (AdminID, RescuerID, CitizenID)
+                            localStorage.setItem('userID', response.userID);
+                            localStorage.setItem('role', response.role);
 
                             if (response.role === 'Administrator') {
 
                                 // Set a cookie for 20 minutes (active session)
                                 setCookie('admin_session', 'active', 20);
                                 // Store the admin ID in localStorage
-                                localStorage.setItem('admin_id', response.userID);
+                                localStorage.setItem('admin_id', response.specificID);
                                 
                                 window.location.href = 'Admin/admin.html';
+
                             } else if (response.role === 'Citizen') {
+                                sessionStorage.setItem('userID', response.userID);
+                                localStorage.setItem('citizen_id', response.specificID);
                                 window.location.href = 'citizen.html';
-                            } else {
+                            }else if (response.role === 'Rescuer') {
+                                localStorage.setItem('rescuer_id', response.specificID);
+                                window.location.href = 'Rescuer/rescuer.html';
+                            }else {
                                 window.location.href = 'blank.html';
                             }
                         } else {
