@@ -11,7 +11,7 @@ function setCookie(name, value, minutes) {
 
 // Function to reset the session cookie when the user is active
 function extendSession() {
-    setCookie('admin_session', 'active', 20);  // Reset session for another 20 minutes
+    setCookie('rescuer_session', 'active', 20);  // Reset session for another 20 minutes
 }
 
 // Add event listeners for user activity (mousemove, keypress, click)
@@ -21,10 +21,10 @@ window.addEventListener('click', extendSession);
 
 // Function to continuously check if the session cookie exists and redirect if missing
 function checkSession() {
-    var sessionCookie = getCookie('admin_session');
-    var adminID = localStorage.getItem('admin_id');
+    var sessionCookie = getCookie('rescuer_session');
+    var rescuer_id = localStorage.getItem('rescuer_id');
 
-    if (!sessionCookie || !adminID) {
+    if (!sessionCookie || !rescuer_id) {
         // If the session cookie is missing or expired, redirect to login
         window.location.href = '../start.html';
     }
@@ -54,9 +54,11 @@ function getCookie(name) {
 document.getElementById('loggout').addEventListener('click', function (e) {
     e.preventDefault();
 
-    // Remove the session cookie and admin ID from localStorage
-    document.cookie = "admin_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    localStorage.removeItem('admin_id');
+    // Remove the session cookie and rescuer ID from localStorage
+    document.cookie = "rescuer_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    localStorage.removeItem('rescuer_id');
+    localStorage.removeItem('role');
+    localStorage.removeItem('user_id');
 
     // Redirect to login page
     window.location.href = '../start.html';

@@ -29,10 +29,13 @@ document.addEventListener('DOMContentLoaded', function() {
                                 window.location.href = 'Admin/admin.html';
 
                             } else if (response.role === 'Citizen') {
+                                
                                 sessionStorage.setItem('userID', response.userID);
                                 localStorage.setItem('citizen_id', response.specificID);
                                 window.location.href = 'citizen.html';
                             }else if (response.role === 'Rescuer') {
+                                // Set a cookie for 20 minutes (active session)
+                                setCookie('rescuer_session', 'active', 20);
                                 localStorage.setItem('rescuer_id', response.specificID);
                                 window.location.href = 'Rescuer/rescuer.html';
                             }else {
