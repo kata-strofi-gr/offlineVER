@@ -374,7 +374,14 @@
 
 .form-buttons {
     display: flex;
+    justify-content: center;
+    padding-top: 10px;
+}
+
+.form-buttons2 {
+    display: flex;
     justify-content: space-between;
+    padding-top: 28px;
 }
 
 .btn {
@@ -487,16 +494,16 @@
     font-family: roboto;
     display: flex;
     justify-content: space-between;
-    padding: 20px;
+    padding: 16px;
 }
 
 /* Table container styles */
 .table-container {
-    flex: 3;
+    flex: 10;
     overflow-x: auto;
     overflow-y: auto;
-    max-height: 400px;
-    margin-right: 20px;
+    max-height: 420px;
+    margin-right: 24px;
     background-color: #f4f4f4;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -793,13 +800,13 @@ label button:hover {
 /* Container for forms to display side by side */
 .form-wrapper {
     display: flex;
-    gap: 20px; /* Adjust gap between forms as needed */
+    gap: 40px; /* Adjust gap between forms as needed */
     flex-wrap: wrap; /* Allows wrapping on smaller screens */
 }
 
 .form-container {
     flex: 1; /* Ensures equal width for all forms */
-    min-width: 300px; /* Ensures minimum width to keep forms readable */
+    min-width: 240px; /* Ensures minimum width to keep forms readable */
 }
 
 
