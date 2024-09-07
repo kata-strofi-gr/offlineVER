@@ -56,6 +56,9 @@ document.getElementById('loggout').addEventListener('click', function (e) {
 
     // Remove the session cookie and admin ID from localStorage
     document.cookie = "admin_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    window.removeEventListener('mousemove', extendSession);
+    window.removeEventListener('keypress', extendSession);
+    window.removeEventListener('click', extendSession);
     localStorage.removeItem('admin_id');
     localStorage.removeItem('userID');
     localStorage.removeItem('role');

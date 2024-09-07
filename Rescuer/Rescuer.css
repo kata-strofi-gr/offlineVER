@@ -4,7 +4,6 @@
 
 :root {
     --kataRED: #FA4343;
-    --grey50: #5F5F5F;
 }
 * {
     box-sizing: border-box;
@@ -15,21 +14,29 @@
     display: grid;
     height: 100%;
     width: 100%;
-    grid-template-columns: 1fr 3fr 1.5fr;
+    grid-template-columns: 2.6fr 0.8fr 0.7fr;
     grid-template-rows: 0.2fr 1.5fr 8fr;
     grid-template-areas: 
     "modeT modeT modeT" 
     "logoT menuT menuT" 
-    "imapT imapT boxesT";
+    "imapT taskT boxesT";
 
 }
 
 .logoT{
-    
+    background-color: #00440f;
     grid-area: logoT;
     display: flex;
     justify-content: flex-start; /* Center horizontally */
     align-items: center; /* Center vertically */
+}
+
+.taskT {
+    grid-area: taskT;
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    background-color: #00f736; /* Color for the task table */
 }
 
 .modeT{
@@ -38,7 +45,7 @@
 }
 
 .menuT{
-    
+    background-color: #d203c4;
     grid-area: menuT;
     display: flex;
     justify-content: end;
@@ -46,12 +53,13 @@
 }
 
 .imapT{
+    background-color: #FA4343;
     padding: 5%;
     grid-area: imapT;
 }
 
 .boxesT{
-    
+    background-color: aqua;
     grid-area: boxesT;
 }
 
@@ -60,7 +68,7 @@
     width: 100%;
     height: 4vh;
     flex-shrink: 0;
-    background-color: #D9D9D9;
+    background-color: #e20000;
     justify-content: center;
     align-items: center;
 }
@@ -116,9 +124,9 @@
 /* edo gia xarti*/
 .mapContainer {
     width: 100%;
-    max-width: 1000px;
+    max-width: 900px;
     margin: 0 auto;
-    border-radius: 30px;
+    border-radius: 10px;
     /*border: 3px solid #FA4343;*/
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
@@ -343,7 +351,7 @@
 }
 
 .form-content {
-    padding: 20px;
+    padding: 15px;
 }
 
 .form-content label {
@@ -396,6 +404,22 @@
 }
 
 
+.btn_task {
+    width: 58%;
+    padding: 15px;
+    border: none;
+    background-color: #f4f4f4;
+    border-radius: 5px;
+    color: #FA4343;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 15px;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
 .btn.add-fields {
     background-color: #FF6B6B;
 }       
@@ -404,16 +428,17 @@
     background-color: #FA4343;
 }
 
-.btn:hover {
+.btn_task:hover {
     opacity: 0.9;
 }
-
+.btn_task:active
+{   color: #ffffff;
+    background-color: #FA4343;
+}
 .reqs{
     padding-top: 5px;
     padding-bottom: 15px;
 }
-
-
 
 
 .dashboard-container {
@@ -438,57 +463,6 @@
 }
 
 
-.date-picker {
-    padding: 20px 0;
-}
-
-.date-picker label {
-    margin: 0 10px;
-    font-size: 1.2em;
-}
-
-.date-picker input {
-    margin: 0 10px;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    background-color: #eee;
-    color: #333;
-    text-align: center;
-    cursor: pointer;
-}
-.charts {
-    padding: 20px 0;
-    display: none; /* Initially hidden */
-    text-align: center;
-}
-
-.charts canvas {
-    max-width: 70%;
-    width: 90%;
-    height: 400px; /* Set a more reasonable height */
-    margin: 0 auto;
-    background-color: #f4f4f4;
-    border-radius: 10px;
-}
-
-.btnC {
-    width: 20%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: none;
-    border-radius: 5px;
-    color: white;
-    font-size: 1em;
-    cursor: pointer;
-    border-radius: 15px;
-    background-color: var(--kataRED);
-}
-
-
-
-/* Add these styles to your admin.css file */
-
 /* Container for data table and filter */
 .data-container {
     font-family: roboto;
@@ -510,7 +484,7 @@
 }
 
 table {
-    
+    font-family: Roboto;
     width: 100%;
     border-collapse: collapse;
     text-align: left;
@@ -541,46 +515,6 @@ tbody tr:hover {
 .viewStockW{
     display: none;
 }
-/* Filter container styles */
-.filter-container {
-    font-family: var(--font-roboto);
-    flex: 1;
-    background-color: #f4f4f4;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    max-width: 300px;
-}
-
-.filter-header {
-    background-color: #FA4343;
-    color: white;
-    padding:15px;
-    border-radius: 10px 10px 0 0;
-    text-align: center;
-    font-weight: bold;
-}
-
-.filter-content {
-    padding: 20px;
-}
-
-.filter-content label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: bold;
-}
-
-.filter-content select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    appearance: none;
-    background: #f9f9f9 url('data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjNDAwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMCA2Ij4gPHBhdGggZD0iTTUgMEw5IDZIMkw1IDB6Ii8+IDwvc3ZnPg==') no-repeat right 10px center;
-    background-size: 10px;
-}
-
-
 /*mobile version*/
 .hamburger-menu {
     display: none;
@@ -645,7 +579,8 @@ tbody tr:hover {
         "modeT modeT" 
         "logoT menuT" 
         "imapT imapT"
-        "boxesT" "boxesT";
+        "taskT taskT"
+        "boxesT boxesT";
         height: auto;
     
     }
@@ -671,6 +606,10 @@ tbody tr:hover {
         grid-area: imapT;
     }
 
+    .taskT {
+        grid-area: taskT;
+    }
+
     .boxesT {
         grid-area: boxesT;
     }
@@ -693,7 +632,16 @@ tbody tr:hover {
     }
 
     .map-button{
+        font-size: 0.8em;
+    }
+
+    .btn_task{
         font-size: 0.9em;
+    }
+
+    .task-panel-right {
+        width: 100%;
+        margin-top: 20px;
     }
 
     .data-container {
@@ -706,52 +654,16 @@ tbody tr:hover {
     }
 
     table {
+        font-family: roboto;
         font-size: 0.8em; /* Decrease font size */
     }
-
-    .charts canvas {
-        width: 600px; /* Adjust to full width */
-        height: auto; /* Adjust height to maintain aspect ratio */
-        max-width: 100%;
-        max-height: 100%; /* Ensure it doesn't overflow */ /* Adjust height to maintain aspect ratio */
-        background-color: #f4f4f4;
-        border-radius: 10px;
-        
-    }
-    
-    .dashboard-container {
-        font-family: roboto;
-        display: none;
-        width: 100%;
-        height: 100%;
-        background-color: #f4f4f4;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        text-align: center;
-        max-width: 100%;
-        
-    }
-    .date-picker{
-        scale: 0.8;
-    }
 }
+
 
 
 /* Styling for the new form header */
 .form-header {
     border-radius: 10px 10px 0 0; /* This is added to ensure a consistent rounded border */
-}
-
-/* Additional styles for the new form */
-
-#simpleTextFieldForm{
-    
-    max-height: 15rem;
-}
-
-#uploadFileForm{
-    
-    max-height: 15rem;
 }
 
 .form-content input[type="number"] {
@@ -760,43 +672,9 @@ tbody tr:hover {
     margin-bottom: 15px;
     border: 1px solid #ddd;
     border-radius: 5px;
-    box-sizing: border-box;
 }
 
 
-
-/* Style for delete buttons */
-label button {
-    margin-left: 10px;
-    padding: 5px 10px;
-    background-color: lightgrey;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.9em;
-}
-
-label button:hover {
-    background-color: var(--kataRED);
-}
-
-.drop-area{
-    background-color: lightgray;
-    border-radius: 15px;
-    height: 2rem;
-    margin-bottom: 30px;
-    width: 15rem;
-    
-}
-
-.uploadTEXT{
-    text-align: center;
-    font-size: medium;
-    color: white;
-}
-
-/* Container for forms to display side by side */
 /* Container for forms to display side by side */
 .form-wrapper {
     display: flex;
@@ -804,9 +682,40 @@ label button:hover {
     flex-wrap: wrap; /* Allows wrapping on smaller screens */
 }
 
-.form-container {
-    flex: 1; /* Ensures equal width for all forms */
-    min-width: 240px; /* Ensures minimum width to keep forms readable */
+
+.task-panel-right {
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: white;
+}
+
+.table-title {
+    font-family: Roboto;
+    background-color: #FA4343;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    font-size: 1.5em;
+    border-radius: 10px 10px 0 0;
+}
+
+.task-button, .cancel-button {
+    width: 40%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+.task-button {
+    background-color: #00AEEF;
+}
+
+.cancel-button {
+    background-color: rgb(236, 186, 60);
 }
 
 

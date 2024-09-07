@@ -11,7 +11,7 @@ function setCookie(name, value, minutes) {
 
 // Function to reset the session cookie when the user is active
 function extendSession() {
-    setCookie('rescuer_session', 'active', 20);  // Reset session for another 20 minutes
+    setCookie('rescuer_session', 'active', 1);  // Reset session for another 20 minutes
 }
 
 // Add event listeners for user activity (mousemove, keypress, click)
@@ -31,12 +31,12 @@ function checkSession() {
 }
 
 // Check the session immediately when the page loads
-window.onload = function() {
+document.addEventListener("DOMContentLoaded", function() {
     checkSession();  // Initial check
 
     // Set an interval to check the session every minute (60000 milliseconds)
     setInterval(checkSession, 60000);  // Check every 1 minute
-};
+});
 
 // Function to get a cookie by name
 function getCookie(name) {
@@ -56,9 +56,12 @@ document.getElementById('loggout').addEventListener('click', function (e) {
 
     // Remove the session cookie and rescuer ID from localStorage
     document.cookie = "rescuer_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    window.removeEventListener('mousemove', extendSession);
+    window.removeEventListener('keypress', extendSession);
+    window.removeEventListener('click', extendSession);
     localStorage.removeItem('rescuer_id');
+    localStorage.removeItem('userID');
     localStorage.removeItem('role');
-    localStorage.removeItem('user_id');
 
     // Redirect to login page
     window.location.href = '../start.html';
@@ -71,32 +74,14 @@ function showvehiclemanagement() {
     var contentSection = document.getElementById('vehiclem'); // Show this section
     var mapContainer = document.getElementById('mapContainerI'); // Hide the map section
     var contentSectionX = document.getElementById('taskm'); // Hide task management section
-    var contentSectionX2 = document.getElementById('newAithmata'); // Hide task management section    
+    var contentSectionX2 = document.getElementById('newAithmata'); // Hide new announcement section    
+    var taskTable = document.getElementById('taskT'); // Hide task table
 
     contentSection.style.display = 'block';  // Show vehicle management
-    contentSectionX2.style.display = 'block';  // Hide task management
+    contentSectionX2.style.display = 'block';  // Show new announcement section
     mapContainer.style.display = 'none';     // Hide map
-    contentSectionX.style.display = 'none';  // Hide task management
+    taskTable.style.display = 'none';        // Hide task table
 }
-
-// Function to show the task management section and hide others
-function showtaskmanagement() {
-    var contentSection = document.getElementById('taskm'); // Show this section
-    var mapContainer = document.getElementById('mapContainerI'); // Hide the map section
-    var contentSectionX = document.getElementById('vehiclem'); // Hide vehicle management section
-    var contentSectionX2 = document.getElementById('newAithmata'); // Hide new announcement section
-
-    contentSection.style.display = 'block';  // Show task management
-    mapContainer.style.display = 'none';     // Hide map
-    contentSectionX.style.display = 'none';  // Hide vehicle management
-    contentSectionX2.style.display = 'none';  // Hide new announcement section
-}
-
-// Event listener to trigger task management view
-document.getElementById('taskmanagement').addEventListener('click', function (e) {
-    e.preventDefault();  // Prevent default link behavior
-    showtaskmanagement();  // Call the function to show task management
-});
 
 
 
@@ -107,19 +92,21 @@ document.getElementById('vehiclemanagement').addEventListener('click', function 
 });
 
 
-
 // Function to reset to the map view when the logo is clicked
-document.getElementById('logoF').addEventListener('click', function(e) {
+document.getElementById('logoF').addEventListener('click', function (e) {
     e.preventDefault();
     var mapContainer = document.getElementById('mapContainerI'); // Show map
-    var contentSectionX = document.getElementById('taskm'); // Hide task management
-    var contentSectionX2 = document.getElementById('vehiclem'); // Hide vehicle management
-    var contentSectionX1 = document.getElementById('newAithmata');
+    var contentSectionX = document.getElementById('vehiclem'); // Hide vehicle management
+    var contentSectionX1 = document.getElementById('newAithmata'); // Hide newAithmata
+    var taskTable = document.getElementById('taskT'); // Show task table section
 
-    mapContainer.style.display = 'block';   // Show map
-    contentSectionX.style.display = 'none'; // Hide task management
-    contentSectionX2.style.display = 'none'; // Hide vehicle management
-    contentSectionX1.style.display = 'none'; // Hide vehicle management
+    // Display map and task table
+    mapContainer.style.display = 'block';
+    taskTable.style.display = 'block';  // Show taskT section
+
+    // Hide other sections
+    contentSectionX.style.display = 'none';
+    contentSectionX1.style.display = 'none';
 });
 
 //mobile version
@@ -149,4 +136,76 @@ document.addEventListener('DOMContentLoaded', function() {
             menuItems.forEach(item => item.classList.remove('active'));
         }
     });
+});
+
+
+function populateTaskTable() {
+    const taskTableBody = document.querySelector("#taskTable tbody");
+
+    // Dummy data array
+    const dummyTasks = [
+        {
+            name: "John Doe",
+            phone: "123-456-7890",
+            date: "2024-09-01",
+            type: "Food Supplies",
+            quantity: 10
+        },
+        {
+            name: "Jane Smith",
+            phone: "987-654-3210",
+            date: "2024-09-02",
+            type: "Medical Kit",
+            quantity: 5
+        },
+        {
+            name: "Alex Johnson",
+            phone: "555-123-4567",
+            date: "2024-09-03",
+            type: "Water Bottles",
+            quantity: 20
+        },
+        {
+            name: "Emily Davis",
+            phone: "444-555-6666",
+            date: "2024-09-04",
+            type: "Blankets",
+            quantity: 15
+        }
+    ];
+
+    // Insert dummy data into table
+    dummyTasks.forEach(task => {
+        const row = document.createElement("tr");
+
+        const nameCell = document.createElement("td");
+        nameCell.textContent = task.name;
+
+        const phoneCell = document.createElement("td");
+        phoneCell.textContent = task.phone;
+
+        const dateCell = document.createElement("td");
+        dateCell.textContent = task.date;
+
+        const typeCell = document.createElement("td");
+        typeCell.textContent = task.type;
+
+        const quantityCell = document.createElement("td");
+        quantityCell.textContent = task.quantity;
+
+        // Append cells to the row
+        row.appendChild(nameCell);
+        row.appendChild(phoneCell);
+        row.appendChild(dateCell);
+        row.appendChild(typeCell);
+        row.appendChild(quantityCell);
+
+        // Append the row to the table body
+        taskTableBody.appendChild(row);
+    });
+}
+
+// Call the function when the page loads
+document.addEventListener("DOMContentLoaded", function() {
+    populateTaskTable();  // Populate the task table with dummy data
 });

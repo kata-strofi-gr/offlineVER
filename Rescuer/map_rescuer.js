@@ -418,7 +418,6 @@ document.getElementById('toggleTakenRequests').addEventListener('click', toggleI
 document.getElementById('togglePendingRequests').addEventListener('click', togglePendingRequests);
 document.getElementById('toggleOffers').addEventListener('click', toggleOffers);
 document.getElementById('toggleActiveVehicles').addEventListener('click', toggleActiveVehicles);
-document.getElementById('toggleInactiveVehicles').addEventListener('click', toggleInactiveVehicles);
 document.getElementById('toggleLines').addEventListener('click', toggleLines);
 
 
@@ -511,3 +510,4 @@ function openPopup() {
 function closePopupFunction() {
     externalPopup.style.display = 'none';
 }
+
