@@ -83,7 +83,7 @@ BEGIN
 
         SET i = i + 1;
     END WHILE;
-END;
+END//
 
 DELIMITER ;
 
@@ -170,7 +170,7 @@ BEGIN
 
         SET i = i + 1;
     END WHILE;
-END;
+END//
 DELIMITER ;
 
 
@@ -256,7 +256,7 @@ BEGIN
 
         SET i = i + 1;
     END WHILE;
-END;
+END//
 
 DELIMITER ;
 
@@ -288,7 +288,7 @@ BEGIN
     -- Insert into Vehicles table
     INSERT INTO Vehicles (RescuerID, Latitude, Longitude) VALUES (rescuer_id, latitude, longitude);
 
-END //
+END//
 DELIMITER ;
 
 
@@ -315,7 +315,7 @@ BEGIN
     -- Insert into Citizen table
     INSERT INTO Citizen (UserID, Name, Surname, Phone, Latitude, Longitude)
     VALUES (user_id, first_name, last_name, phone_number, latitude, longitude);
-END //
+END//
 DELIMITER ;
 
 
@@ -336,7 +336,7 @@ BEGIN
 
     -- Insert into Admin table
     INSERT INTO Administrator (UserID) VALUES (user_id);
-END //
+END//
 DELIMITER ;
 
 
@@ -349,8 +349,7 @@ CREATE PROCEDURE AssignRequest (
 BEGIN
     UPDATE Requests SET RescuerID = p_RescuerID, Status = 'INPROGRESS', DateAssignedVehicle = NOW() 
     WHERE RequestID = p_RequestID;
-END;
-//
+END//
 DELIMITER ;
 
 -- Procedure to assign an offer to a rescuer
@@ -362,8 +361,8 @@ CREATE PROCEDURE AssignOffer (
 BEGIN
     UPDATE Offers SET RescuerID = p_RescuerID, Status = 'INPROGRESS', DateAssignedVehicle = NOW() 
     WHERE OfferID = p_OfferID;
-END;
-//
+END//
+DELIMITER ;
 
 -- Procedure to Cancel a Request
 DELIMITER //
@@ -374,7 +373,7 @@ BEGIN
     UPDATE Requests
     SET Status = 'PENDING', DateAssignedVehicle = NULL, RescuerID = NULL
     WHERE RequestID = reqID;
-END //
+END//
 
 DELIMITER ;
 
@@ -390,7 +389,7 @@ BEGIN
     UPDATE Offers
     SET Status = 'PENDING', DateAssignedVehicle = NULL, RescuerID = NULL
     WHERE OfferID = p_offerID;
-END //
+END//
 DELIMITER ;
 
 -- Procedure to Mark a Request as Finished
@@ -402,7 +401,7 @@ BEGIN
     UPDATE Requests
     SET Status = 'FINISHED' , DateFinished = NOW()
     WHERE RequestID = reqID;
-END //
+END//
 DELIMITER ;
 
 -- Procedure to Mark an Offer as Finished
@@ -414,7 +413,7 @@ BEGIN
     UPDATE Offers
     SET Status = 'FINISHED',  DateFinished = NOW()
     WHERE OfferID = p_offerID;
-END //
+END//
 DELIMITER ;
 
 -- Trigger to prevent rescuer assignment if they have reached the task limit for requests
@@ -438,7 +437,7 @@ BEGIN
             SET MESSAGE_TEXT = 'Rescuer has reached the maximum number of tasks.', MYSQL_ERRNO = 6002;
         END IF;
     END IF;
-END //
+END//
 DELIMITER ;
 
 -- Trigger to prevent rescuer assignment if they have reached the task limit for offers
@@ -463,7 +462,7 @@ BEGIN
             SET MESSAGE_TEXT = 'Rescuer has reached the maximum number of tasks.', MYSQL_ERRNO = 6002;
         END IF;
     END IF;
-END //
+END//
 DELIMITER ;
 
 -- Trigger to prevent reassignment of in-progress requests
@@ -476,7 +475,7 @@ BEGIN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'In-progress requests cannot be reassigned.', MYSQL_ERRNO = 5003;
     END IF;
-END //
+END//
 DELIMITER ;
 
 -- Trigger to prevent reassignment of in-progress offers
@@ -489,7 +488,7 @@ BEGIN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'In-progress offers cannot be reassigned.', MYSQL_ERRNO = 5004;
     END IF;
-END //
+END//
 DELIMITER ;
 
 -- Trigger to prevent pending requests from being marked as finished
@@ -502,7 +501,7 @@ BEGIN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Pending requests cannot be marked as finished.', MYSQL_ERRNO = 5005;
     END IF;
-END //
+END//
 DELIMITER ;
 
 -- Trigger to prevent pending offers from being marked as finished
@@ -515,7 +514,7 @@ BEGIN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Pending offers cannot be marked as finished.', MYSQL_ERRNO = 5006;
     END IF;
-END //
+END//
 DELIMITER ;
 
 
@@ -529,7 +528,7 @@ BEGIN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Finished requests cannot be altered.', MYSQL_ERRNO = 5007;  
     END IF;
-END //
+END//
 DELIMITER ;
 
 -- Trigger to prevent finished offers from being altered
@@ -543,7 +542,7 @@ BEGIN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Finished offers cannot be altered.', MYSQL_ERRNO = 5008;
     END IF;
-END //
+END//
 DELIMITER ;
 
 
