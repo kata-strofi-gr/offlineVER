@@ -50,7 +50,6 @@
     grid-area: imapT;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
 }
 
 .boxesT{
@@ -447,10 +446,8 @@
 /* Container for data table and filter */
 .data-container {
     font-family: roboto;
-    display: flex;
-    justify-content: space-between;
     padding: 20px;
-    /* TODO: Make this fill the rest of the space */
+    flex-grow: 1;
 }
 
 /* Table container styles */
@@ -689,11 +686,16 @@ tbody tr:hover {
     .date-picker{
         scale: 0.8;
     }
+    
+    #newRequest {
+        display: block;
+    }
 }
 
 
 .historyReq{
     display: none;
+    flex-grow: 1;
 }
 
 .offergive{
