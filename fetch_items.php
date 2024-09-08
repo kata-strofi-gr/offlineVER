@@ -6,7 +6,7 @@ header('Content-Type: application/json');
 
 // Query to get items from the database
 $sql = "
-    SELECT *
+    SELECT Name, ItemID, CategoryID
     FROM Items
     ORDER BY Name
     ";
