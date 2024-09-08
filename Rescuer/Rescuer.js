@@ -11,7 +11,7 @@ function setCookie(name, value, minutes) {
 
 // Function to reset the session cookie when the user is active
 function extendSession() {
-    setCookie('rescuer_session', 'active', 1);  // Reset session for another 20 minutes
+    setCookie('rescuer_session', 'active', 20);  // Reset session for another 20 minutes
 }
 
 // Add event listeners for user activity (mousemove, keypress, click)
@@ -73,7 +73,6 @@ document.getElementById('loggout').addEventListener('click', function (e) {
 function showvehiclemanagement() {
     var contentSection = document.getElementById('vehiclem'); // Show this section
     var mapContainer = document.getElementById('mapContainerI'); // Hide the map section
-    var contentSectionX = document.getElementById('taskm'); // Hide task management section
     var contentSectionX2 = document.getElementById('newAithmata'); // Hide new announcement section    
     var taskTable = document.getElementById('taskT'); // Hide task table
 
@@ -103,7 +102,6 @@ document.getElementById('logoF').addEventListener('click', function (e) {
     // Display map and task table
     mapContainer.style.display = 'block';
     taskTable.style.display = 'block';  // Show taskT section
-
     // Hide other sections
     contentSectionX.style.display = 'none';
     contentSectionX1.style.display = 'none';
@@ -139,73 +137,3 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-function populateTaskTable() {
-    const taskTableBody = document.querySelector("#taskTable tbody");
-
-    // Dummy data array
-    const dummyTasks = [
-        {
-            name: "John Doe",
-            phone: "123-456-7890",
-            date: "2024-09-01",
-            type: "Food Supplies",
-            quantity: 10
-        },
-        {
-            name: "Jane Smith",
-            phone: "987-654-3210",
-            date: "2024-09-02",
-            type: "Medical Kit",
-            quantity: 5
-        },
-        {
-            name: "Alex Johnson",
-            phone: "555-123-4567",
-            date: "2024-09-03",
-            type: "Water Bottles",
-            quantity: 20
-        },
-        {
-            name: "Emily Davis",
-            phone: "444-555-6666",
-            date: "2024-09-04",
-            type: "Blankets",
-            quantity: 15
-        }
-    ];
-
-    // Insert dummy data into table
-    dummyTasks.forEach(task => {
-        const row = document.createElement("tr");
-
-        const nameCell = document.createElement("td");
-        nameCell.textContent = task.name;
-
-        const phoneCell = document.createElement("td");
-        phoneCell.textContent = task.phone;
-
-        const dateCell = document.createElement("td");
-        dateCell.textContent = task.date;
-
-        const typeCell = document.createElement("td");
-        typeCell.textContent = task.type;
-
-        const quantityCell = document.createElement("td");
-        quantityCell.textContent = task.quantity;
-
-        // Append cells to the row
-        row.appendChild(nameCell);
-        row.appendChild(phoneCell);
-        row.appendChild(dateCell);
-        row.appendChild(typeCell);
-        row.appendChild(quantityCell);
-
-        // Append the row to the table body
-        taskTableBody.appendChild(row);
-    });
-}
-
-// Call the function when the page loads
-document.addEventListener("DOMContentLoaded", function() {
-    populateTaskTable();  // Populate the task table with dummy data
-});

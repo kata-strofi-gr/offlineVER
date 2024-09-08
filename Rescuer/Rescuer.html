@@ -139,15 +139,16 @@
         </div>
     
             <!-- Task Table Section (taskT) -->
-    <div class="taskT" id="taskT">
-        <div class="task-panel-right">
-            <div class="table-container">
+    <div class="taskT" id="taskt">
+        <div class="task-panel-right" id="taskT">
+            <div class="table-container2">
                 <table id="taskTable">
                     <thead>
                         <tr>
-                            <th colspan="5" class="table-title">Τρέχοντα Tasks</th>
+                            <th colspan="6" class="table-title">Τρέχοντα Tasks</th>
                         </tr>
                         <tr>
+                            <th>Επιλογή</th> 
                             <th>Ονοματεπώνυμο</th>
                             <th>Τηλέφωνο</th>
                             <th>Ημ/νία Καταχώρησης</th>
@@ -181,24 +182,23 @@
 
      
     <!-- ola ta popup mexri edo mesas-->
-    
-            <div class="boxesT">
-                <div class="offer-box" id="draggableBox">
-                    <div class="offer-header">
-                        <span class="offer-title">Προσφορά</span>
-                        <span class="close-btn" id="closeBox">✖</span>
-                    </div>
-                    <div class="offer-details">
-                        <p><strong>Ονοματεπώνυμο:</strong> Αλέξης Στροφερός</p>
-                        <p><strong>Τηλέφωνο:</strong> 69435050505</p>
-                        <p><strong>Ημ/νία καταχώρησης:</strong> 5/5/505</p>
-                        <p><strong>Είδος:</strong> Macallan</p>
-                        <p><strong>Ποσότητα:</strong> 2 κούτες</p>
-                        <p><strong>Ημ/νία ανάληψης οχήματος:</strong> 9/9/998</p>
-                        <p><strong>Διακριτικό οχήματος:</strong> ZYZ0505</p>
-                    </div>
-                </div>
-            </div>   
+    <div class="boxesT" id="boxesT">
+        <div class="offer-box" id="draggableBox">
+            <div class="offer-header">
+                <span class="offer-title">Προσφορά</span>
+                <span class="close-btn" id="closeBox">✖</span>
+            </div>
+            <div class="offer-details">
+                <p><strong>Ονοματεπώνυμο:</strong> Αλέξης Στροφερός</p>
+                <p><strong>Τηλέφωνο:</strong> 69435050505</p>
+                <p><strong>Ημ/νία καταχώρησης:</strong> 5/5/505</p>
+                <p><strong>Είδος:</strong> Macallan</p>
+                <p><strong>Ποσότητα:</strong> 2 κούτες</p>
+                <p><strong>Ημ/νία ανάληψης οχήματος:</strong> 9/9/998</p>
+                <p><strong>Διακριτικό οχήματος:</strong> ZYZ0505</p>
+            </div>
+        </div>
+    </div>   
     
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
