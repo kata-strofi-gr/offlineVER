@@ -15,14 +15,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         var response = JSON.parse(xhr.responseText);
                         if (response.success) {
 
-                            // Store the UserID and specific ID (AdminID, RescuerID, CitizenID)
-                            localStorage.setItem('userID', response.userID);
+                            // Store the specific ID (AdminID, RescuerID, CitizenID) and create session cookie
                             localStorage.setItem('role', response.role);
 
                             if (response.role === 'Administrator') {
 
                                 // Set a cookie for 20 minutes (active session)
-                                setCookie('admin_session', 'active', 20);
+                                setCookie('admin_session', 'active', 20000);
                                 // Store the admin ID in localStorage
                                 localStorage.setItem('admin_id', response.specificID);
                                 
@@ -30,14 +29,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
                             } else if (response.role === 'Citizen') {
                                 
-                                sessionStorage.setItem('userID', response.userID);
+                                //TODO: Set a cookie for 20 minutes!!!!!!!!!!!
+                                setCookie('citizen_session', 'active', 20000);
                                 localStorage.setItem('citizen_id', response.specificID);
-                                window.location.href = 'citizen.html';
+
+                                window.location.href = 'Citizen/citizen.html';
 
                             }else if (response.role === 'Rescuer') {
                                 
                                 // Set a cookie for 20 minutes (active session)
-                                setCookie('rescuer_session', 'active', 20);
+                                setCookie('rescuer_session', 'active', 20000);
                                 localStorage.setItem('rescuer_id', response.specificID);
                                 
                                 window.location.href = 'Rescuer/rescuer.html';
