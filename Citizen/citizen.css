@@ -482,6 +482,14 @@ th {
     color: white;
 }
 
+th.sort-asc::after {
+    content: ' ▲'; /* Up arrow */
+}
+
+th.sort-desc::after {
+    content: ' ▼'; /* Down arrow */
+}
+
 thead tr th:hover {
     cursor: pointer;
 }

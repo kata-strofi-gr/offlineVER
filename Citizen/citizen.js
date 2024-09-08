@@ -90,14 +90,25 @@ const comparer = (idx, asc) => (a, b) => ((v1, v2) =>
     v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
     )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
 
-// do the work...
-document.querySelectorAll('th').forEach(th => th.addEventListener('click', (() => {
+// Add event listeners to each header for sorting
+document.querySelectorAll('th').forEach(th => th.addEventListener('click', function() {
     const table = th.closest('table');
     const tbody = table.querySelector('tbody');
+    const index = Array.from(th.parentNode.children).indexOf(th);
+    const asc = this.asc = !this.asc;
+
+    // Remove sort indicators from all headers
+    document.querySelectorAll('th').forEach(header => {
+        header.classList.remove('sort-asc', 'sort-desc');
+    });
+
+    // Add sort indicator to the clicked header
+    th.classList.add(asc ? 'sort-asc' : 'sort-desc');
+
     Array.from(tbody.querySelectorAll('tr'))
-        .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
+        .sort(comparer(index, asc))
         .forEach(tr => tbody.appendChild(tr));
-})));
+}));
 
 /**
  * Mobile frontend  //todo: this doesn't do anything??
