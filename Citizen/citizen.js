@@ -4,9 +4,9 @@
 function checkSession() {
     //todo: add functionality for logout, keep logged in etc?
     var sessionCookie = getCookie('citizen_session');
-    var citizenID = localStorage.getItem('citizen_id');
+    var citizen_id = localStorage.getItem('citizen_id');
 
-    if (!sessionCookie || !citizenID) {
+    if (!sessionCookie || !citizen_id) {
         // If the session cookie is missing or expired, redirect to login
         window.location.href = '/start.html';
     }
@@ -24,6 +24,9 @@ function getCookie(name) {
     return null;
 }
 
+checkSession();  // Initial check //TODO: make this run immediately?
+setInterval(checkSession, 60000);  // Check every 1 minute
+
 /**
  * Global variables
  */
@@ -32,20 +35,15 @@ var offersData;
 var announcementsData;
 var allItemCategories;
 var allItems;
+var expiryDates = {"Requests": null, "Offers": null, "Announcements": null, "Categories": null, "Items": null};
+const expiryTime = 60000; // 1 minute in milliseconds
 
 /**
  * Event Listeners
  */
 document.addEventListener("DOMContentLoaded", function () {
-    //todo: refetch
-    requestsData = fetchRequests();
-    offersData = fetchOffers();
-    announcementsData = fetchAnnouncements();
-    allItemCategories = fetchCategories();
-    allItems = fetchItems();
-
-    checkSession();  // Initial check //TODO: make this run immediately?
-    setInterval(checkSession, 60000);  // Check every 1 minute
+    fetchAllExpired();
+    setInterval(fetchAllExpired, expiryTime);
 
 });
 
@@ -72,7 +70,16 @@ offersScreenButton.addEventListener('click', function(e) {
 const logoutButton = document.getElementById('logout');
 logoutButton.addEventListener('click', function(e) {
     e.preventDefault(); // Prevent default link behavior
-    window.location.href = 'http://127.0.0.1:5500/start.html#';
+    window.location.href = '../start.html';
+});
+
+const requestSubmitButton = document.getElementById('newRequest').querySelector('.btn.submit');
+requestSubmitButton.addEventListener('click', function(e) {
+    var requestTable = document.getElementById('newRequest');
+    var selectedItemName = requestTable.querySelector('#searchStock').value;
+    var numOfPeople = requestTable.querySelector('#peopleNumb').value;
+
+    createRequest(selectedItemName, numOfPeople);
 });
 
 /**
@@ -146,8 +153,11 @@ function showOffersScreen(){
 }
 
 function populateRequestCategories(data) {
-    const categoryList = document.getElementById('category');
-    
+    const newRequestElement = document.getElementById('newRequest');
+    const categoryList = newRequestElement.querySelector('#category');
+    newRequestElement.querySelector('#searchStock').value = ''; //empty selected item
+
+
     categoryList.innerHTML = `
             <option value="" disabled selected>Επιλέξτε κατηγορία</option>
             <option value="all">All</option>
@@ -202,7 +212,7 @@ function populateRequestHistory(data) {
             <td>${row.DateCreated}</td>
             <td>${row.DateAssignedVehicle}</td> 
             <td>${row.DateFinished}</td>
-        `; //TODO: dates are messed up
+        `;
         tableBody.appendChild(tr);
     });
 }
@@ -235,7 +245,7 @@ function populateOfferHistory(data) {
             <td>${row.DateCreated}</td>
             <td>${row.DateAssignedVehicle}</td> 
             <td>${row.DateFinished}</td> 
-        `; //TODO: dates are messed up
+        `;
         tableBody.appendChild(tr);
     });
 }
@@ -243,6 +253,28 @@ function populateOfferHistory(data) {
 /**
  * Backend Functions
  */
+function fetchAllExpired() {
+    if (expiryDates['Requests'] == null || Date.now() - expiryDates['Requests'] > expiryTime) {
+        requestsData = fetchRequests();
+    }
+
+    if (expiryDates['Offers'] == null || Date.now() - expiryDates['Offers'] > expiryTime) {
+        offersData = fetchOffers();
+    }
+
+    if (expiryDates['Announcements'] == null || Date.now() - expiryDates['Announcements'] > expiryTime) {
+        announcementsData = fetchAnnouncements();
+    }
+
+    if (expiryDates['Categories'] == null || Date.now() - expiryDates['Categories'] > expiryTime) {
+        allItemCategories = fetchCategories();
+    }
+
+    if (expiryDates['Items'] == null || Date.now() - expiryDates['Items'] > expiryTime) {
+        allItems = fetchItems();
+    }
+}
+
 function fetchCategories() {
     return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
@@ -251,6 +283,7 @@ function fetchCategories() {
         xhr.onload = function () {
             if (xhr.status === 200) {
                 resolve(JSON.parse(xhr.responseText));
+                expiryDates['Categories'] = Date.now();
             } else {
                 console.error('Failed to fetch all categories data');
                 resolve([]);
@@ -275,6 +308,7 @@ function fetchItems() {
         xhr.onload = function () {
             if (xhr.status === 200) {
                 resolve(JSON.parse(xhr.responseText));
+                expiryDates['Items'] = Date.now();
             } else {
                 console.error('Failed to fetch all items data');
                 resolve([]);
@@ -294,11 +328,12 @@ function fetchRequests() {
     return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         let citizen_id = localStorage.getItem('citizen_id');
-        xhr.open('GET', 'fetch_citizen_requests.php/' + citizen_id, true);
+        xhr.open('GET', 'fetch_requests.php/' + citizen_id, true);
 
         xhr.onload = function () {
             if (xhr.status === 200) {
                 resolve(JSON.parse(xhr.responseText));
+                expiryDates['Requests'] = Date.now();
             } else {
                 console.error('Failed to fetch requests data');
                 resolve([]);
@@ -318,11 +353,12 @@ function fetchOffers() {
     return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         let citizen_id = localStorage.getItem('citizen_id');
-        xhr.open('GET', 'fetch_citizen_offers.php/' + citizen_id, true);
+        xhr.open('GET', 'fetch_offers.php/' + citizen_id, true);
 
         xhr.onload = function () {
             if (xhr.status === 200) {
                 resolve(JSON.parse(xhr.responseText));
+                expiryDates['Offers'] = Date.now();
             } else {
                 console.error('Failed to fetch offers data');
                 resolve([]);
@@ -346,6 +382,7 @@ function fetchAnnouncements() {
         xhr.onload = function () {
             if (xhr.status === 200) {
                 resolve(JSON.parse(xhr.responseText));
+                expiryDates['Announcements'] = Date.now();
             } else {
                 console.error('Failed to fetch announcements data');
                 resolve([]);
@@ -359,4 +396,38 @@ function fetchAnnouncements() {
 
         xhr.send();
     });
+}
+
+function createRequest(items, numOfPeople) {
+   
+    const xhr = new XMLHttpRequest();
+    var citizen_id = localStorage.getItem('citizen_id');
+    xhr.open('POST', 'create_request.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+    // Define what happens when the server responds
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            const response = JSON.parse(xhr.responseText);
+            if (response.success) {
+                alert('Το αίτημα δημιουργήθηκε επιτυχώς!');
+
+                requestsData = fetchRequests();
+                requestsData.then(requests => {
+                populateRequestHistory(requests);
+                });
+            } else {
+                alert('Σφάλμα: ' + response.message);
+            }
+        } else {
+            alert('Η αίτηση απέτυχε. Κωδικός σφάλματος: ' + xhr.status);
+        }
+    };
+
+    const data = `citizen_id=${encodeURIComponent(citizen_id)}
+        &items=${encodeURIComponent(items)}
+        &people=${encodeURIComponent(numOfPeople)}
+    `;
+    xhr.send(data);
+ 
 }
