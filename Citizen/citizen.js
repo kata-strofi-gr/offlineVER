@@ -7,11 +7,11 @@ function checkSession() {
 
     if (!sessionCookie || !citizen_id) {
         // If the session cookie is missing or expired, redirect to login
-        window.location.href = '/start.html';
+        localStorage.removeItem('citizen_id');
+        window.location.href = '../start.html';
     }
 }
 
-// Function to get a cookie by name
 function getCookie(name) {
     var nameEQ = name + "=";
     var ca = document.cookie.split(';');
@@ -23,7 +23,16 @@ function getCookie(name) {
     return null;
 }
 
-// Function to reset the session cookie when the user is active
+function setCookie(name, value, minutes) {
+    var expires = "";
+    if (minutes) {
+        var date = new Date();
+        date.setTime(date.getTime() + (minutes * 60 * 1000)); // Convert minutes to milliseconds
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + value + expires + "; path=/";
+}
+
 function extendSession() {
     setCookie('citizen_session', 'active', sessionTime);  // Reset session for another 20 minutes
 }
