@@ -28,16 +28,18 @@ if ($userID) {
 
     $result = $conn->query($sql);
     $items = [];
-    while ($row = $result->fetch_assoc()) {
-        $items[] = [
-            'Name' => $row['Name'],
-            'Category' => $row['Category'],
-            'Quantity' => $row['Quantity'],
-            'DateCreated' => $row['DateCreated'],
-            'DateAssignedVehicle' => $row['DateAssignedVehicle'],
-        ];
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $items[] = [
+                'Name' => $row['Name'],
+                'Category' => $row['Category'],
+                'Quantity' => $row['Quantity'],
+                'DateCreated' => $row['DateCreated'],
+                'DateAssignedVehicle' => $row['DateAssignedVehicle'],
+            ];
+        }
     }
-
+    
     $conn->close();
     echo json_encode($items);
 
