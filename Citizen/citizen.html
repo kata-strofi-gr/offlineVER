@@ -6,18 +6,6 @@
     <title>Citizen</title>
     <link rel="stylesheet" href="citizen.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-     <!-- Include jQuery -->
-     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-     <!-- Include jQuery UI CSS and JS for Datepicker -->
-     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-     <!-- Include Chart.js -->
-     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-
-
 </head>
 <body>
     <div class="container">
@@ -34,136 +22,104 @@
         <div class="menuT">
             <button class="hamburger-menu" onclick="toggleMenu()">☰</button>
             <nav class="menu-bar">
-                <a href="#" class="menu-item" id="aithmataaShow">Αιτήματα</a>
+                <a href="#" class="menu-item" id="requestsScreen">Αιτήματα</a>
                 <span class="separator">|</span>
-                <a href="#" class="menu-item" id="prosforessShow">Προσφορές</a>
+                <a href="#" class="menu-item" id="offersScreen">Προσφορές</a>
                 <span class="separator">|</span>
-                <div class="menu-item-container">
-                    <a href="#" class="menu-item">Επιλογές</a>
-                    <div class="dropdown-content">
-                        <a href="#" id="loggout">Αποσύνδεση</a>
-                        <a href="#" id="other">Ότι θέλετε</a>
-                    </div>
-                </div>
+                <a href="#" class="menu-item" id="logout">Αποσύνδεση</a>
             </nav>
         </div>
         <div class="imapT">
-            
-            <div class="form-container" id="newAithmata2">
+            <div class="form-container" id="newRequest">
                 <div class="form-header">
                     Νέο αίτημα
                 </div>
                 <div class="form-content">
-
                     <label for="category">Κατηγορία</label>
                     <select id="category" name="type">
                         <option value="" disabled selected>Επιλέξτε κατηγορία</option>
                         <option value="default">Δεν υπάρχουν δεδομένα</option>
                     </select>
-        
                     <label for="searchStock">Αναζήτηση είδους</label>
                     <input type="text" id="searchStock" name="searchStock" placeholder="πχ. ΓΑΛ" list="itemsList">
                     <datalist id="itemsList">
                         <!-- Data will be dynamically inserted here -->
                     </datalist>
-                    
-                    <div class="reqs"> 
-                    <label for="peopleNumb">Αριθμός ατόμων</label>
-                    <input type="number" id="peopleNumb" name="peopleNumb" placeholder="Συνολικά άτομα">
+                    <div class="reqs">
+                        <label for="peopleNumb">Αριθμός ατόμων</label>
+                        <input type="number" id="peopleNumb" name="peopleNumb" placeholder="Συνολικά άτομα">
                     </div>
-                    
-
                     <div class="form-buttons">
-                        
                         <button type="submit" class="btn submit">Υποβολή</button>
                     </div>
                 </div>
             </div>
-
-        <div class="historyReq" id="historyR">
-        <!-- Add these containers in the appropriate section of your admin.html file -->
-        <div class="data-container">
-            <div class="table-container">
-                <table id="dataTable">
-                    <thead>
-                        <tr>
-                            <th>Είδος</th>
-                            <th>Κατηγορία</th>
-                            <th>Ποσότητα</th>
-                            <th>Ημ/νια αποδοχής</th>
-                            <th>Ημ/νια ολοκλήρωσης</th>
-                        
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Table rows will be dynamically inserted here -->
-                    </tbody>
-                </table>
-            </div>
-            
-        </div>
-        </div>
-
-        <div class="offergive" id="offerG">
-            <!-- Add these containers in the appropriate section of your admin.html file -->
-            <div class="data-container">
-                <div class="table-container">
-                    <table id="newDataTable">
-                        <thead>
-                            <tr>
-                                <th>Κατηγορία προσφοράς</th>
-                                <th>Ποσότητα προσφοράς</th>
-                                <th>Θα προσφέρετε?</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Table rows will be populated here by JavaScript -->
-                        </tbody>
-                    </table>
-                    
-                    
+            <div class="historyReq" id="historyR">
+                <!-- Add these containers in the appropriate section of your admin.html file -->
+                <div class="data-container">
+                    <div class="table-container">
+                        <table id="dataTable">
+                            <thead>
+                                <tr>
+                                    <th>Είδος</th>
+                                    <th>Κατηγορία</th>
+                                    <th>Ποσότητα</th>
+                                    <th>Ημ/νια δημιουργίας</th>
+                                    <th>Ημ/νια αποδοχής</th>
+                                    <th>Ημ/νια ολοκλήρωσης</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Table rows will be dynamically inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                
             </div>
+            <div class="offergive" id="offerG">
+                <!-- Add these containers in the appropriate section of your admin.html file -->
+                <div class="data-container">
+                    <div class="table-container">
+                        <table id="newDataTable">
+                            <thead>
+                                <tr>
+                                    <th>Κατηγορία προσφοράς</th>
+                                    <th>Ποσότητα προσφοράς</th>
+                                    <th>Θα προσφέρετε?</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Table rows will be populated here by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-
-
-
-       <div class="offergiveHist" id="offerGH">
-        <!-- Add these containers in the appropriate section of your admin.html file -->
-        <div class="data-container">
-            <div class="table-container">
-                <table id="dataTable2">
-                    <thead>
-                        <tr>
-                            <th>Είδος Προσφοράς</th>
-                            <th>Κατηγορία Προσφοράς</th>
-                            <th>Ποσότητα Προσφοράς</th>
-                            <th>Ημ/νια αποδοχής</th>
-                            <th>Ημ/νια ολοκλήρωσης</th>
-                        
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Table rows will be dynamically inserted here -->
-                    </tbody>
-                </table>
+            <div class="offergiveHist" id="offerGH">
+                <!-- Add these containers in the appropriate section of your admin.html file -->
+                <div class="data-container">
+                    <div class="table-container">
+                        <table id="dataTable2">
+                            <thead>
+                                <tr>
+                                    <th>Είδος Προσφοράς</th>
+                                    <th>Κατηγορία Προσφοράς</th>
+                                    <th>Ποσότητα Προσφοράς</th>
+                                    <th>Ημ/νια δημιουργίας</th>
+                                    <th>Ημ/νια αποδοχής</th>
+                                    <th>Ημ/νια ολοκλήρωσης</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Table rows will be dynamically inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-            
+            <!-- ola ta popup mexri edo mesas-->
         </div>
-        </div>     
-
-
-
-
-    <!-- ola ta popup mexri edo mesas-->
     </div>
- 
-    </div>
-
-
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="citizen.js"></script>
-    <script src="offers.js"></script>
 </body>
 </html>
