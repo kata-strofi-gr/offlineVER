@@ -2,7 +2,6 @@
  * Cookies management
  */
 function checkSession() {
-    //todo: add functionality for logout, keep logged in etc?
     var sessionCookie = getCookie('citizen_session');
     var citizen_id = localStorage.getItem('citizen_id');
 
@@ -24,6 +23,11 @@ function getCookie(name) {
     return null;
 }
 
+// Function to reset the session cookie when the user is active
+function extendSession() {
+    setCookie('citizen_session', 'active', sessionTime);  // Reset session for another 20 minutes
+}
+
 checkSession();  // Initial check //TODO: make this run immediately?
 setInterval(checkSession, 60000);  // Check every 1 minute
 
@@ -37,10 +41,16 @@ var allItemCategories;
 var allItems;
 var expiryDates = {"Requests": null, "Offers": null, "Announcements": null, "Categories": null, "Items": null};
 const expiryTime = 60000; // 1 minute in milliseconds
+const sessionTime = 20 // 20 minutes
 
 /**
  * Event Listeners
  */
+// Add event listeners for user activity (mousemove, keypress, click)
+window.addEventListener('mousemove', extendSession);
+window.addEventListener('keypress', extendSession);
+window.addEventListener('click', extendSession);
+
 document.addEventListener("DOMContentLoaded", function () {
     fetchAllExpired();
     setInterval(fetchAllExpired, expiryTime);
@@ -66,10 +76,14 @@ offersScreenButton.addEventListener('click', function(e) {
     showOffersScreen();
 });
 
-//todo: aposindesi dummy
 const logoutButton = document.getElementById('logout');
 logoutButton.addEventListener('click', function(e) {
     e.preventDefault(); // Prevent default link behavior
+
+    document.cookie = "citizen_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    localStorage.removeItem('citizen_id');
+    localStorage.removeItem('role');
+
     window.location.href = '../start.html';
 });
 

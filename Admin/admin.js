@@ -60,7 +60,6 @@ document.getElementById('loggout').addEventListener('click', function (e) {
     window.removeEventListener('keypress', extendSession);
     window.removeEventListener('click', extendSession);
     localStorage.removeItem('admin_id');
-    localStorage.removeItem('userID');
     localStorage.removeItem('role');
 
     // Redirect to login page
