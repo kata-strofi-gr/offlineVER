@@ -37,7 +37,7 @@ function extendSession() {
     setCookie('citizen_session', 'active', sessionTime);  // Reset session for another 20 minutes
 }
 
-checkSession();  // Initial check //TODO: make this run immediately?
+checkSession();  // Initial check
 setInterval(checkSession, 60000);  // Check every 1 minute
 
 /**
