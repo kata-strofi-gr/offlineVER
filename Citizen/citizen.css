@@ -482,6 +482,10 @@ th {
     color: white;
 }
 
+thead tr th:hover {
+    cursor: pointer;
+}
+
 tbody tr:nth-child(even) {
     background-color: #ffffff;
 }
