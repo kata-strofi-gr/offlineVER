@@ -1,14 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
-
-
 :root {
     --kataRED: #FA4343;
 }
 * {
     box-sizing: border-box;
 }
-
 
 .container{
     display: grid;
@@ -277,7 +274,6 @@
     font-size: 1.5em;
     cursor: pointer;
 }
-
 
 
 .offer-details {
