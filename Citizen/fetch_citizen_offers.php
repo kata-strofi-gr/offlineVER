@@ -9,21 +9,22 @@ if (isset($_SERVER['PATH_INFO'])) {
 }
 
 // Include the database configuration file
-include 'db_config.php';
+include '../db_config.php';
 
 if ($userID) {
     $sql = "
         SELECT
-            i.Name,
-            i.Category,
-            ri.Quantity,
-            r.DateCreated,
-            r.DateAssignedVehicle
-        FROM Requests r
-        LEFT JOIN RequestItems ri ON r.RequestID = ri.RequestID
-        LEFT JOIN Items i ON ri.ItemID = i.ItemID
-        LEFT JOIN Citizen c ON r.CitizenID = c.CitizenID
-        WHERE c.UserID = $userID";
+            items.Name,
+            cat.CategoryName,
+            offitems.Quantity,
+            off.DateCreated,
+            off.DateAssignedVehicle
+        FROM Offers off
+        LEFT JOIN OfferItems offitems ON off.OfferID = offitems.OfferID
+        LEFT JOIN Items items ON offitems.ItemID = items.ItemID
+        LEFT JOIN Category cat ON items.CategoryID = cat.CategoryID
+        LEFT JOIN Citizen cit ON off.CitizenID = cit.CitizenID
+        WHERE cit.UserID = $userID";
 
     $result = $conn->query($sql);
     $items = [];
