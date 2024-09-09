@@ -479,7 +479,7 @@ function createRequest(items, numOfPeople) {
    
     const xhr = new XMLHttpRequest();
     var citizen_id = localStorage.getItem('citizen_id');
-    xhr.open('POST', 'create_request.php', true);
+    xhr.open('POST', 'create_request.php/'+ citizen_id, true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
     // Define what happens when the server responds
@@ -501,8 +501,7 @@ function createRequest(items, numOfPeople) {
         }
     };
 
-    const data = `citizen_id=${encodeURIComponent(citizen_id)}
-        &items=${encodeURIComponent(items)}
+    const data = `items=${encodeURIComponent(items)}
         &people=${encodeURIComponent(numOfPeople)}
     `;
     xhr.send(data);
@@ -518,7 +517,7 @@ function createOffer(items, quantities) {
 
     const xhr = new XMLHttpRequest();
     var citizen_id = localStorage.getItem('citizen_id');
-    xhr.open('POST', 'create_offer.php', true);
+    xhr.open('POST', 'create_offer.php/' + citizen_id, true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
     // Define what happens when the server responds
@@ -540,8 +539,7 @@ function createOffer(items, quantities) {
         }
     };
 
-    const data = `citizen_id=${encodeURIComponent(citizen_id)}
-        &items=${encodeURIComponent(items)}
+    const data = `items=${encodeURIComponent(items)}
         &quantities=${encodeURIComponent(quantities)}
     `;
     xhr.send(data);

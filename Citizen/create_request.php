@@ -4,8 +4,14 @@ header('Content-Type: application/json');
 // Include the database configuration file
 include '../db_config.php';
 
+// Get the citizen name from the URL
+if (isset($_SERVER['PATH_INFO'])) {
+    $citizen_id = trim($_SERVER['PATH_INFO'], '/'); // Trim leading and trailing slashes
+} else {
+    echo json_encode(['error' => 'No citizen ID provided']);
+}
+
 // TODO: multiple items
-$citizen_id = rtrim($_POST['citizen_id']);
 $items = rtrim($_POST['items']);
 $people = rtrim($_POST['people']);
 $quantity = $people * 10; //TODO: quantity per person

@@ -4,11 +4,16 @@ header('Content-Type: application/json');
 // Include the database configuration file
 include '../db_config.php';
 
-$citizen_id = rtrim($_POST['citizen_id']);
+// Get the citizen name from the URL
+if (isset($_SERVER['PATH_INFO'])) {
+    $citizen_id = trim($_SERVER['PATH_INFO'], '/'); // Trim leading and trailing slashes
+} else {
+    echo json_encode(['error' => 'No citizen ID provided']);
+}
+
 $items = rtrim($_POST['items']);
 $quantities = rtrim($_POST['quantities']);
 
-// error_log("citizen_id: $citizen_id, items: $items, quantities: $quantities");
 // Call the stored procedure
 try {
     // Call the stored procedure to create a new rescuer and a vehicle
