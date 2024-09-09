@@ -98,13 +98,34 @@ logoutButton.addEventListener('click', function(e) {
     window.location.href = '../start.html';
 });
 
-const requestSubmitButton = document.getElementById('newRequest').querySelector('.btn.submit');
+const requestTable = document.getElementById('newRequest');
+const requestSubmitButton = requestTable.querySelector('.btn.submit');
 requestSubmitButton.addEventListener('click', function(e) {
-    var requestTable = document.getElementById('newRequest');
     var selectedItemName = requestTable.querySelector('#searchStock').value;
     var numOfPeople = requestTable.querySelector('#peopleNumb').value;
 
     createRequest(selectedItemName, numOfPeople);
+});
+
+const offerTable = document.getElementById('offerG');
+const offerSubmitButton = offerTable.querySelector('.btn.submit');
+offerSubmitButton.addEventListener('click', function(e) {
+    var filledCheckboxes = Array.from(offerTable.querySelectorAll('input[type=checkbox]'))
+    .filter(input => input.checked);
+
+    // Get parent tr, select third column (which contains item name)
+    var selectedItemNames = Array.from(filledCheckboxes).map(checkbox => {
+        var row = checkbox.closest('tr');
+        return row.querySelectorAll('td')[2].textContent;
+    });
+
+    // same as above for quantities
+    var quantities = Array.from(filledCheckboxes).map(checkbox => {
+        var row = checkbox.closest('tr');
+        return row.querySelectorAll('td')[3].textContent;
+    });
+
+    createOffer(selectedItemNames, quantities);
 });
 
 // Table sorting!
@@ -470,7 +491,7 @@ function createRequest(items, numOfPeople) {
 
                 requestsData = fetchRequests();
                 requestsData.then(requests => {
-                populateRequestHistory(requests);
+                    populateRequestHistory(requests);
                 });
             } else {
                 alert('Σφάλμα: ' + response.message);
@@ -483,6 +504,45 @@ function createRequest(items, numOfPeople) {
     const data = `citizen_id=${encodeURIComponent(citizen_id)}
         &items=${encodeURIComponent(items)}
         &people=${encodeURIComponent(numOfPeople)}
+    `;
+    xhr.send(data);
+ 
+}
+
+function createOffer(items, quantities) {
+    // Check if arrays are empty
+    if (items.length === 0 || quantities.length === 0) {
+        alert('Δεν έχετε επιλέξει κανένα αντικείμενο!');
+        return;
+    }
+
+    const xhr = new XMLHttpRequest();
+    var citizen_id = localStorage.getItem('citizen_id');
+    xhr.open('POST', 'create_offer.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+    // Define what happens when the server responds
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            const response = JSON.parse(xhr.responseText);
+            if (response.success) {
+                alert('Η προσφορά δημιουργήθηκε επιτυχώς!');
+
+                offersData = fetchOffers();
+                offersData.then(offers => {
+                    populateOfferHistory(offers);
+                });
+            } else {
+                alert('Σφάλμα: ' + response.message);
+            }
+        } else {
+            alert('Η αίτηση απέτυχε. Κωδικός σφάλματος: ' + xhr.status);
+        }
+    };
+
+    const data = `citizen_id=${encodeURIComponent(citizen_id)}
+        &items=${encodeURIComponent(items)}
+        &quantities=${encodeURIComponent(quantities)}
     `;
     xhr.send(data);
  

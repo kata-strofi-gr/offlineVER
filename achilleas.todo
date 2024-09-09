@@ -1,0 +1,27 @@
+//Offers:
+    //-Show announcement id
+    //-Allow multiple
+    //-Submit button
+
+Rescuer Map:
+    -Actually make map work
+    -Task handling
+    -Warehouse management:
+        -TO BE ANALYZED
+
+Details:
+    -Add cancels to requests/offers etc. (if not already taken)
+    -Reorganize folders: public api, class api etc.
+    -Status in offer and requests
+    -Fix CSS
+    -Table sorting everywhere
+    -Show details along item name
+    -Add last page used for localstorage citizen
+    -Add sessions in for back/forwards
+    -SameSite cookies tag
+    -Announcement details?
+
+Big fix:
+    -Quantity per person
+    -More than 1 item per request (popup?)
+    -Beautify announcements (popup/dropdown?)
