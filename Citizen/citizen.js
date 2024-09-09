@@ -66,10 +66,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
-const categorySelect = document.getElementById('category');
-categorySelect.addEventListener('change', function () {
+const newRequestElement = document.getElementById('newRequest');
+const categoryList = newRequestElement.querySelector('#category');
+categoryList.addEventListener('change', function () {
     allItems.then(items => {
         populateRequestItems(items);
+        newRequestElement.querySelector('#searchStock').value = ''; //empty selected item
     });
 });
 
@@ -204,8 +206,6 @@ function showOffersScreen(){
 }
 
 function populateRequestCategories(data) {
-    const newRequestElement = document.getElementById('newRequest');
-    const categoryList = newRequestElement.querySelector('#category');
     newRequestElement.querySelector('#searchStock').value = ''; //empty selected item
 
 
