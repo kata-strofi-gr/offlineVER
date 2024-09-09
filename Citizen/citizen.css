@@ -494,6 +494,10 @@ thead tr th:hover {
     cursor: pointer;
 }
 
+thead tr th.no-sort:hover {
+    cursor: default; /* don't show pointer cursor for non-sortable columns */    
+}
+
 tbody tr:nth-child(even) {
     background-color: #ffffff;
 }

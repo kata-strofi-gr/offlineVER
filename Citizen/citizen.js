@@ -117,6 +117,8 @@ const comparer = (idx, asc) => (a, b) => ((v1, v2) =>
 
 // Add event listeners to each header for sorting
 document.querySelectorAll('th').forEach(th => th.addEventListener('click', function() {
+    if (th.classList.contains('no-sort')) return; // Skip sorting for this column
+
     const table = th.closest('table');
     const tbody = table.querySelector('tbody');
     const index = Array.from(th.parentNode.children).indexOf(th);
@@ -275,10 +277,13 @@ function populateNewOffer(data) {
     data.forEach(row => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td>${row.category}</td>
-            <td>${row.quantity}</td>
-            <td><input type="checkbox" data-id="${row.id}"></td>
-        `;
+            <td>${row.AnnouncementID}</td>
+            <td>${row.CategoryName}</td>
+            <td>${row.Name}</td>
+            <td>${row.Quantity}</td>
+            <td>${row.DateCreated}</td>
+            <td><input type="checkbox" data-id="${row.Name}"></td> 
+        `;//todo: change to ids?
         tableBody.appendChild(tr);
     });
 }
