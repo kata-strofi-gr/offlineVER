@@ -5,6 +5,7 @@
 
 Rescuer Map:
     -Actually make map work
+    - What happens when not assigned vehicle
     -Task handling
     -Warehouse management:
         -TO BE ANALYZED
@@ -20,6 +21,10 @@ Details:
     -Add sessions in for back/forwards
     -SameSite cookies tag
     -Announcement details?
+    -Base location popup in view
+    -Add button for map view instead of logo only
+    -Clean popups when changing view
+    -Api give roleid return username?
 
 Big fix:
     -Quantity per person
