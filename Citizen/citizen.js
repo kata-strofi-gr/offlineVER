@@ -37,9 +37,6 @@ function extendSession() {
     setCookie('citizen_session', 'active', sessionTime);  // Reset session for another 20 minutes
 }
 
-checkSession();  // Initial check
-setInterval(checkSession, 60000);  // Check every 1 minute
-
 /**
  * Global variables
  */
@@ -59,12 +56,6 @@ const sessionTime = 20 // 20 minutes
 window.addEventListener('mousemove', extendSession);
 window.addEventListener('keypress', extendSession);
 window.addEventListener('click', extendSession);
-
-document.addEventListener("DOMContentLoaded", function () {
-    fetchAllExpired();
-    setInterval(fetchAllExpired, expiryTime);
-
-});
 
 const newRequestElement = document.getElementById('newRequest');
 const categoryList = newRequestElement.querySelector('#category');
@@ -545,3 +536,16 @@ function createOffer(items, quantities) {
     xhr.send(data);
  
 }
+
+/**
+ * Setup
+ */
+// session cookie
+checkSession();  // Initial check
+setInterval(checkSession, 60000);  // Check every 1 minute
+
+document.addEventListener("DOMContentLoaded", function () {
+    fetchAllExpired();
+    setInterval(fetchAllExpired, expiryTime/10); //check every 1th of the expiry time
+
+});
