@@ -1,13 +1,9 @@
-//Offers:
-    //-Show announcement id
-    //-Allow multiple
-    //-Submit button
+Offers:
     -css tickboxes
 
 Rescuer Map:
     //-Basics map
-    -Filters
-    -Lines updated correctly
+
     -Include active tasks, vehicle and base in view
     -tasks selector list? with responsive map update?
     -Task handling
@@ -31,6 +27,8 @@ Details:
     -Api give roleid return username?
     -Uniformly use fetch
     -Pending etc offer markers?
+    -draw line to offer when selected?
+    -optimize sql queries
 
 Big fix:
     -Quantity per person

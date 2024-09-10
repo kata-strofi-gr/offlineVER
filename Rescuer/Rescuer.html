@@ -20,7 +20,7 @@
     <div class="container">
         <div class="modeT">
             <div class="modeRectangle">
-                <div class="modeF">
+                <div class="modeF" id="rescuer-name">
                     Συνδεδεμένος ως Rescuer
                 </div>
             </div>
@@ -57,12 +57,12 @@
                 <div class="buttonArea">
                     <button class="map-button" id="toggleTakenRequests" data-filter="takenRequests">Αιτήματα
                         αναληφθέντα</button>
+                    <button class="map-button" id="toggleTakenOffers" data-filter="takenOffers">Προσφορές αναληφθείσες</button>
                     <button class="map-button" id="togglePendingRequests" data-filter="pendingRequests">Αιτήματα
                         εκκρεμή</button>
-                    <button class="map-button" id="toggleOffers" data-filter="offers">Προσφορές αναληφθείσες</button>
-                    <button class="map-button" id="toggleActiveVehicles" data-filter="activeVehicles">Προσφορές
+                    <button class="map-button" id="togglePendingOffers" data-filter="pendingOffers">Προσφορές
                         εκκρεμείς</button>
-                    <button class="map-button" id="toggleLines" data-filter="lines">Ενδείξεις προορισμού</button>
+                    <button class="map-button" id="toggleLines" data-filter="lines">Ενδείξεις γραμμών</button>
                     <button class="btn_task" id="task">Ανάληψη</button>
                 </div>
             </div>
@@ -153,10 +153,11 @@
                     <table id="taskTable">
                         <thead>
                             <tr>
-                                <th colspan="6" class="table-title">Τρέχοντα Tasks</th>
+                                <th colspan="7" class="table-title">Τρέχοντα Tasks</th>
                             </tr>
                             <tr>
                                 <th>Επιλογή</th>
+                                <th>Ζ/Π</th>
                                 <th>Ονοματεπώνυμο</th>
                                 <th>Τηλέφωνο</th>
                                 <th>Ημ/νία Καταχώρησης</th>
@@ -210,7 +211,6 @@
 
 
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-        <script src="map_rescuer.js"></script>
         <script src="rescuer.js"></script>
         <script src="vehicle_management.js"></script>
 </body>

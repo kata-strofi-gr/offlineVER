@@ -6,56 +6,25 @@ if (isset($_SERVER['PATH_INFO'])) {
     $rescuer_id = trim($_SERVER['PATH_INFO'], '/'); // Trim leading and trailing slashes
 } else {
     echo json_encode(['error' => 'No rescuer ID provided']);
+    return;
 }
 
 // Include the database configuration file
-include '../db_config.php';
+include '../../db_config.php';
 
-// Fetch base location
-$base_sql = "
-    SELECT BaseName, Latitude, Longitude
-    FROM BaseLocation
-    LIMIT 1;
-";
-
-$base_result = $conn->query($base_sql);
-$base_location = $base_result->fetch_assoc();
-
-$vehicle_sql = "
-    SELECT 
-        Latitude + 0.0001 AS VehicleLat,
-        Longitude + 0.0001 AS VehicleLng,
-        GROUP_CONCAT(DISTINCT req.RequestID) AS AssignedRequests,
-        GROUP_CONCAT(DISTINCT off.OfferID) AS AssignedOffers
-    FROM Vehicles v
-    LEFT JOIN Requests req ON req.RescuerID = v.RescuerID AND req.Status = 'INPROGRESS'
-    LEFT JOIN Offers off ON off.RescuerID = v.RescuerID AND off.Status = 'INPROGRESS'
-    WHERE v.RescuerID = $rescuer_id
-    GROUP BY v.Latitude, v.Longitude
-";
-
-$vehicle_result = $conn->query($vehicle_sql);
-
-// assume single vehicle!
-$vehicle;
-if ($vehicle_result->num_rows > 0) {
-    while ($row = $vehicle_result->fetch_assoc()) {
-        $vehicle = $row;
-    }
-}
-
-$unclaimed_and_owned_offers_sql = "
+$offers_sql = "
         SELECT 
-        off.OfferID, 
-        off.CitizenID, 
-        off.DateCreated, 
-        off.DateAssignedVehicle,
-        off.Status,
-        cit.Name, 
-        cit.Surname, 
-        cit.Phone,
-        cit.Latitude, 
-        cit.Longitude,
+        'Offer' AS Type,
+        off.OfferID ID, 
+        off.CitizenID CitizenID, 
+        off.DateCreated DateCreated, 
+        off.DateAssignedVehicle DateAssignedVehicle,
+        off.Status Status,
+        cit.Name Name, 
+        cit.Surname Surname,  
+        cit.Phone Phone,
+        cit.Latitude Latitude, 
+        cit.Longitude Longitude,
         GROUP_CONCAT(offitems.ItemID) AS ItemIDs,
         GROUP_CONCAT(items.Name SEPARATOR ', ') AS ItemNames,
         GROUP_CONCAT(offitems.Quantity SEPARATOR ', ') AS ItemQuantities
@@ -63,7 +32,7 @@ $unclaimed_and_owned_offers_sql = "
     JOIN Citizen cit on cit.CitizenID = off.CitizenID
     LEFT JOIN OfferItems offitems on off.OfferID = offitems.OfferID
     LEFT JOIN Items on offitems.ItemID = Items.ItemID
-    WHERE off.RescuerID is null or off.RescuerID = $rescuer_id
+    WHERE off.RescuerID = $rescuer_id
     GROUP BY off.OfferID, 
         off.CitizenID, 
         off.DateCreated, 
@@ -76,12 +45,12 @@ $unclaimed_and_owned_offers_sql = "
 
 ";
 
-$unclaimed_and_owned_offers_result = $conn->query($unclaimed_and_owned_offers_sql);
-$unclaimed_and_owned_offers = [];
+$offers_result = $conn->query($offers_sql);
+$offers = [];
 $offerOffsets = []; // for unstacking offers from the same citizen
 
-if ($unclaimed_and_owned_offers_result->num_rows > 0) {
-    while ($row = $unclaimed_and_owned_offers_result->fetch_assoc()) {
+if ($offers_result->num_rows > 0) {
+    while ($row = $offers_result->fetch_assoc()) {
         $citizenID = $row['CitizenID'];
 
         // Increment the offset for this citizen's offers
@@ -94,23 +63,24 @@ if ($unclaimed_and_owned_offers_result->num_rows > 0) {
         $row['Latitude'] += $offerOffsets[$citizenID] * 0.0000678;
         $row['Longitude'] += $offerOffsets[$citizenID] * 0.0000570;
 
-        $unclaimed_and_owned_offers[] = $row;
+        $offers[] = $row;
     }
 }
 
 
-$unclaimed_and_owned_requests_sql = "
+$requests_sql = "
     SELECT 
-        req.RequestID, 
-        req.CitizenID, 
-        req.DateCreated, 
-        req.DateAssignedVehicle,
-        req.Status,
-        cit.Name, 
-        cit.Surname, 
-        cit.Phone,
-        cit.Latitude, 
-        cit.Longitude,
+        'Request' AS Type,
+        req.RequestID ID,
+        req.CitizenID CitizenID,
+        req.DateCreated DateCreated,
+        req.DateAssignedVehicle DateAssignedVehicle,
+        req.Status Status,
+        cit.Name Name,
+        cit.Surname Surname,
+        cit.Phone Phone,
+        cit.Latitude Latitude,
+        cit.Longitude Longitude,
         GROUP_CONCAT(reqItems.ItemID) AS ItemIDs,
         GROUP_CONCAT(items.Name SEPARATOR ', ') AS ItemNames,
         GROUP_CONCAT(reqItems.Quantity SEPARATOR ', ') AS ItemQuantities
@@ -118,7 +88,7 @@ $unclaimed_and_owned_requests_sql = "
     JOIN Citizen cit on cit.CitizenID = req.CitizenID
     LEFT JOIN RequestItems reqitems on req.RequestID = reqitems.RequestID
     LEFT JOIN Items on reqitems.ItemID = Items.ItemID
-    WHERE req.RescuerID is null or req.RescuerID = $rescuer_id
+    WHERE req.RescuerID = $rescuer_id
     GROUP BY req.RequestID, 
         req.RequestID, 
         req.CitizenID, 
@@ -131,12 +101,12 @@ $unclaimed_and_owned_requests_sql = "
         cit.Longitude
 ";
 
-$unclaimed_and_owned_requests_result = $conn->query($unclaimed_and_owned_requests_sql);
-$unclaimed_and_owned_requests = [];
+$requests_result = $conn->query($requests_sql);
+$requests = [];
 $requestOffsets = []; // for unstacking requests from the same citizen
 
-if ($unclaimed_and_owned_requests_result->num_rows > 0) {
-    while ($row = $unclaimed_and_owned_requests_result->fetch_assoc()) {
+if ($requests_result->num_rows > 0) {
+    while ($row = $requests_result->fetch_assoc()) {
         $citizenID = $row['CitizenID'];
 
         // Increment the offset for this citizen's requests
@@ -149,17 +119,15 @@ if ($unclaimed_and_owned_requests_result->num_rows > 0) {
         $row['Latitude'] += $requestOffsets[$citizenID] * 0.0000608;
         $row['Longitude'] += $requestOffsets[$citizenID] * 0.00006555;
 
-        $unclaimed_and_owned_requests[] = $row;
+        $requests[] = $row;
     }
 }
 
-// Combine all data into one response
-$response = [
-    'base' => $base_location,
-    'vehicle' => $vehicle,
-    'requests' => $unclaimed_and_owned_requests,
-    'offers' => $unclaimed_and_owned_offers,
+$tasks = [
+    'Offers' => $offers,
+    'Requests' => $requests
 ];
 
-echo json_encode($response);
+echo json_encode($tasks);
 $conn->close();
+?>
