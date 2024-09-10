@@ -2,10 +2,14 @@
     //-Show announcement id
     //-Allow multiple
     //-Submit button
+    -css tickboxes
 
 Rescuer Map:
-    -Actually make map work
-    - What happens when not assigned vehicle
+    //-Basics map
+    -Filters
+    -Lines updated correctly
+    -Include active tasks, vehicle and base in view
+    -tasks selector list? with responsive map update?
     -Task handling
     -Warehouse management:
         -TO BE ANALYZED
@@ -25,6 +29,8 @@ Details:
     -Add button for map view instead of logo only
     -Clean popups when changing view
     -Api give roleid return username?
+    -Uniformly use fetch
+    -Pending etc offer markers?
 
 Big fix:
     -Quantity per person
