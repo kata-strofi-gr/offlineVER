@@ -13,7 +13,7 @@ var baseMarker; // To store the base marker
 var newBaseLatLng; // To store the new coordinates after dragging
 let vehicleMarkers = {}; // To store vehicle locations
 let allMarkers = []; // Array to store all markers
-let inProgressMarkers = []; // Array to store in-progress request markers
+let inProgressRequestMarkers = []; // Array to store in-progress request markers
 let pendingRequestMarkers = []; // Array to store pending request markers
 let offerMarkers = []; // Array to store offer markers
 let activeVehicleMarkers = []; // Array to store active vehicle markers
