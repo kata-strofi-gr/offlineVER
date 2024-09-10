@@ -176,15 +176,6 @@ document.getElementById('toggleLines').addEventListener('click', toggleLines);
 var externalPopup = document.getElementById('draggableBox');
 var closePopup = document.getElementById('closeBox');
 
-// Function to open the popup
-function openPopup() {
-    externalPopup.style.display = 'flex';
-}
-
-// Function to close the popup
-function closePopupFunction() {
-    externalPopup.style.display = 'none';
-}
 
 /**
  * Frontend functions
@@ -507,6 +498,12 @@ function showPopup({ type, title, details }) {
 
     popup.style.display = 'flex';
 }
+
+// Close button event for vehicle popup
+document.getElementById('closeBox').addEventListener('click', function () {
+    document.getElementById('draggableBox').style.display = 'none';
+    clearLines();
+});
 
 // Function to toggle the filter for "In Progress Requests"
 function toggleInProgressRequests() {
