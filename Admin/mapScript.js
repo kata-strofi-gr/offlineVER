@@ -14,7 +14,7 @@ var newBaseLatLng; // To store the new coordinates after dragging
 let vehicleMarkers = {}; // To store vehicle locations
 let allMarkers = []; // Array to store all markers
 let inProgressMarkers = []; // Array to store in-progress request markers
-let pendingMarkers = []; // Array to store pending request markers
+let pendingRequestMarkers = []; // Array to store pending request markers
 let offerMarkers = []; // Array to store offer markers
 let activeVehicleMarkers = []; // Array to store active vehicle markers
 let inactiveVehicleMarkers = []; // Array to store inactive vehicle markers
@@ -160,16 +160,16 @@ function updateMap(mapData) {
 
     // Clear previous markers and lines
     allMarkers.forEach(marker => map.removeLayer(marker));
-    inProgressMarkers.forEach(marker => map.removeLayer(marker));
-    pendingMarkers.forEach(marker => map.removeLayer(marker));
+    inProgressRequestMarkers.forEach(marker => map.removeLayer(marker));
+    pendingRequestMarkers.forEach(marker => map.removeLayer(marker));
     offerMarkers.forEach(marker => map.removeLayer(marker));
     activeVehicleMarkers.forEach(marker => map.removeLayer(marker));
     inactiveVehicleMarkers.forEach(marker => map.removeLayer(marker));
     drawnLines.forEach(line => map.removeLayer(line));
     
     allMarkers = []; // Reset the marker arrays
-    inProgressMarkers = [];
-    pendingMarkers = [];
+    inProgressRequestMarkers = [];
+    pendingRequestMarkers = [];
     offerMarkers = [];
     activeVehicleMarkers = [];
     inactiveVehicleMarkers = [];
@@ -250,9 +250,9 @@ function updateMap(mapData) {
         // Add to the respective arrays
         allMarkers.push(requestMarker);
         if (request.Status === 'INPROGRESS') {
-            inProgressMarkers.push(requestMarker);
+            inProgressRequestMarkers.push(requestMarker);
         } else if (request.Status === 'PENDING') {
-            pendingMarkers.push(requestMarker);
+            pendingRequestMarkers.push(requestMarker);
         }
 
         // Add marker to the map if the filters are not active or if it should be displayed
@@ -328,10 +328,10 @@ function toggleInProgressRequests() {
     const button = document.getElementById('toggleTakenRequests');
     
     if (isInProgressFilterActive) {
-        inProgressMarkers.forEach(marker => marker.addTo(map)); // Re-add in-progress markers
+        inProgressRequestMarkers.forEach(marker => marker.addTo(map)); // Re-add in-progress markers
         button.classList.remove('active-filter');
     } else {
-        inProgressMarkers.forEach(marker => map.removeLayer(marker)); // Remove in-progress markers
+        inProgressRequestMarkers.forEach(marker => map.removeLayer(marker)); // Remove in-progress markers
         button.classList.add('active-filter');
     }
     
@@ -343,10 +343,10 @@ function togglePendingRequests() {
     const button = document.getElementById('togglePendingRequests');
     
     if (isPendingFilterActive) {
-        pendingMarkers.forEach(marker => marker.addTo(map)); // Re-add pending markers
+        pendingRequestMarkers.forEach(marker => marker.addTo(map)); // Re-add pending markers
         button.classList.remove('active-filter');
     } else {
-        pendingMarkers.forEach(marker => map.removeLayer(marker)); // Remove pending markers
+        pendingRequestMarkers.forEach(marker => map.removeLayer(marker)); // Remove pending markers
         button.classList.add('active-filter');
     }
     
