@@ -11,13 +11,12 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 var baseMarker; // To store the base marker
 var newBaseLatLng; // To store the new coordinates after dragging
-let vehicleMarkers = {}; // To store vehicle locations
+let vehicleMarkerLatLng; // To store vehicle coordinates
+let vehicleMarker; // To store the vehicle marker
 let allMarkers = []; // Array to store all markers
 let inProgressMarkers = []; // Array to store in-progress request markers
 let pendingMarkers = []; // Array to store pending request markers
 let offerMarkers = []; // Array to store offer markers
-let activeVehicleMarkers = []; // Array to store active vehicle markers
-let inactiveVehicleMarkers = []; // Array to store inactive vehicle markers
 let drawnLines = []; // Array to store drawn lines
 
 let isInProgressFilterActive = false; // State to track if the in-progress filter is active
@@ -84,8 +83,8 @@ function fetchDataAndUpdateMap() {
         currentCenter = map.getCenter();
         currentZoom = map.getZoom();
     }
-    
-    fetch('map_fetch.php')
+
+    fetch('map_fetch.php/' + localStorage.getItem('rescuer_id'))
         .then(response => response.json())
         .then(data => {
             if (data.error) {
@@ -99,24 +98,22 @@ function fetchDataAndUpdateMap() {
         });
 }
 
-
 // Function to clear all lines from the map
 function clearLines() {
     drawnLines.forEach(line => map.removeLayer(line));
     drawnLines = [];
 }
 
-
 // Function to draw lines between vehicle and tasks
 function drawLines(vehicle, requests, offers) {
     clearLines();
 
     // Draw lines to assigned requests
-    if (vehicle.AssignedRequests) {
+    if (vehicle.AssignedRequests && isInProgressFilterActive) {
         vehicle.AssignedRequests.split(',').forEach(reqID => {
             const request = requests.find(r => r.RequestID == reqID);
             if (request) {
-                const line = L.polyline([[vehicle.VehicleLat, vehicle.VehicleLng], [request.RequestLat, request.RequestLng]], {
+                const line = L.polyline([[vehicle.VehicleLat, vehicle.VehicleLng], [request.Latitude, request.Longitude]], {
                     color: 'green'
                 }).addTo(map);
                 drawnLines.push(line);
@@ -129,7 +126,7 @@ function drawLines(vehicle, requests, offers) {
         vehicle.AssignedOffers.split(',').forEach(offerID => {
             const offer = offers.find(o => o.OfferID == offerID);
             if (offer) {
-                const line = L.polyline([[vehicle.VehicleLat, vehicle.VehicleLng], [offer.OfferLat, offer.OfferLng]], {
+                const line = L.polyline([[vehicle.VehicleLat, vehicle.VehicleLng], [offer.Latitude, offer.Longitude]], {
                     color: 'blue'
                 }).addTo(map);
                 drawnLines.push(line);
@@ -138,41 +135,31 @@ function drawLines(vehicle, requests, offers) {
     }
 }
 
-
-// Function to draw a line between a request/offer and its assigned vehicle using VehicleID
-function drawLineToAssignedVehicle(marker, assignedVehicleID, vehicleMarkers) {
-    clearLines(); // Clear existing lines
-
-    const vehicleLatLng = vehicleMarkers[assignedVehicleID];
-    if (vehicleLatLng) {
-        const line = L.polyline([[marker.getLatLng().lat, marker.getLatLng().lng], [vehicleLatLng.lat, vehicleLatLng.lng]], {
+// Function to draw a line between a request/offer marker and the rescuer's vehicle coordinates
+function drawLineToVehicle(marker, vehicleMarkerLatLng) {
+    if (vehicleMarkerLatLng) {
+        const line = L.polyline([[marker.getLatLng().lat, marker.getLatLng().lng], [vehicleMarkerLatLng.lat, vehicleMarkerLatLng.lng]], {
             color: 'green'
         }).addTo(map);
         drawnLines.push(line);
     }
 }
 
-
 // Function to update the map with base, vehicle, offer, and request data
 function updateMap(mapData) {
     const base = mapData.base;
-    
 
     // Clear previous markers and lines
     allMarkers.forEach(marker => map.removeLayer(marker));
     inProgressMarkers.forEach(marker => map.removeLayer(marker));
     pendingMarkers.forEach(marker => map.removeLayer(marker));
     offerMarkers.forEach(marker => map.removeLayer(marker));
-    activeVehicleMarkers.forEach(marker => map.removeLayer(marker));
-    inactiveVehicleMarkers.forEach(marker => map.removeLayer(marker));
     drawnLines.forEach(line => map.removeLayer(line));
-    
+
     allMarkers = []; // Reset the marker arrays
     inProgressMarkers = [];
     pendingMarkers = [];
     offerMarkers = [];
-    activeVehicleMarkers = [];
-    inactiveVehicleMarkers = [];
     drawnLines = [];
 
     // Clear the base marker if it exists
@@ -180,21 +167,24 @@ function updateMap(mapData) {
         map.removeLayer(baseMarker);
     }
 
+    // Clear the vehicle marker if it exists
+    if (vehicleMarker) {
+        map.removeLayer(vehicleMarker);
+    }
+
     // Add the base marker with the custom icon
-    baseMarker = L.marker([base.Latitude, base.Longitude], { icon: baseIcon, draggable: true })
-        .addTo(map)
-        .bindPopup(`<b>${base.BaseName}</b><br>Drag to change location.`)
-        .openPopup();
+    baseMarker = L.marker([base.Latitude, base.Longitude], { icon: baseIcon}).addTo(map);
+    
+    // Store vehicle location for easy lookup
+    vehicleMarkerLatLng = { lat: mapData.vehicle.VehicleLat, lng: mapData.vehicle.VehicleLng };
 
-    // Handle dragging of the base marker
-    baseMarker.on('dragend', function (event) {
-        newBaseLatLng = event.target.getLatLng();
-        showConfirmPopup(); // Show confirmation popup when dragging ends
-    });
+    vehicleMarker = L.marker([vehicleMarkerLatLng.lat, vehicleMarkerLatLng.lng], { icon: blueIcon });
+    vehicleMarker.addTo(map).bindPopup(`<b>You are here!</b>`);
 
-    // If it's the initial load (browser refresh), set the map to the base location
+    // If it's the initial load (browser refresh), set the map to the base location and open popup
     if (initialLoad) {
         map.setView([base.Latitude, base.Longitude], 16);
+        vehicleMarker.openPopup();
         initialLoad = false; // Reset the flag after the initial load
     } else {
         // Reapply the saved center and zoom level after the update
@@ -203,49 +193,15 @@ function updateMap(mapData) {
         }
     }
 
-
-    // Store vehicle locations for easy lookup
-    mapData.vehicles.forEach(function (vehicle) {
-        vehicleMarkers[vehicle.VehicleID] = { lat: vehicle.VehicleLat, lng: vehicle.VehicleLng };
-
-        // Determine if the vehicle is active or inactive
-        let vehicleMarker = L.marker([vehicle.VehicleLat, vehicle.VehicleLng], { icon: blueIcon });
-
-        if (vehicle.ActiveTasks > 0) {
-            activeVehicleMarkers.push(vehicleMarker);
-        } else {
-            inactiveVehicleMarkers.push(vehicleMarker);
-        }
-
-        if ((!isActiveVehiclesFilterActive || vehicle.ActiveTasks > 0) &&
-            (!isInactiveVehiclesFilterActive || vehicle.ActiveTasks === 0)) {
-            vehicleMarker.addTo(map);
-        }
-
-        vehicleMarker.on('click', function () {
-            clearLines(); // Clear lines when clicking a new marker
-            showPopup({
-                type: "vehicle-box",
-                title: "Όχημα",
-                details: `
-                <p><strong>Διακριτικό Οχήματος:</strong> ${vehicle.RescuerUsername}</p>
-                <p><strong>Φορτίο:</strong> ${vehicle.Load}</p>
-                <p><strong>Κατάσταση:</strong> ${vehicle.Status}</p>
-                <p><strong>Ενεργά Tasks:</strong> ${vehicle.ActiveTasks > 0 ? 'Ναι' : 'Όχι'}</p>
-            `
-            });
-
-            // Draw lines only if the lines filter is not active
-            if (!isLinesFilterActive) {
-                drawLines(vehicle, mapData.requests, mapData.offers);
-            }
-        });
-    });
+    // Draw lines only if the lines filter is not active
+    if (!isLinesFilterActive) {
+        drawLines(mapData.vehicle, mapData.requests, mapData.offers);
+    }
 
     // Add request markers
     mapData.requests.forEach(function (request) {
         var icon = request.Status === 'PENDING' ? pendingRequestIcon : inProgressRequestIcon;
-        var requestMarker = L.marker([request.RequestLat, request.RequestLng], { icon: icon });
+        var requestMarker = L.marker([request.Latitude, request.Longitude], { icon: icon });
 
         // Add to the respective arrays
         allMarkers.push(requestMarker);
@@ -272,14 +228,13 @@ function updateMap(mapData) {
                 <p><strong>Ημ/νια Καταχώρησης:</strong> ${request.DateCreated}</p>
                 <p><strong>Είδη:</strong> ${request.ItemNames}</p>
                 <p><strong>Ποσότητες:</strong> ${request.ItemQuantities}</p>
-                ${request.RescuerUsername ? `<p><strong>Ημ/νια Ανάληψης Οχήματος:</strong> ${request.DateAssignedVehicle}</p>` : ''}
-                ${request.RescuerUsername ? `<p><strong>Αναλήφθηκε από:</strong> ${request.RescuerUsername}</p>` : ''}
+                ${request.Status === "INPROGRESS" ? `<p><strong>Ημ/νια Ανάληψης Οχήματος:</strong> ${request.DateAssignedVehicle}</p>` : ''}
             `
             });
 
-            // Draw a line to the assigned vehicle if in progress
-            if (request.Status === 'INPROGRESS' && request.AssignedVehicleID && !isLinesFilterActive) {
-                drawLineToAssignedVehicle(requestMarker, request.AssignedVehicleID, vehicleMarkers);
+            // Draw a line to the vehicle if in progress
+            if (request.Status === 'INPROGRESS' && !isLinesFilterActive) {
+                drawLineToVehicle(requestMarker, vehicleMarkerLatLng);
             }
         });
     });
@@ -287,7 +242,7 @@ function updateMap(mapData) {
     // Add offer markers
     mapData.offers.forEach(function (offer) {
         var icon = offer.Status === 'PENDING' ? pendingOfferIcon : inProgressOfferIcon;
-        var offerMarker = L.marker([offer.OfferLat, offer.OfferLng], { icon: icon });
+        var offerMarker = L.marker([offer.Latitude, offer.Longitude], { icon: icon });
 
         // Add to the respective array
         allMarkers.push(offerMarker);
@@ -309,14 +264,13 @@ function updateMap(mapData) {
                 <p><strong>Ημ/νια Καταχώρησης:</strong> ${offer.DateCreated}</p>
                 <p><strong>Είδη:</strong> ${offer.ItemNames}</p>
                 <p><strong>Ποσότητες:</strong> ${offer.ItemQuantities}</p>
-                ${offer.DateAssignedVehicle ? `<p><strong>Ημ/νια Ανάληψης Οχήματος:</strong> ${offer.DateAssignedVehicle}</p>` : ''}
-                ${offer.RescuerUsername ? `<p><strong>Αναλήφθηκε από:</strong> ${offer.RescuerUsername}</p>` : ''}
+                ${offer.Status === "INPROGRESS" ? `<p><strong>Ημ/νια Ανάληψης Οχήματος:</strong> ${offer.DateAssignedVehicle}</p>` : ''}
             `
             });
 
-            // Draw a line to the assigned vehicle if in progress
-            if (offer.Status === 'INPROGRESS' && offer.AssignedVehicleID && !isLinesFilterActive) {
-                drawLineToAssignedVehicle(offerMarker, offer.AssignedVehicleID, vehicleMarkers);
+            // Draw a line to the vehicle if in progress
+            if (offer.Status === 'INPROGRESS' && !isLinesFilterActive) {
+                drawLineToVehicle(offerMarker, vehicleMarkerLatLng);
             }
         });
     });
@@ -326,7 +280,7 @@ function updateMap(mapData) {
 // Function to toggle the filter for "Taken Requests"
 function toggleInProgressRequests() {
     const button = document.getElementById('toggleTakenRequests');
-    
+
     if (isInProgressFilterActive) {
         inProgressMarkers.forEach(marker => marker.addTo(map)); // Re-add in-progress markers
         button.classList.remove('active-filter');
@@ -334,14 +288,14 @@ function toggleInProgressRequests() {
         inProgressMarkers.forEach(marker => map.removeLayer(marker)); // Remove in-progress markers
         button.classList.add('active-filter');
     }
-    
+
     isInProgressFilterActive = !isInProgressFilterActive;
 }
 
 // Function to toggle the filter for "Pending Requests"
 function togglePendingRequests() {
     const button = document.getElementById('togglePendingRequests');
-    
+
     if (isPendingFilterActive) {
         pendingMarkers.forEach(marker => marker.addTo(map)); // Re-add pending markers
         button.classList.remove('active-filter');
@@ -349,14 +303,14 @@ function togglePendingRequests() {
         pendingMarkers.forEach(marker => map.removeLayer(marker)); // Remove pending markers
         button.classList.add('active-filter');
     }
-    
+
     isPendingFilterActive = !isPendingFilterActive;
 }
 
 // Function to toggle the filter for "Offers"
 function toggleOffers() {
     const button = document.getElementById('toggleOffers');
-    
+
     if (isOfferFilterActive) {
         offerMarkers.forEach(marker => marker.addTo(map)); // Re-add offer markers
         button.classList.remove('active-filter');
@@ -364,14 +318,14 @@ function toggleOffers() {
         offerMarkers.forEach(marker => map.removeLayer(marker)); // Remove offer markers
         button.classList.add('active-filter');
     }
-    
+
     isOfferFilterActive = !isOfferFilterActive;
 }
 
 // Function to toggle the filter for "Active Vehicles"
 function toggleActiveVehicles() {
     const button = document.getElementById('toggleActiveVehicles');
-    
+
     if (isActiveVehiclesFilterActive) {
         activeVehicleMarkers.forEach(marker => marker.addTo(map)); // Re-add active vehicle markers
         button.classList.remove('active-filter');
@@ -379,14 +333,14 @@ function toggleActiveVehicles() {
         activeVehicleMarkers.forEach(marker => map.removeLayer(marker)); // Remove active vehicle markers
         button.classList.add('active-filter');
     }
-    
+
     isActiveVehiclesFilterActive = !isActiveVehiclesFilterActive;
 }
 
 // Function to toggle the filter for "Inactive Vehicles"
 function toggleInactiveVehicles() {
     const button = document.getElementById('toggleInactiveVehicles');
-    
+
     if (isInactiveVehiclesFilterActive) {
         inactiveVehicleMarkers.forEach(marker => marker.addTo(map)); // Re-add inactive vehicle markers
         button.classList.remove('active-filter');
@@ -394,14 +348,14 @@ function toggleInactiveVehicles() {
         inactiveVehicleMarkers.forEach(marker => map.removeLayer(marker)); // Remove inactive vehicle markers
         button.classList.add('active-filter');
     }
-    
+
     isInactiveVehiclesFilterActive = !isInactiveVehiclesFilterActive;
 }
 
 // Function to toggle the filter for "Lines"
 function toggleLines() {
     const button = document.getElementById('toggleLines');
-    
+
     if (isLinesFilterActive) {
         drawnLines.forEach(line => line.addTo(map)); // Re-add lines
         button.classList.remove('active-filter');
@@ -409,7 +363,7 @@ function toggleLines() {
         drawnLines.forEach(line => map.removeLayer(line)); // Remove lines
         button.classList.add('active-filter');
     }
-    
+
     isLinesFilterActive = !isLinesFilterActive;
 }
 
@@ -441,19 +395,19 @@ function confirmBaseLocation() {
                 longitude: newBaseLatLng.lng
             })
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Base location updated successfully!');
-                const confirmationBox = document.getElementById('confirmationBox');
-                confirmationBox.style.display = 'none';
-            } else {
-                alert('Failed to update base location. ' + (data.error ? data.error : ''));
-            }
-        })
-        .catch(error => {
-            alert('Failed to send data to the server. Error: ' + error.message);
-        });
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Base location updated successfully!');
+                    const confirmationBox = document.getElementById('confirmationBox');
+                    confirmationBox.style.display = 'none';
+                } else {
+                    alert('Failed to update base location. ' + (data.error ? data.error : ''));
+                }
+            })
+            .catch(error => {
+                alert('Failed to send data to the server. Error: ' + error.message);
+            });
     }
 }
 
@@ -587,6 +541,6 @@ function populateTaskTable() {
 }
 
 // Call the function when the page loads
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     populateTaskTable();  // Populate the task table with dummy data
 });
