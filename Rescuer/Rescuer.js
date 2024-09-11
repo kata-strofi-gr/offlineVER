@@ -209,6 +209,7 @@ function populateTaskTable() {
         checkbox.type = "checkbox";
         checkbox.classList.add("task-checkbox"); // Add custom class for styling
         checkboxCell.appendChild(checkbox);
+        checkboxCell.dataset.taskId = task.ID; // Store the task ID in the cell
 
         // Data cells
         const taskTypeCell = document.createElement("td");
@@ -318,8 +319,17 @@ function updateMap() {
     // Store vehicle location for easy lookup
     vehicleMarkerLatLng = { lat: vehicle_data.Latitude, lng: vehicle_data.Longitude };
 
-    vehicleMarker = L.marker([vehicleMarkerLatLng.lat, vehicleMarkerLatLng.lng], { icon: blueIcon });
+    vehicleMarker = L.marker([vehicleMarkerLatLng.lat, vehicleMarkerLatLng.lng], { icon: blueIcon, draggable: true});
     vehicleMarker.addTo(map).bindPopup(`<b>You are here!</b>`);
+
+    // Handle dragging of the base marker
+    vehicleMarker.on('dragend', function (event) {
+        vehicleMarker.setLatLng = event.target.getLatLng();
+        vehicle_data.Latitude = event.target.getLatLng().lat;
+        vehicle_data.Longitude = event.target.getLatLng().lng;
+        drawTaskLines();
+        postVehiclePosition();
+    });
 
     // If it's the initial load (browser refresh), set the map to the base location and open popup
     if (initialLoad) {
@@ -328,7 +338,7 @@ function updateMap() {
         
         // Set the rescuer's name in the header //todo: not the right place to be in
         document.getElementById('rescuer-name').innerText = 'Συνδεδεμένος ως: ' + rescuer_data.Username + ' (Rescuer)';
-
+        initialLoad = false;
     } else {
         // Reapply the saved center and zoom level after the update
         if (currentCenter && currentZoom) {
@@ -710,6 +720,37 @@ function fetchVehicleBaseRescuer() {
             vehicle_data = vehicle_base_data.Vehicle;
             base_data = vehicle_base_data.Base;
             rescuer_data = vehicle_base_data.Rescuer;
+        })
+        .catch(error => {
+            console.error('Fetch Error:', error);
+            throw error; // Rethrow after logging to allow caller to handle
+        });
+}
+
+function postVehiclePosition() {
+    const data = {
+        latitude: vehicle_data.Latitude,
+        longitude: vehicle_data.Longitude
+    };
+
+    fetch('api/update_vehicle_pos.php/' + localStorage.getItem('rescuer_id'), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.error) {
+                throw new Error(data.error);
+            }
+            console.log(data['message']);
         })
         .catch(error => {
             console.error('Fetch Error:', error);
