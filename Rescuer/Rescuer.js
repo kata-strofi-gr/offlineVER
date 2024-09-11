@@ -845,6 +845,7 @@ function postCompletedTasks() {
             task = tasks_data.Requests.filter((entry) => entry.ID === task_id)[0];
         }
 
+        //todo move to backend!
         var distance = calculateDistance(task.Latitude, task.Longitude, vehicle_data.Latitude, vehicle_data.Longitude);
         if (distance>100) {
             alert("Δεν βρίσκεστε αρκετά κοντά για ολοκληρώσετε την εργασία");
@@ -855,7 +856,7 @@ function postCompletedTasks() {
             task_id: task_id,
             task_type: task_type
         }
-        fetch('api/complete_task.php', {
+        fetch('api/complete_task.php/' + sessionStorage('rescuer_id'), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

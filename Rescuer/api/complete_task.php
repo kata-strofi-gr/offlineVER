@@ -1,4 +1,10 @@
 <?php
+if (isset($_SERVER['PATH_INFO'])) {
+    $rescuer_id = trim($_SERVER['PATH_INFO'], '/');
+} else {
+    echo json_encode(['error' => 'No rescuer ID provided']);
+    return;
+}
 
 // Include the database configuration file
 include '../../db_config.php';
@@ -11,11 +17,15 @@ $task_type = $data['task_type'];
 
 if ($task_type == 'Request') {
     // Call the stored procedure to complete the task
-    $sql = "CALL FinishRequest(?)";
+
+    $sql_finish = "CALL FinishRequest(?)"; //TODO: This currently removes all the items up to the invalid item!!
     
 } else if ($task_type == 'Offer') {
     // Call the stored procedure to complete the task
-    $sql = "CALL FinishOffer(?)";
+    $sql = "INSERT INTO VehicleItems (vehicle_id, item_id, quantity) 
+    SELECT rescuer_vehicle_id, item_id, quantity 
+    FROM RequestItems WHERE request_id = ?";
+    $sql_finish = "CALL FinishOffer(?)";
 
 } else {
     echo json_encode(['error' => 'Invalid task type']);
@@ -23,7 +33,7 @@ if ($task_type == 'Request') {
     return;
 }
 
-$stmt = $conn->prepare($sql);
+$stmt = $conn->prepare($sql_finish);
 $stmt->bind_param("i", $task_id);
 
 $response = [];

@@ -416,6 +416,194 @@ BEGIN
 END//
 DELIMITER ;
 
+-- Procedure to move items from warehouse to rescuer's vehicle
+DELIMITER //
+CREATE PROCEDURE MoveItemsToVehicle (
+    IN p_RescuerID INT,
+    IN item_ids VARCHAR(1000),  -- Comma-separated item ids
+    IN quantities VARCHAR(1000)   -- Comma-separated quantities
+)
+BEGIN
+    DECLARE item_id INT;
+    DECLARE quantity INT;
+    DECLARE total_items INT;
+    DECLARE i INT DEFAULT 1;
+    DECLARE found_item_id INT;
+    DECLARE item_count INT;
+
+    -- Calculate the total number of items from the comma-separated string
+    SET total_items = LENGTH(item_ids) - LENGTH(REPLACE(item_ids, ',', '')) + 1;
+
+    -- Initialize item count
+    SET item_count = 0;
+
+    -- Loop through the delimited item names and quantities to validate existence
+    WHILE i <= total_items DO
+        -- Extract the current item id
+        SET item_id = CAST(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(item_ids, ',', i), ',', -1)) AS UNSIGNED);
+
+        -- Extract the current quantity and convert it to an integer
+        SET quantity = CAST(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(quantities, ',', i), ',', -1)) AS UNSIGNED);
+
+        -- Validate the existence of the item and get its ID
+        SELECT COUNT(*) INTO found_item_id
+        FROM Items
+        WHERE ItemID = item_id
+        LIMIT 1;
+
+        -- Ensure the item exists and the quantity is valid
+        IF found_item_id > 0 AND quantity > 0 THEN
+            -- Increment the item count for each valid item
+            SET item_count = item_count + 1;
+        END IF;
+
+        SET i = i + 1;
+    END WHILE;
+
+    -- Check if the number of valid items matches the total number of items
+    IF item_count <> total_items THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'One or more items do not exist in the database or invalid quantities provided', MYSQL_ERRNO = 4001;
+    END IF;
+
+    -- Check if quantities of items in warehouse is more than required quantity for each item
+    SET i = 1;
+    WHILE i <= total_items DO
+        -- Extract the current item id
+        SET item_id = CAST(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(item_ids, ',', i), ',', -1)) AS UNSIGNED);
+
+        -- Extract the current quantity and convert it to an integer
+        SET quantity = CAST(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(quantities, ',', i), ',', -1)) AS UNSIGNED);
+
+        -- Check if the quantity of the item in the warehouse is less than the required quantity
+        SELECT Quantity INTO found_item_id
+        FROM Warehouse
+        WHERE ItemID = item_id
+        LIMIT 1;
+
+        -- Ensure the quantity in the warehouse is sufficient
+        IF found_item_id < quantity THEN
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Insufficient quantity of one or more items in the warehouse', MYSQL_ERRNO = 4002;
+        END IF;
+
+        SET i = i + 1;
+    END WHILE;
+
+    -- Loop again to move each item from Warehouse to Rescuer's Vehicle
+    SET i = 1;
+    WHILE i <= total_items DO
+        -- Extract the current item id
+        SET item_id = CAST(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(item_ids, ',', i), ',', -1)) AS UNSIGNED);
+
+        -- Extract the current quantity and convert it to an integer
+        SET quantity = CAST(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(quantities, ',', i), ',', -1)) AS UNSIGNED);
+
+        -- Remove quantity from warehouse, insert into vehicle
+        UPDATE Warehouse
+        SET Quantity = Quantity - quantity
+        WHERE ItemID = item_id;
+
+        INSERT INTO VehicleItems (VehicleID, ItemID, Quantity)
+        VALUES ((SELECT VehicleID FROM Vehicles WHERE RescuerID = p_RescuerID), item_id, quantity);
+
+        SET i = i + 1;
+    END WHILE;
+END//
+DELIMITER ;
+
+-- Procedure to move items from rescuer's vehicle to warehouse
+DELIMITER //
+CREATE PROCEDURE MoveItemsToWarehouse (
+    IN p_RescuerID INT,
+    IN item_ids VARCHAR(1000),  -- Comma-separated item ids
+    IN quantities VARCHAR(1000)   -- Comma-separated quantities
+)
+BEGIN
+    DECLARE item_id INT;
+    DECLARE quantity INT;
+    DECLARE total_items INT;
+    DECLARE i INT DEFAULT 1;
+    DECLARE found_item_id INT;
+    DECLARE item_count INT;
+
+    -- Calculate the total number of items from the comma-separated string
+    SET total_items = LENGTH(item_ids) - LENGTH(REPLACE(item_ids, ',', '')) + 1;
+
+    -- Initialize item count
+    SET item_count = 0;
+
+    -- Loop through the delimited item names and quantities to validate existence
+    WHILE i <= total_items DO
+        -- Extract the current item id
+        SET item_id = CAST(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(item_ids, ',', i), ',', -1)) AS UNSIGNED);
+
+        -- Extract the current quantity and convert it to an integer
+        SET quantity = CAST(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(quantities, ',', i), ',', -1)) AS UNSIGNED);
+
+        -- Validate the existence of the item and get its ID
+        SELECT COUNT(*) INTO found_item_id
+        FROM Items
+        WHERE ItemID = item_id
+        LIMIT 1;
+
+        -- Ensure the item exists and the quantity is valid
+        IF found_item_id > 0 AND quantity > 0 THEN
+            -- Increment the item count for each valid item
+            SET item_count = item_count + 1;
+        END IF;
+
+        SET i = i + 1;
+    END WHILE;
+
+    -- Check if the number of valid items matches the total number of items
+    IF item_count <> total_items THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'One or more items do not exist in the database or invalid quantities provided', MYSQL_ERRNO = 4001;
+    END IF;
+
+    -- Check if quantities of items in vehicle is more than required quantity for each item
+    SET i = 1;
+    WHILE i <= total_items DO
+        -- Extract the current item id
+        SET item_id = CAST(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(item_ids, ',', i), ',', -1)) AS UNSIGNED);
+
+        -- Extract the current quantity and convert it to an integer
+        SET quantity = CAST(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(quantities, ',', i), ',', -1)) AS UNSIGNED);
+
+        -- Check if the quantity of the item in the vehicle is less than the required quantity
+        SELECT Quantity INTO found_item_id
+        FROM VehicleItems
+        WHERE ItemID = item_id
+        LIMIT 1;
+
+        -- Ensure the quantity in the vehicle is sufficient
+        IF found_item_id < quantity THEN
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Insufficient quantity of one or more items in the vehicle', MYSQL_ERRNO = 4002;
+        END IF;
+
+        SET i = i + 1;
+    END WHILE;
+
+    -- Loop again to move each item from Vehicle to Warehouse
+    SET i = 1;
+    WHILE i <= total_items DO
+        -- Extract the current item id
+        SET item_id = CAST(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(item_ids, ',', i), ',', -1)) AS UNSIGNED);
+
+        -- Extract the current quantity and convert it to an integer
+        SET quantity = CAST(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(quantities, ',', i), ',', -1)) AS UNSIGNED);
+
+        -- Remove quantity from vehicle, insert into warehouse
+        UPDATE VehicleItems
+        SET Quantity = Quantity - quantity
+        WHERE ItemID = item_id;
+
+        INSERT INTO Warehouse (ItemID, Quantity)
+        VALUES (item_id, quantity);
+
+        SET i = i + 1;
+    END WHILE;
+END//
+DELIMITER ;
+
 -- Trigger to prevent rescuer assignment if they have reached the task limit for requests
 DELIMITER //
 CREATE TRIGGER BeforeAssignRescuerToRequest
@@ -545,7 +733,96 @@ BEGIN
 END//
 DELIMITER ;
 
+-- Trigger to combine quantities when item is inserted into vehicle (manually)
+DELIMITER //
+CREATE TRIGGER CombineQuantitiesVehicle
+AFTER INSERT ON VehicleItems
+FOR EACH ROW
+BEGIN
+    DECLARE existing_quantity INT;
 
+    -- Check if negative quantity
+    IF NEW.Quantity < 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Quantity cannot be negative.', MYSQL_ERRNO = 5009;
+    END IF;
 
+    -- Check if the item already exists in the vehicle
+    SELECT Quantity INTO existing_quantity
+    FROM VehicleItems
+    WHERE VehicleID = NEW.VehicleID AND ItemID = NEW.ItemID;
 
+    -- If the item already exists 
+    IF existing_quantity IS NOT NULL THEN
+        UPDATE VehicleItems
+        SET Quantity = existing_quantity + NEW.Quantity
+        WHERE VehicleID = NEW.VehicleID AND ItemID = NEW.ItemID;
+    END IF;
+END//
+DELIMITER ;
 
+-- Trigger to combine quantities when item is inserted into warehouse (manually)
+DELIMITER //
+CREATE TRIGGER CombineQuantitiesWarehouse
+AFTER INSERT ON Warehouse
+FOR EACH ROW
+BEGIN
+    DECLARE existing_quantity INT;
+
+    -- Check if negative quantity
+    IF NEW.Quantity < 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Quantity cannot be negative.', MYSQL_ERRNO = 5009;
+    END IF;
+
+    -- Check if the item already exists in the warehouse
+    SELECT Quantity INTO existing_quantity
+    FROM Warehouse
+    WHERE ItemID = NEW.ItemID;
+    
+    -- If the item already exists, update the quantity
+    IF existing_quantity IS NOT NULL THEN
+        UPDATE Warehouse
+        SET Quantity = existing_quantity + NEW.Quantity
+        WHERE ItemID = NEW.ItemID;
+    END IF;
+END//
+DELIMITER ;
+
+-- Trigger to prevent extracting more quantity than exists in the warehouse
+DELIMITER //
+CREATE TRIGGER PreventExtractingMoreThanExistsWarehouse
+BEFORE UPDATE ON Warehouse
+FOR EACH ROW
+BEGIN
+    DECLARE existing_quantity INT;
+
+    SELECT Quantity INTO existing_quantity
+    FROM Warehouse
+    WHERE ItemID = NEW.ItemID;
+
+    IF NEW.Quantity > existing_quantity THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Quantity cannot be more than exists.', MYSQL_ERRNO = 5010;
+    END IF;
+END//
+DELIMITER ;
+
+-- Trigger to prevent extracting more quantity than exists in the vehicle
+DELIMITER //
+CREATE TRIGGER PreventExtractingMoreThanExistsVehicle
+BEFORE UPDATE ON VehicleItems
+FOR EACH ROW
+BEGIN
+    DECLARE existing_quantity INT;
+
+    SELECT Quantity INTO existing_quantity
+    FROM VehicleItems
+    WHERE VehicleID = NEW.VehicleID AND ItemID = NEW.ItemID;
+
+    IF NEW.Quantity > existing_quantity THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Quantity cannot be more than exists.', MYSQL_ERRNO = 5010;
+    END IF;
+END//
+DELIMITER ;
