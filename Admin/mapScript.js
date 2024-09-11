@@ -502,13 +502,6 @@ setInterval(fetchDataAndUpdateMap, 10000);
 var externalPopup = document.getElementById('draggableBox');
 var closePopup = document.getElementById('closeBox');
 
-// // Function to open the popup
-// function openPopup() {
-//     externalPopup.style.display = 'flex';
-// }
 
-// // Function to close the popup
-// function closePopupFunction() {
-//     externalPopup.style.display = 'none';
-// }
+
 
