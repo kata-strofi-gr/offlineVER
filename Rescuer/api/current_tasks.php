@@ -19,8 +19,8 @@ $offers_sql = "
         off.CitizenID CitizenID, 
         off.DateCreated DateCreated, 
         off.DateAssignedVehicle DateAssignedVehicle,
-        off.Status Status,
-        cit.Name Name, 
+        off.Status `Status`,
+        cit.Name as Name, 
         cit.Surname Surname,  
         cit.Phone Phone,
         cit.Latitude Latitude, 
@@ -32,8 +32,9 @@ $offers_sql = "
     JOIN Citizen cit on cit.CitizenID = off.CitizenID
     LEFT JOIN OfferItems offitems on off.OfferID = offitems.OfferID
     LEFT JOIN Items on offitems.ItemID = Items.ItemID
-    WHERE off.RescuerID = $rescuer_id
-    GROUP BY off.OfferID, 
+    WHERE off.RescuerID = $rescuer_id and off.Status != 'Finished'
+    GROUP BY 
+        off.OfferID, 
         off.CitizenID, 
         off.DateCreated, 
         off.Status,
@@ -75,8 +76,8 @@ $requests_sql = "
         req.CitizenID CitizenID,
         req.DateCreated DateCreated,
         req.DateAssignedVehicle DateAssignedVehicle,
-        req.Status Status,
-        cit.Name Name,
+        req.Status `Status`,
+        cit.Name AS Name,
         cit.Surname Surname,
         cit.Phone Phone,
         cit.Latitude Latitude,
@@ -88,11 +89,12 @@ $requests_sql = "
     JOIN Citizen cit on cit.CitizenID = req.CitizenID
     LEFT JOIN RequestItems reqitems on req.RequestID = reqitems.RequestID
     LEFT JOIN Items on reqitems.ItemID = Items.ItemID
-    WHERE req.RescuerID = $rescuer_id
+    WHERE req.RescuerID = $rescuer_id and req.Status != 'Finished'
     GROUP BY req.RequestID, 
         req.RequestID, 
         req.CitizenID, 
         req.DateCreated, 
+        req.DateAssignedVehicle,
         req.Status,
         cit.Name, 
         cit.Surname, 

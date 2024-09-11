@@ -102,7 +102,6 @@ const sessionTime = 20 // 20 minutes
 
 // map variables
 var baseMarker; // To store the base marker
-var newBaseLatLng; // To store the new coordinates after dragging
 let vehicleMarkerLatLng; // To store vehicle coordinates
 let vehicleMarker; // To store the vehicle marker
 let allMarkers = []; // Array to store all markers
@@ -176,6 +175,7 @@ document.getElementById('toggleLines').addEventListener('click', toggleLines);
 var externalPopup = document.getElementById('draggableBox');
 var closePopup = document.getElementById('closeBox');
 
+document.getElementById('completedButton').addEventListener('click', postCompletedTasks);
 
 /**
  * Frontend functions
@@ -200,8 +200,9 @@ function populateTaskTable() {
 
     taskTableBody.innerHTML = "";
 
-    tasks_data.Requests.forEach(task => {
+    tasks_data.Requests.concat(tasks_data.Offers).forEach(task => {
         const row = document.createElement("tr");
+        row.dataset.taskId = task.ID; // Store the task ID in the cell
 
         // Checkbox cell
         const checkboxCell = document.createElement("td");
@@ -209,7 +210,6 @@ function populateTaskTable() {
         checkbox.type = "checkbox";
         checkbox.classList.add("task-checkbox"); // Add custom class for styling
         checkboxCell.appendChild(checkbox);
-        checkboxCell.dataset.taskId = task.ID; // Store the task ID in the cell
 
         // Data cells
         const taskTypeCell = document.createElement("td");
@@ -756,6 +756,53 @@ function postVehiclePosition() {
             console.error('Fetch Error:', error);
             throw error; // Rethrow after logging to allow caller to handle
         });
+}
+
+function postCompletedTasks() {
+    // get all checked checkboxes
+    const checkboxes = document.getElementById('taskTable').querySelectorAll('.task-checkbox:checked');
+    const task_ids = Array.from(checkboxes).map(checkbox => checkbox.parentElement.parentElement.dataset.taskId);
+    const task_types = Array.from(checkboxes).map(checkbox => checkbox.parentElement.nextElementSibling.textContent);
+
+    // If no checkboxes are selected, show an alert
+    if (task_ids.length === 0) {
+        alert('Δεν έχετε επιλέξει καμία εργασία.');
+        return;
+    }
+
+    // send post for each task localstorage rescuer id
+    task_ids.forEach(task_id => {
+        data = {
+            task_id: task_id,
+            task_type: task_types[task_ids.indexOf(task_id)]
+        }
+        fetch('api/complete_task.php/' + localStorage.getItem('rescuer_id'), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                console.log(data['message']);
+
+                expiryDates['Tasks'] = null; // Force a refresh of the tasks and re-rendering
+                fetchAllExpired();
+            })
+            .catch(error => {
+                console.error('Fetch Error:', error);
+                throw error; // Rethrow after logging to allow caller to handle
+            });
+    });
 }
 
 /**
