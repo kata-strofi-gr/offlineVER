@@ -171,11 +171,8 @@ document.getElementById('toggleTakenOffers').addEventListener('click', toggleInP
 document.getElementById('togglePendingOffers').addEventListener('click', togglePendingOffers);
 document.getElementById('toggleLines').addEventListener('click', toggleLines);
 
-// Get the popup element and close button
-var externalPopup = document.getElementById('draggableBox');
-var closePopup = document.getElementById('closeBox');
-
 document.getElementById('completedButton').addEventListener('click', postCompletedTasks);
+document.getElementById('task').addEventListener('click', postTaskUndertaking);
 
 /**
  * Frontend functions
@@ -376,7 +373,8 @@ function updateMap() {
                 <p><strong>Ημ/νια Καταχώρησης:</strong> ${request.DateCreated}</p>
                 <p><strong>Είδη:</strong> ${request.ItemNames}</p>
                 <p><strong>Ποσότητες:</strong> ${request.ItemQuantities}</p>
-            `
+            `, taskID: request.RequestID,
+                taskType: "Request"
             });
 
             // Draw a line to the vehicle if selected and the lines filter is not active
@@ -396,7 +394,7 @@ function updateMap() {
         pendingOfferMarkers.push(offerMarker);
 
         // Add marker to the map if the filter is not active
-        if (!inProgressOfferIcon) {
+        if (!isPendingOfferFilterActive) {
             offerMarker.addTo(map);
         }
 
@@ -411,7 +409,10 @@ function updateMap() {
                 <p><strong>Ημ/νια Καταχώρησης:</strong> ${offer.DateCreated}</p>
                 <p><strong>Είδη:</strong> ${offer.ItemNames}</p>
                 <p><strong>Ποσότητες:</strong> ${offer.ItemQuantities}</p>
-            `
+                
+            `, 
+                taskID: offer.OfferID,
+                taskType: "Offer"
             });
 
             // Draw a line to the vehicle if selected and the lines filter is not active
@@ -439,7 +440,7 @@ function updateMap() {
         offerMarker.on('click', function () {
             clearLines(); // Clear lines when clicking a new marker
             showPopup({
-                type: "offer-box",
+                type: "task-offer-box",
                 title:"Προσφορά",
                 details: `
                 <p><strong>Ονοματεπώνυμο:</strong> ${offer.Name}</p>
@@ -447,7 +448,7 @@ function updateMap() {
                 <p><strong>Ημ/νια Καταχώρησης:</strong> ${offer.DateCreated}</p>
                 <p><strong>Είδος:</strong> ${offer.Type}</p>
                 <p><strong>Ποσότητα:</strong> ${offer.Quantity}</p>
-                <p><strong>Ημ/νια Ανάληψης Προσφοράς:</strong> ${offer.DateAssignedVehicle}</p>`
+                <p><strong>Ημ/νια Ανάληψης Προσφοράς:</strong> ${offer.DateAssignedVehicle}</p>`,
             });
 
             // Draw a line to the vehicle if selected and the lines filter is not active
@@ -475,7 +476,7 @@ function updateMap() {
         requestMarker.on('click', function () {
             clearLines(); // Clear lines when clicking a new marker
             showPopup({
-                type: "request-box",
+                type: "task-request-box",
                 title:"Αίτημα",
                 details: `
                 <p><strong>Ονοματεπώνυμο:</strong> ${request.Name}</p>
@@ -483,7 +484,7 @@ function updateMap() {
                 <p><strong>Ημ/νια Καταχώρησης:</strong> ${request.DateCreated}</p>
                 <p><strong>Είδος:</strong> ${request.Type}</p>
                 <p><strong>Ποσότητα:</strong> ${request.Quantity}</p>
-                <p><strong>Ημ/νια Ανάληψης Αιτήματος:</strong> ${request.DateAssignedVehicle}</p>`
+                <p><strong>Ημ/νια Ανάληψης Αιτήματος:</strong> ${request.DateAssignedVehicle}</p>`,
             });
 
             // Draw a line to the vehicle if selected and the lines filter is not active
@@ -495,11 +496,19 @@ function updateMap() {
 }
 
 // Function to show the vehicle popup
-function showPopup({ type, title, details }) {
+function showPopup({ type, title, details, taskID=null, taskType=null }) {
     const popup = document.getElementById('draggableBox');
-    popup.className = type;
-    const popupTitle = popup.querySelector('.offer-title');
-    const popupDetails = popup.querySelector('.offer-details');
+    popup.className = type
+    if (taskID && taskType) {
+        popup.dataset.taskId = taskID;
+        popup.dataset.taskType = taskType
+    } else {
+        popup.dataset.taskId = null;
+        popup.dataset.taskType = null;
+    }
+
+    const popupTitle = popup.querySelector('.task-title');
+    const popupDetails = popup.querySelector('.task-details');
 
     popupTitle.innerHTML = title;
     popupDetails.innerHTML = details;
@@ -510,7 +519,7 @@ function showPopup({ type, title, details }) {
 // Close button event for vehicle popup
 document.getElementById('closeBox').addEventListener('click', function () {
     document.getElementById('draggableBox').style.display = 'none';
-    clearLines();
+    drawTaskLines();
 });
 
 // Function to toggle the filter for "In Progress Requests"
@@ -749,6 +758,7 @@ function postVehiclePosition() {
         .then(data => {
             if (data.error) {
                 throw new Error(data.error);
+                alert(data.error);
             }
             console.log(data['message']);
         })
@@ -756,6 +766,60 @@ function postVehiclePosition() {
             console.error('Fetch Error:', error);
             throw error; // Rethrow after logging to allow caller to handle
         });
+}
+
+function postTaskUndertaking() {
+    // Get popup box
+    const popup = document.getElementById('draggableBox');
+    // get id and type from data
+    const task_id = popup.dataset.taskId;
+    const task_type = popup.dataset.taskType;
+
+    // and displayed
+    if (!task_id || !task_type || popup.style.display == 'none') {
+        alert('Δεν έχετε επιλέξει καμία εργασία.');
+        return;
+    }
+
+    // send post for each task localstorage rescuer id
+    data = {
+        task_id: task_id,
+        task_type: task_type
+    }
+
+    fetch('api/undertake_task.php/' + localStorage.getItem('rescuer_id'), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.error) {
+                throw new Error(data.error);
+            }
+            alert(data['message']);
+
+            expiryDates['Tasks'] = null; // Force a refresh of the tasks and re-rendering
+            expiryDates['Requests'] = null; // Force a refresh of the requests and re-rendering
+            expiryDates['Offers'] = null; // Force a refresh of the offers and re-rendering
+            popup.style.display = 'none';
+            fetchAllExpired();
+            
+        })
+        .catch(error => {
+            console.error('Fetch Error:', error);
+            throw error; // Rethrow after logging to allow caller to handle
+    });
+    
+
+
 }
 
 function postCompletedTasks() {
@@ -772,11 +836,26 @@ function postCompletedTasks() {
 
     // send post for each task localstorage rescuer id
     task_ids.forEach(task_id => {
+        var task_type = task_types[task_ids.indexOf(task_id)];
+        var task;
+        // search for the task json object
+        if (task_type === "Offer"){
+            task = tasks_data.Offers.filter((entry) => entry.ID === task_id)[0];
+        } else {
+            task = tasks_data.Requests.filter((entry) => entry.ID === task_id)[0];
+        }
+
+        var distance = calculateDistance(task.Latitude, task.Longitude, vehicle_data.Latitude, vehicle_data.Longitude);
+        if (distance>100) {
+            alert("Δεν βρίσκεστε αρκετά κοντά για ολοκληρώσετε την εργασία");
+            return;
+        }
+
         data = {
             task_id: task_id,
-            task_type: task_types[task_ids.indexOf(task_id)]
+            task_type: task_type
         }
-        fetch('api/complete_task.php/' + localStorage.getItem('rescuer_id'), {
+        fetch('api/complete_task.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -803,6 +882,31 @@ function postCompletedTasks() {
                 throw error; // Rethrow after logging to allow caller to handle
             });
     });
+}
+
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Radius of the Earth in kilometers
+    const rad = Math.PI / 180; // Factor to convert degrees to radians
+    const dLat = (lat2 - lat1) * rad;
+    const dLon = (lon2 - lon1) * rad;
+
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * rad) * Math.cos(lat2 * rad) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c * 1000; // Distance in meters
+}
+
+function vehicleToTaskDistance(taskMarker) {
+    const taskLatLng = taskMarker.getLatLng();
+    const vehicleLatLng = vehicleMarker.getLatLng();
+    const distance = calculateDistance(taskLatLng.lat, taskLatLng.lng, vehicleLatLng.lat, vehicleLatLng.lng);
+
+    return distance
+
 }
 
 /**
@@ -857,4 +961,6 @@ document.addEventListener("DOMContentLoaded", function () {
     setInterval(fetchAllExpired, expiryTime / 10); // check every one tenth of the expiry time
     currentCenter = map.getCenter();
     currentZoom = map.getZoom();
+    //hide popup
+
 });

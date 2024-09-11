@@ -1,12 +1,5 @@
 <?php
 
-// get id from url
-if (isset($_SERVER['PATH_INFO'])) {
-    $rescuer_id = trim($_SERVER['PATH_INFO'], '/');
-} else {
-    echo json_encode(['error' => 'No citizen ID provided']);
-}
-
 // Include the database configuration file
 include '../../db_config.php';
 
