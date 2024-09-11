@@ -223,18 +223,19 @@ function populateTaskTable() {
         const dateCell = document.createElement("td");
         dateCell.textContent = task.DateCreated;
 
-        const typeCell = document.createElement("td");
-        typeCell.textContent = task.ItemNames;
+        const itemTypeCell = document.createElement("td");
+        itemTypeCell.textContent = task.ItemNames;
 
         const quantityCell = document.createElement("td");
         quantityCell.textContent = task.ItemQuantities;
 
         // Append cells to the row
         row.appendChild(checkboxCell);  // Add checkbox cell to the row
+        row.appendChild(taskTypeCell);
         row.appendChild(nameCell);
         row.appendChild(phoneCell);
         row.appendChild(dateCell);
-        row.appendChild(typeCell);
+        row.appendChild(itemTypeCell);
         row.appendChild(quantityCell);
 
         // Append the row to the table body
@@ -326,11 +327,8 @@ function updateMap() {
         vehicleMarker.openPopup();
         
         // Set the rescuer's name in the header //todo: not the right place to be in
-        document.getElementById('rescuer-name').innerText = 'Συνδεδεμένος ως: ', 
-        rescuer_data.Username,
-        ' (Rescuer)';
+        document.getElementById('rescuer-name').innerText = 'Συνδεδεμένος ως: ' + rescuer_data.Username + ' (Rescuer)';
 
-        initialLoad = false; // Reset the flag after the initial load
     } else {
         // Reapply the saved center and zoom level after the update
         if (currentCenter && currentZoom) {
