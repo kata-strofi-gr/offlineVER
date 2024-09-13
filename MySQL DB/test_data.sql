@@ -5,11 +5,14 @@ CALL CreateNewRescuer('john_dwoe', 'securepassword123', 38.04816300, 23.79188600
 CALL CreateNewRescuer('Sjanec_doe', 'securepassworcd456',38.04616300, 23.79643000);
 CALL CreateNewRescuer('ssmitDh', 'securepassword789', 38.04459300, 23.78110400);
 
+CALL CreateNewRescuer('VasilisPapa', '3424r44', 38.04659300, 23.78110400);
+
 
 -- Test entry to create a new citizen
 CALL CreateNewCitizen('jane_doce', 'securepassword456', 'Jane', 'Doe', '123-456-7890', 38.04161800, 23.78762700);
 CALL CreateNewCitizen('john_dose', 'securepassword123', 'John', 'Doe', '987-654-3210', 38.03932500, 23.79466300);
 CALL CreateNewCitizen('alixce_smith', 'securepassword789', 'Alice', 'Smith', '555-555-5555', 38.04173700, 23.79206500);
+CALL CreateNewCitizen('Marianamits', '3424r44', 'Mariana', 'Mitsena', '555-555-5555', 38.04273700, 23.79306500);
 
 -- Test entry to create a new admin
 CALL CreateNewAdmin('admin_user', 'adminpassword');
@@ -50,7 +53,12 @@ INSERT INTO VehicleItems (VehicleID, ItemID, Quantity) VALUES
 (2, 3, 7),  -- Vehicle 2 carrying 7 units of Item 3
 (2, 1, 15), -- Vehicle 2 carrying 15 units of Item 1
 (3, 2, 20), -- Vehicle 3 carrying 20 units of Item 2
-(3, 3, 10); -- Vehicle 3 carrying 10 units of Item 3
+(3, 3, 10), -- Vehicle 3 carrying 10 units of Item 3
+(4, 1, 30), -- Vehicle 4 carrying 30 units of Item 1
+(4, 2, 25), -- Vehicle 4 carrying 25 units of Item 2
+(4, 3, 15); -- Vehicle 4 carrying 15 units of Item 3
+
+
 
 -- Insert sample data into Requests table
 INSERT INTO Requests (CitizenID,NumberofPeople,Status, DateCreated) VALUES 
@@ -59,7 +67,10 @@ INSERT INTO Requests (CitizenID,NumberofPeople,Status, DateCreated) VALUES
 (3,1, 'PENDING', NOW()),  -- Alice Smith requesting Blanket
 (1,1, 'PENDING', NOW()),  -- John Doe requesting Aspirin
 (2,1, 'PENDING', NOW()),  -- Jane Doe requesting Blanket
-(3,1, 'PENDING', NOW());  -- Alice Smith requesting Rice
+(3,1, 'PENDING', NOW()),  -- Alice Smith requesting Rice
+(4,1, 'PENDING', NOW());  -- Alice Smith requesting Rice
+
+
 
 INSERT INTO RequestItems (RequestID, ItemID, Quantity) VALUES
 (1, 1, 10), -- John Doe requesting 10 units of Rice
@@ -67,7 +78,8 @@ INSERT INTO RequestItems (RequestID, ItemID, Quantity) VALUES
 (3, 3, 3),  -- Alice Smith requesting 3 units of Blanket
 (4, 2, 7),  -- John Doe requesting 7 units of Aspirin
 (5, 3, 10), -- Jane Doe requesting 10 units of Blanket
-(6, 1, 15); -- Alice Smith requesting 15 units of Rice
+(6, 1, 15), -- Alice Smith requesting 15 units of Rice
+(7, 1, 15); -- Alice Smith requesting 15 units of Rice
 
 
 -- Insert sample data into Offers table
@@ -77,7 +89,8 @@ INSERT INTO Offers (CitizenID, Status, DateCreated) VALUES
 (3, 'PENDING', NOW()),  -- Alice Smith offering Blanket
 (1, 'PENDING', NOW()), -- John Doe offering Blanket
 (2, 'PENDING', NOW()),  -- Jane Doe offering Rice
-(3, 'PENDING', NOW());  -- Alice Smith offering Aspirin
+(3, 'PENDING', NOW()),  -- Alice Smith offering Aspirin
+(4, 'PENDING', NOW());  -- Alice Smith offering Aspirin
 
 INSERT INTO OfferItems (OfferID, ItemID, Quantity) VALUES
 (1, 1, 20), -- John Doe offering 20 units of Rice
@@ -85,7 +98,8 @@ INSERT INTO OfferItems (OfferID, ItemID, Quantity) VALUES
 (3, 3, 5),  -- Alice Smith offering 5 units of Blanket
 (4, 3, 7),  -- John Doe offering 7 units of Blanket
 (5, 1, 15), -- Jane Doe offering 15 units of Rice
-(6, 2, 20); -- Alice Smith offering 20 units of Aspirin
+(6, 2, 20), -- Alice Smith offering 20 units of Aspirin
+(7, 2, 20); -- Alice Smith offering 20 units of Aspirin
 
 
 -- Insert sample data into Announcements table
@@ -129,6 +143,7 @@ CALL CreateNewAnnouncement(1,
 
 
 
+
 -- Example of requests being assigned to rescuers
 CALL AssignRequest(1, 1); -- Assigning first request to rescuer1
 CALL AssignRequest(2, 2); -- Assigning second request to rescuer1
@@ -151,6 +166,5 @@ CALL FinishRequest(2);
 CALL FinishOffer(3);
 
 
-
-
-
+-- Example usage:
+CALL UnloadVehicleItems(2);

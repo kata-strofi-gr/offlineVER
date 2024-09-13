@@ -547,5 +547,55 @@ DELIMITER ;
 
 
 
+DELIMITER //
 
+CREATE PROCEDURE UnloadVehicleItems(
+    IN p_VehicleID INT
+)
+BEGIN
+    DECLARE v_ItemID INT;
+    DECLARE v_Quantity INT;
+    DECLARE done INT DEFAULT 0;
 
+    -- Declare a cursor to go through each item in the vehicle
+    DECLARE vehicle_items_cursor CURSOR FOR 
+    SELECT ItemID, Quantity FROM VehicleItems WHERE VehicleID = p_VehicleID;
+
+    -- Declare a handler for when the cursor finishes
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+
+    -- Open the cursor
+    OPEN vehicle_items_cursor;
+
+    -- The loop to go through all vehicle items
+    items_loop: LOOP
+        -- Fetch the current vehicle item
+        FETCH vehicle_items_cursor INTO v_ItemID, v_Quantity;
+
+        -- Exit the loop if done
+        IF done = 1 THEN
+            LEAVE items_loop;
+        END IF;
+
+        -- Step 1: Try updating the existing warehouse record first
+        UPDATE Warehouse
+        SET Quantity = Quantity + v_Quantity
+        WHERE ItemID = v_ItemID;
+
+        -- Step 2: Check if the update affected any rows (i.e., if the item exists)
+        IF ROW_COUNT() = 0 THEN
+            -- Step 3: If no rows were affected, insert a new record for the item
+            INSERT INTO Warehouse (ItemID, Quantity)
+            VALUES (v_ItemID, v_Quantity);
+        END IF;
+    END LOOP;
+
+    -- Close the cursor
+    CLOSE vehicle_items_cursor;
+
+    -- Delete all vehicle items for the given VehicleID after unloading
+    DELETE FROM VehicleItems WHERE VehicleID = p_VehicleID;
+
+END //
+
+DELIMITER ;
