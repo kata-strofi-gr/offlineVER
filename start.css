@@ -233,10 +233,12 @@ body {
     grid-template-areas: "textF exitF" "textF textF" "userF userF" "passF passF" "forgotF forgotF" "logF logF";
     grid-gap: 0.1rem;
     z-index: 9999;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px); /* Modern browsers */
+    -webkit-backdrop-filter: blur(5px); /* Safari (iOS) */
     position: fixed;
     justify-items: center;
     align-items: center;
+    transform: translateZ(0);
 }
 
 .container2.active {
