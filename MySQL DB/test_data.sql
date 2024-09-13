@@ -168,3 +168,9 @@ CALL FinishOffer(3);
 
 -- Example usage:
 CALL UnloadVehicleItems(2);
+
+--test data for charts 
+INSERT INTO Requests (CitizenID, NumberofPeople, Status, DateCreated) VALUES (1, 1, 'PENDING', '2024-07-07');
+INSERT INTO Requests (CitizenID, NumberofPeople, Status, DateCreated) VALUES (1, 1, 'FINISHED', '2024-07-13');
+INSERT INTO Requests (CitizenID, NumberofPeople, Status, DateCreated) VALUES (1, 1, 'FINISHED', '2024-07-07');
+INSERT INTO Requests (CitizenID, NumberofPeople, Status, DateCreated) VALUES (2, 1, 'FINISHED', '2024-07-02');

@@ -61,7 +61,7 @@ CREATE TABLE Items (
 -- Warehouse Table
 CREATE TABLE Warehouse (
     ItemID INT,
-    Quantity INT NOT NULL,
+    Quantity INT NOT NULL CHECK (Quantity > 0),
     FOREIGN KEY (ItemID) REFERENCES Items(ItemID) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
@@ -88,7 +88,7 @@ CREATE TABLE RequestItems (
     RequestItemID INT AUTO_INCREMENT PRIMARY KEY,
     RequestID INT,
     ItemID INT,
-    Quantity INT NOT NULL,
+    Quantity INT NOT NULL CHECK (Quantity > 0),
     FOREIGN KEY (RequestID) REFERENCES Requests(RequestID) ON DELETE CASCADE,
     FOREIGN KEY (ItemID) REFERENCES Items(ItemID) ON DELETE CASCADE,
     INDEX (RequestID),
@@ -127,7 +127,7 @@ CREATE TABLE OfferItems (
     OfferItemID INT AUTO_INCREMENT PRIMARY KEY,
     OfferID INT,
     ItemID INT,
-    Quantity INT NOT NULL,
+    Quantity INT NOT NULL CHECK (Quantity > 0),
     FOREIGN KEY (OfferID) REFERENCES Offers(OfferID) ON DELETE CASCADE,
     FOREIGN KEY (ItemID) REFERENCES Items(ItemID) ON DELETE CASCADE,
     INDEX (OfferID),
@@ -149,7 +149,7 @@ CREATE TABLE VehicleItems (
     VehicleItemID INT AUTO_INCREMENT PRIMARY KEY,
     VehicleID INT,
     ItemID INT,
-    Quantity INT NOT NULL,
+    Quantity INT NOT NULL CHECK (Quantity > 0),
     FOREIGN KEY (VehicleID) REFERENCES Vehicles(VehicleID) ON DELETE CASCADE,
     FOREIGN KEY (ItemID) REFERENCES Items(ItemID) ON DELETE CASCADE,
     INDEX (VehicleID),
@@ -172,7 +172,7 @@ CREATE TABLE AnnouncementItems (
     AnnouncementItemID INT AUTO_INCREMENT PRIMARY KEY,
     AnnouncementID INT,
     ItemID INT,
-    Quantity INT NOT NULL,
+    Quantity INT NOT NULL CHECK (Quantity > 0),
     FOREIGN KEY (AnnouncementID) REFERENCES Announcements(AnnouncementID) ON DELETE CASCADE,
     FOREIGN KEY (ItemID) REFERENCES Items(ItemID) ON DELETE CASCADE,
     INDEX (AnnouncementID),
