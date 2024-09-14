@@ -813,3 +813,15 @@ label button:hover {
     transform: translate(0, 0); /* Initial translate set to zero */
     transition: transform 0.2s ease;
 }
+
+th.sort-asc::after {
+    content: ' ▲'; /* Up arrow */
+}
+
+th.sort-desc::after {
+    content: ' ▼'; /* Down arrow */
+}
+
+thead tr th:hover {
+    cursor: pointer;
+}

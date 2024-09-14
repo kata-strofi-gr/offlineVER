@@ -305,3 +305,33 @@ function stopDrag() {
     isDragging = false;
     draggableBox.style.cursor = 'grab';
 }
+
+// Table sorting!
+// https://stackoverflow.com/questions/14267781/sorting-html-table-with-javascript
+const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+
+const comparer = (idx, asc) => (a, b) => ((v1, v2) => 
+    v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
+    )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+
+// Add event listeners to each header for sorting
+document.querySelectorAll('th').forEach(th => th.addEventListener('click', function() {
+    if (th.classList.contains('no-sort')) return; // Skip sorting for this column
+
+    const table = th.closest('table');
+    const tbody = table.querySelector('tbody');
+    const index = Array.from(th.parentNode.children).indexOf(th);
+    const asc = this.asc = !this.asc;
+
+    // Remove sort indicators from all headers
+    document.querySelectorAll('th').forEach(header => {
+        header.classList.remove('sort-asc', 'sort-desc');
+    });
+
+    // Add sort indicator to the clicked header
+    th.classList.add(asc ? 'sort-asc' : 'sort-desc');
+
+    Array.from(tbody.querySelectorAll('tr'))
+        .sort(comparer(index, asc))
+        .forEach(tr => tbody.appendChild(tr));
+}));
