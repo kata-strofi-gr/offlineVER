@@ -294,7 +294,7 @@ function populateNewOffer(data) {
             <td>${row.Name}</td>
             <td>${row.Quantity}</td>
             <td>${row.DateCreated}</td>
-            <td><input type="checkbox" data-id="${row.Name}"></td> 
+            <td><input type="checkbox" class="task-checkbox" data-id="${row.Name}"></td> 
         `;//todo: change to ids?
         tableBody.appendChild(tr);
     });
@@ -313,6 +313,7 @@ function populateOfferHistory(data) {
             <td>${row.DateCreated}</td>
             <td>${row.DateAssignedVehicle}</td> 
             <td>${row.DateFinished}</td> 
+            <td><input type="checkbox" class="task-checkbox" data-id="${row.Name}"></td> 
         `;
         tableBody.appendChild(tr);
     });
@@ -549,3 +550,71 @@ document.addEventListener("DOMContentLoaded", function () {
     setInterval(fetchAllExpired, expiryTime/10); //check every 1th of the expiry time
 
 });
+
+
+// Add event listener for the delete (cancel) button
+const deleteOfferButton = document.querySelector('.btn.delete');
+deleteOfferButton.addEventListener('click', function (e) {
+    e.preventDefault(); // Prevent default form submission behavior
+
+    // Find selected offers (checkbox checked)
+    const selectedOffers = Array.from(document.querySelectorAll('#dataTable2 input[type=checkbox]'))
+        .filter(input => input.checked);
+
+    // Ensure at least one offer is selected
+    if (selectedOffers.length === 0) {
+        alert('Please select an offer to cancel.');
+        return;
+    }
+
+    // Get the offer IDs from the selected rows
+    const selectedOfferIDs = selectedOffers.map(checkbox => {
+        const row = checkbox.closest('tr');
+        return row.querySelectorAll('td')[0].textContent; // Assuming the first column contains the offer ID
+    });
+
+    // Call the deleteOffer function with the selected offer IDs
+    deleteOffer(selectedOfferIDs);
+});
+
+function deleteOffer(offerIDs) {
+    // Check if offerIDs array is not empty
+    if (offerIDs.length === 0) {
+        alert('No offers selected.');
+        return;
+    }
+
+    // Confirm deletion with the user
+    if (!confirm('Are you sure you want to cancel the selected offer(s)?')) {
+        return;
+    }
+
+    // Prepare the request
+    const xhr = new XMLHttpRequest();
+    var citizen_id = localStorage.getItem('citizen_id');
+    xhr.open('POST', 'delete_offer.php/' + citizen_id, true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+    // Define what happens on server response
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            const response = JSON.parse(xhr.responseText);
+            if (response.success) {
+                alert('Offer(s) canceled successfully!');
+                // Refresh the offer history
+                offersData = fetchOffers();
+                offersData.then(offers => {
+                    populateOfferHistory(offers);
+                });
+            } else {
+                alert('Error: ' + response.message);
+            }
+        } else {
+            alert('Request failed. Error code: ' + xhr.status);
+        }
+    };
+
+    // Send request with the selected offer IDs
+    const data = `offerIDs=${encodeURIComponent(offerIDs.join(','))}`;
+    xhr.send(data);
+}
