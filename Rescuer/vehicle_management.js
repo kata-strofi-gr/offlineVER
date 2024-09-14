@@ -1,71 +1,63 @@
-// Function to populate the vehicle management table with dummy data
+// Function to populate the vehicle management table with data from the backend
 function populateVehicleTable() {
-    const tableBody = document.querySelector('#dataTable tbody');
-    tableBody.innerHTML = '';  // Clear the table first
+    const rescuer_id = localStorage.getItem('rescuer_id');  // Assuming rescuer_id is stored in localStorage
 
-    // Dummy data for demonstration purposes
-    const dummyData = [
-        {
-            category: 'Medical Supplies',
-            name: 'First Aid Kit',
-            detailName: 'Brand',
-            detailValue: 'MedPro',
-            id: '1'
-        },
-        {
-            category: 'Food',
-            name: 'Canned Beans',
-            detailName: 'Expiration Date',
-            detailValue: '2025-07-12',
-            id: '2'
-        },
-        {
-            category: 'Tools',
-            name: 'Hammer',
-            detailName: 'Weight',
-            detailValue: '1.5 kg',
-            id: '4000'
-        },
-        {
-            category: 'Water',
-            name: 'Water Bottles',
-            detailName: 'Volume',
-            detailValue: '500ml',
-            id: '4'
-        },
-    ];
+    // Fetch vehicle data for the rescuer from the backend
+    fetch(`api/get_vehicle_data.php?rescuer_id=${rescuer_id}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert('Error fetching vehicle data: ' + data.error);
+                return;
+            }
 
-    // Populate table with dummy data
-    dummyData.forEach(item => {
-        const row = document.createElement('tr');
+            // Get the table body element
+            const tableBody = document.querySelector('#dataTable tbody');
+            tableBody.innerHTML = '';  // Clear the table first
 
-        // Create cells for each piece of data
-        const categoryCell = document.createElement('td');
-        categoryCell.textContent = item.category;
+            // Populate the table with data
+            data.data.forEach(item => {
+                const row = document.createElement('tr');
 
-        const nameCell = document.createElement('td');
-        nameCell.textContent = item.name;
+                // Create cells for each piece of data
+                const categoryCell = document.createElement('td');
+                categoryCell.textContent = item.CategoryName;
 
-        const detailNameCell = document.createElement('td');
-        detailNameCell.textContent = item.detailName;
+                const nameCell = document.createElement('td');
+                nameCell.textContent = item.Name;
 
-        const detailValueCell = document.createElement('td');
-        detailValueCell.textContent = item.detailValue;
+                const detailNameCell = document.createElement('td');
+                detailNameCell.textContent = item.DetailName;
 
-        const idCell = document.createElement('td');
-        idCell.textContent = item.id;
+                const detailValueCell = document.createElement('td');
+                detailValueCell.textContent = item.DetailValue;
 
-        // Append cells to the row
-        row.appendChild(categoryCell);
-        row.appendChild(nameCell);
-        row.appendChild(detailNameCell);
-        row.appendChild(detailValueCell);
-        row.appendChild(idCell);
+                const quantityCell = document.createElement('td');
+                quantityCell.textContent = item.Quantity;
 
-        // Append the row to the table body
-        tableBody.appendChild(row);
-    });
+                // Append cells to the row
+                row.appendChild(categoryCell);
+                row.appendChild(nameCell);
+                row.appendChild(detailNameCell);
+                row.appendChild(detailValueCell);
+                row.appendChild(quantityCell);
+
+                // Append the row to the table body
+                tableBody.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching vehicle data:', error);
+        });
 }
+
+// Ensure the function runs on page load to populate the vehicle table
+window.onload = function() {
+    populateVehicleTable();  // Populate the table with vehicle data on page load
+
+    // Refresh the table data every 10 seconds (10000 milliseconds)
+    setInterval(populateVehicleTable, 10000);
+};
 
 // Ensure the function runs on page load
 window.onload = function() {
