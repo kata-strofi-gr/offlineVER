@@ -216,112 +216,24 @@ END //
 DELIMITER ;
 
 
-
-
 DELIMITER ;
 CALL GenerateEntries(50);
-
-
-
-
 
 --example usage
 CALL LoadVehicleFromOffer(86, 4);
 
 
-
-
 --example usage
 CALL UnloadVehicleOnRequestCompletion(4, 89);
 
+CALL LoadFromWarehouseToVehicle(
+    4,                      -- RescuerID
+    'Rice,Blanket',          -- Comma-separated item names
+    '1,3'                   -- Corresponding quantities
+);
 
-DELIMITER //
-
-CREATE PROCEDURE LoadFromWarehouseToVehicle(
-    IN p_RescuerID INT,
-    IN p_ItemNames VARCHAR(1000),  -- Comma-separated item names
-    IN p_Quantities VARCHAR(1000)  -- Comma-separated quantities
-)
-BEGIN
-    DECLARE v_VehicleID INT;
-    DECLARE v_ItemID INT;
-    DECLARE v_ItemName VARCHAR(255);
-    DECLARE v_Quantity INT;
-    DECLARE v_WarehouseQuantity INT;
-    DECLARE total_items INT;
-    DECLARE i INT DEFAULT 1;
-    DECLARE item_count INT;
-    
-    -- Calculate total number of items from the comma-separated string
-    SET total_items = LENGTH(p_ItemNames) - LENGTH(REPLACE(p_ItemNames, ',', '')) + 1;
-
-    -- Get the VehicleID associated with the rescuer
-    SELECT VehicleID INTO v_VehicleID
-    FROM Vehicles
-    WHERE RescuerID = p_RescuerID;
-
-    IF v_VehicleID IS NULL THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Error: No vehicle assigned to the rescuer.';
-    END IF;
-
-    -- Start the transaction to ensure atomicity
-    START TRANSACTION;
-
-    -- Loop through the comma-separated item names and quantities
-    WHILE i <= total_items DO
-        -- Extract the current item name
-        SET v_ItemName = TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(p_ItemNames, ',', i), ',', -1));
-
-        -- Extract the current quantity and convert to an integer
-        SET v_Quantity = CAST(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(p_Quantities, ',', i), ',', -1)) AS UNSIGNED);
-
-        -- Get the ItemID for the current item
-        SELECT ItemID INTO v_ItemID
-        FROM Items
-        WHERE Name = v_ItemName
-        LIMIT 1;
-
-        IF v_ItemID IS NULL THEN
-            SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = CONCAT('Error: Item "', v_ItemName, '" does not exist in the warehouse.');
-        END IF;
-
-        -- Check if the item exists in the warehouse and the quantity is sufficient
-        SELECT Quantity INTO v_WarehouseQuantity
-        FROM Warehouse
-        WHERE ItemID = v_ItemID;
-
-        IF v_WarehouseQuantity IS NULL THEN
-            SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = CONCAT('Error: Item "', v_ItemName, '" is not available in the warehouse.');
-        ELSEIF v_WarehouseQuantity < v_Quantity THEN
-            SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = CONCAT('Error: Insufficient quantity of item "', v_ItemName, '" in the warehouse.');
-        END IF;
-
-        -- If the item exists in the vehicle, update the quantity
-        IF EXISTS (SELECT 1 FROM VehicleItems WHERE VehicleID = v_VehicleID AND ItemID = v_ItemID) THEN
-            UPDATE VehicleItems
-            SET Quantity = Quantity + v_Quantity
-            WHERE VehicleID = v_VehicleID AND ItemID = v_ItemID;
-        ELSE
-            -- Otherwise, insert the item into VehicleItems
-            INSERT INTO VehicleItems (VehicleID, ItemID, Quantity)
-            VALUES (v_VehicleID, v_ItemID, v_Quantity);
-        END IF;
-
-        -- Subtract the quantity from the warehouse
-        UPDATE Warehouse
-        SET Quantity = Quantity - v_Quantity
-        WHERE ItemID = v_ItemID;
-
-        SET i = i + 1;
-    END WHILE;
-
-    -- Commit the transaction to apply all changes
-    COMMIT;
-
-END //
-
-DELIMITER ;
+CALL UnloadFromVehicleToWarehouse(
+    2,                      -- RescuerID
+    'Rice,Blanket',          -- Comma-separated item names
+    '69,3'                   -- Corresponding quantities
+);
