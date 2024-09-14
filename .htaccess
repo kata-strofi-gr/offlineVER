@@ -1,0 +1,28 @@
+# Enable gzip compression for text-based files
+<IfModule mod_deflate.c>
+    # Compress HTML, CSS, JavaScript, and other text files
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application/javascript application/json application/xml
+
+    # Exclude certain file types from compression
+    SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png|bmp|ico|pdf)$ no-gzip dont-vary
+</IfModule>
+
+# Set cache expiration for different file types
+<IfModule mod_headers.c>
+    # Cache images, SVGs, and CSS files for 30 days
+    <FilesMatch "\.(png|jpe?g|gif|svg|css)$">
+        Header set Cache-Control "public, max-age=2592000"
+    </FilesMatch>
+
+    # Cache JavaScript files for 30 days
+    <FilesMatch "\.(html|js)$">
+        Header set Cache-Control "private, max-age=2592000, must-revalidate"
+    </FilesMatch>
+
+    # Prevent caching of PHP files
+    <FilesMatch "\.(php)$">
+        Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+        Header set Pragma "no-cache"
+        Header set Expires "Thu, 01 Jan 1970 00:00:00 GMT"
+    </FilesMatch>
+</IfModule>
