@@ -178,6 +178,7 @@ DELIMITER ;
 
 
 -- Procedure to create a new announcement
+-- Procedure to create a new announcement
 DELIMITER //
 CREATE PROCEDURE CreateNewAnnouncement(
     IN admin_id INT,
@@ -254,8 +255,7 @@ BEGIN
         -- Insert the item into AnnouncementItems
         IF found_item_id > 0 AND quantity > 0 THEN
             INSERT INTO AnnouncementItems (AnnouncementID, ItemID, Quantity)
-            VALUES (announcement_id, found_item_id, quantity),
-            ON DUPLICATE KEY UPDATE Quantity = Quantity + VALUES(Quantity);
+            VALUES (announcement_id, found_item_id, quantity);
         END IF;
 
         SET i = i + 1;
