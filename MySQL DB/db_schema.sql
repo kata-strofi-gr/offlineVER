@@ -111,8 +111,7 @@ CREATE TABLE Offers (
     INDEX (CitizenID),
     INDEX (RescuerID),
     INDEX (DateCreated),
-    INDEX (DateAssignedVehicle),
-    UNIQUE KEY uq_request_item (OfferID, ItemID)
+    INDEX (DateAssignedVehicle)
 ) ENGINE=InnoDB;
 
 
@@ -133,7 +132,8 @@ CREATE TABLE OfferItems (
     FOREIGN KEY (OfferID) REFERENCES Offers(OfferID) ON DELETE CASCADE,
     FOREIGN KEY (ItemID) REFERENCES Items(ItemID) ON DELETE CASCADE,
     INDEX (OfferID),
-    INDEX (ItemID)
+    INDEX (ItemID),
+    UNIQUE KEY uq_request_item (OfferID, ItemID)
 ) ENGINE=InnoDB;
 
 -- Vehicles Table
