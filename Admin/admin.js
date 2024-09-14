@@ -272,3 +272,36 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+const draggableBox = document.getElementById("draggableBox");
+
+let isDragging = false;
+let initialX, initialY, offsetX = 0, offsetY = 0;
+
+draggableBox.addEventListener('mousedown', startDrag);
+document.addEventListener('mousemove', drag);
+document.addEventListener('mouseup', stopDrag);
+
+function startDrag(e) {
+    isDragging = true;
+    const event = e.type === 'touchstart' ? e.touches[0] : e;
+    initialX = event.clientX - offsetX;
+    initialY = event.clientY - offsetY;
+
+    draggableBox.style.cursor = 'grabbing';
+}
+
+function drag(e) {
+    if (!isDragging) return;
+    
+    const event = e.type === 'touchmove' ? e.touches[0] : e;
+    offsetX = event.clientX - initialX;
+    offsetY = event.clientY - initialY;
+
+    draggableBox.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+}
+
+function stopDrag() {
+    isDragging = false;
+    draggableBox.style.cursor = 'grab';
+}

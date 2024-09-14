@@ -15,7 +15,7 @@
     display: grid;
     height: 100%;
     width: 100%;
-    grid-template-columns: 1fr 3fr 1.5fr;
+    grid-template-columns: 0.9fr 3fr 1.1fr;
     grid-template-rows: 0.2fr 1.5fr 8fr;
     grid-template-areas: 
     "modeT modeT modeT" 
@@ -638,7 +638,7 @@ tbody tr:hover {
         "modeT modeT" 
         "logoT menuT" 
         "imapT imapT"
-        "boxesT" "boxesT";
+        "imapT" "boxesT";
         height: auto;
     
     }
@@ -668,7 +668,7 @@ tbody tr:hover {
         grid-area: boxesT;
     }
     .offer-box {
-        width: 90%; /* Reduce width for mobile */
+        width: 80%; /* Reduce width for mobile */
         max-width: none;
         left: 5%; /* Adjust positioning */
         top: 10%;
@@ -803,3 +803,13 @@ label button:hover {
 }
 
 
+#draggableBox {
+    position: relative;
+    max-width: 90%; /* Control size */
+    max-height: 90%;
+    margin: auto; /* Center it within its grid area */
+    z-index: 1000;
+    cursor: grab;
+    transform: translate(0, 0); /* Initial translate set to zero */
+    transition: transform 0.2s ease;
+}

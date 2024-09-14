@@ -978,6 +978,10 @@ draggableBox.addEventListener('mousedown', startDrag);
 document.addEventListener('mousemove', drag);
 document.addEventListener('mouseup', stopDrag);
 
+// For touch devices
+draggableBox.addEventListener('touchstart', startDrag);
+document.addEventListener('touchmove', drag);
+document.addEventListener('touchend', stopDrag);
 
 function startDrag(e) {
     isDragging = true;
