@@ -829,10 +829,11 @@ function postTaskUndertaking() {
 }
 
 function postCompletedTasks() {
-    // get all checked checkboxes
+    // Get all checked checkboxes
     const checkboxes = document.getElementById('taskTable').querySelectorAll('.task-checkbox:checked');
     const task_ids = Array.from(checkboxes).map(checkbox => checkbox.parentElement.parentElement.dataset.taskId);
     const task_types = Array.from(checkboxes).map(checkbox => checkbox.parentElement.nextElementSibling.textContent);
+    const rescuer_id = localStorage.getItem('rescuer_id');  // Assuming rescuer_id is stored in localStorage
 
     // If no checkboxes are selected, show an alert
     if (task_ids.length === 0) {
@@ -840,27 +841,36 @@ function postCompletedTasks() {
         return;
     }
 
-    // send post for each task localstorage rescuer id
+    // Loop through each selected task
     task_ids.forEach(task_id => {
-        var task_type = task_types[task_ids.indexOf(task_id)];
-        var task;
-        // search for the task json object
-        if (task_type === "Offer"){
+        // Get the task type based on the checkbox index
+        const task_type = task_types[task_ids.indexOf(task_id)];
+        let task;
+
+        // Search for the task in the JSON object based on the task type (Offer or Request)
+        if (task_type === "Offer") {
             task = tasks_data.Offers.filter((entry) => entry.ID === task_id)[0];
         } else {
             task = tasks_data.Requests.filter((entry) => entry.ID === task_id)[0];
         }
 
-        var distance = calculateDistance(task.Latitude, task.Longitude, vehicle_data.Latitude, vehicle_data.Longitude);
-        if (distance>100) {
-            alert("Δεν βρίσκεστε αρκετά κοντά για ολοκληρώσετε την εργασία");
+        // Calculate the distance between the vehicle and the task location
+        const distance = calculateDistance(task.Latitude, task.Longitude, vehicle_data.Latitude, vehicle_data.Longitude);
+        
+        // If the distance is greater than 100 meters, show an alert and stop the process
+        if (distance > 100) {
+            alert("Δεν βρίσκεστε αρκετά κοντά για να ολοκληρώσετε την εργασία.");
             return;
         }
 
-        data = {
+        // Prepare the data for the POST request
+        const data = {
             task_id: task_id,
-            task_type: task_type
-        }
+            task_type: task_type,
+            rescuer_id: rescuer_id  // Send the rescuer ID as part of the request
+        };
+
+        // Send the POST request to complete the task
         fetch('api/complete_task.php', {
             method: 'POST',
             headers: {
@@ -868,24 +878,21 @@ function postCompletedTasks() {
             },
             body: JSON.stringify(data),
         })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
+            .then(response => response.json())  // Directly parse the JSON response
             .then(data => {
                 if (data.error) {
-                    throw new Error(data.error);
+                    // Display the error message from the backend
+                    alert('Error: ' + data.error);
+                } else {
+                    // Log the success message and refresh tasks
+                    console.log(data['message']);
+                    expiryDates['Tasks'] = null;  // Force a refresh of the tasks and re-rendering
+                    fetchAllExpired();  // Call the function to refresh tasks and map data
                 }
-                console.log(data['message']);
-
-                expiryDates['Tasks'] = null; // Force a refresh of the tasks and re-rendering
-                fetchAllExpired();
             })
             .catch(error => {
                 console.error('Fetch Error:', error);
-                throw error; // Rethrow after logging to allow caller to handle
+                alert('Failed to complete task due to a network error.');
             });
     });
 }
