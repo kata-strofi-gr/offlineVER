@@ -51,17 +51,71 @@ function populateVehicleTable() {
         });
 }
 
-// Ensure the function runs on page load to populate the vehicle table
+// Function to populate the warehouse table with data from the backend
+function populateWarehouseTable() {
+    // Fetch warehouse data from the backend
+    fetch(`api/get_warehouse_data.php`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert('Error fetching warehouse data: ' + data.error);
+                return;
+            }
+
+            // Get the table body element
+            const tableBody = document.querySelector('#secondTable tbody');
+            tableBody.innerHTML = '';  // Clear the table first
+
+            // Populate the table with data
+            data.data.forEach(item => {
+                const row = document.createElement('tr');
+
+                // Create cells for each piece of data
+                const categoryCell = document.createElement('td');
+                categoryCell.textContent = item.CategoryName;
+
+                const nameCell = document.createElement('td');
+                nameCell.textContent = item.Name;
+
+                const detailNameCell = document.createElement('td');
+                detailNameCell.textContent = item.DetailName;
+
+                const detailValueCell = document.createElement('td');
+                detailValueCell.textContent = item.DetailValue;
+
+                const quantityCell = document.createElement('td');
+                quantityCell.textContent = item.Quantity;
+
+                // Append cells to the row
+                row.appendChild(categoryCell);
+                row.appendChild(nameCell);
+                row.appendChild(detailNameCell);
+                row.appendChild(detailValueCell);
+                row.appendChild(quantityCell);
+
+                // Append the row to the table body
+                tableBody.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching warehouse data:', error);
+        });
+}
+
+// Ensure both functions run on page load to populate the tables
 window.onload = function() {
-    populateVehicleTable();  // Populate the table with vehicle data on page load
+    populateVehicleTable();   // Populate vehicle data on page load
+    populateWarehouseTable(); // Populate warehouse data on page load
 
     // Refresh the table data every 10 seconds (10000 milliseconds)
     setInterval(populateVehicleTable, 10000);
+    setInterval(populateWarehouseTable, 10000);
 };
 
 // Ensure the function runs on page load
 window.onload = function() {
     populateVehicleTable();  // Populate the table with dummy data on page load
+    populateWarehouseTable();
 };
 
 // Function to dynamically add new sets of fields for multiple items
