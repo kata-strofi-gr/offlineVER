@@ -92,7 +92,8 @@ CREATE TABLE RequestItems (
     FOREIGN KEY (RequestID) REFERENCES Requests(RequestID) ON DELETE CASCADE,
     FOREIGN KEY (ItemID) REFERENCES Items(ItemID) ON DELETE CASCADE,
     INDEX (RequestID),
-    INDEX (ItemID)
+    INDEX (ItemID),
+    UNIQUE KEY uq_request_item (RequestID, ItemID)
 ) ENGINE=InnoDB;
 
 
@@ -110,7 +111,8 @@ CREATE TABLE Offers (
     INDEX (CitizenID),
     INDEX (RescuerID),
     INDEX (DateCreated),
-    INDEX (DateAssignedVehicle)
+    INDEX (DateAssignedVehicle),
+    UNIQUE KEY uq_request_item (OfferID, ItemID)
 ) ENGINE=InnoDB;
 
 
@@ -176,7 +178,8 @@ CREATE TABLE AnnouncementItems (
     FOREIGN KEY (AnnouncementID) REFERENCES Announcements(AnnouncementID) ON DELETE CASCADE,
     FOREIGN KEY (ItemID) REFERENCES Items(ItemID) ON DELETE CASCADE,
     INDEX (AnnouncementID),
-    INDEX (ItemID)
+    INDEX (ItemID),
+    UNIQUE KEY uq_announcement_item (AnnouncementID, ItemID)
 ) ENGINE=InnoDB;
 
 

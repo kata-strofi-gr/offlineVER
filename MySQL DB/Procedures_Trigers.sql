@@ -16,6 +16,7 @@ BEGIN
     DECLARE i INT DEFAULT 1;
     DECLARE found_item_id INT;
     DECLARE item_count INT;
+    
 
     -- Calculate the total number of items from the comma-separated string
     SET total_items = LENGTH(item_names) - LENGTH(REPLACE(item_names, ',', '')) + 1;
@@ -78,7 +79,8 @@ BEGIN
         -- Insert the item into RequestItems
         IF found_item_id > 0 AND quantity > 0 THEN
             INSERT INTO RequestItems (RequestID, ItemID, Quantity)
-            VALUES (request_id, found_item_id, quantity);
+            VALUES (request_id, found_item_id, quantity)
+            ON DUPLICATE KEY UPDATE Quantity = Quantity + VALUES(Quantity);
         END IF;
 
         SET i = i + 1;
@@ -165,7 +167,8 @@ BEGIN
         -- Insert the item into OfferItems
         IF found_item_id > 0 AND quantity > 0 THEN
             INSERT INTO OfferItems (OfferID, ItemID, Quantity)
-            VALUES (offer_id, found_item_id, quantity);
+            VALUES (offer_id, found_item_id, quantity)
+            ON DUPLICATE KEY UPDATE Quantity = Quantity + VALUES(Quantity);
         END IF;
 
         SET i = i + 1;
@@ -251,7 +254,8 @@ BEGIN
         -- Insert the item into AnnouncementItems
         IF found_item_id > 0 AND quantity > 0 THEN
             INSERT INTO AnnouncementItems (AnnouncementID, ItemID, Quantity)
-            VALUES (announcement_id, found_item_id, quantity);
+            VALUES (announcement_id, found_item_id, quantity),
+            ON DUPLICATE KEY UPDATE Quantity = Quantity + VALUES(Quantity);
         END IF;
 
         SET i = i + 1;
