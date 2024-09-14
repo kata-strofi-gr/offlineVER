@@ -84,7 +84,7 @@ function fetchDataAndUpdateMap() {
         currentCenter = map.getCenter();
         currentZoom = map.getZoom();
     }
-    
+
     fetch('map_fetch.php')
         .then(response => response.json())
         .then(data => {
@@ -93,11 +93,37 @@ function fetchDataAndUpdateMap() {
                 return;
             }
             updateMap(data);
+          // On initial load, show all vehicles by default
+          if (initialLoad) {
+            showAllVehicles(); // Add both active and inactive vehicles to the map
+            initialLoad = false; // Ensure this only happens on the first load
+        }
+
+            // After updating the map, reapply the vehicle filters based on the current states
+            applyVehicleFilters();
         })
         .catch(error => {
             console.error('Fetch Error:', error);
         });
 }
+
+// Helper function to reapply filters based on the active states
+function applyVehicleFilters() {
+    // Reapply the "active vehicles" filter if it's currently active
+    if (!isActiveVehiclesFilterActive) {
+        activeVehicleMarkers.forEach(marker => marker.addTo(map));
+    } else {
+        activeVehicleMarkers.forEach(marker => map.removeLayer(marker));
+    }
+
+    // Reapply the "inactive vehicles" filter if it's currently active
+    if (!isInactiveVehiclesFilterActive) {
+        inactiveVehicleMarkers.forEach(marker => marker.addTo(map));
+    } else {
+        inactiveVehicleMarkers.forEach(marker => map.removeLayer(marker));
+    }
+}
+
 
 
 // Function to clear all lines from the map
@@ -217,10 +243,19 @@ function updateMap(mapData) {
             inactiveVehicleMarkers.push(vehicleMarker);
         }
 
-        if ((!isActiveVehiclesFilterActive || vehicle.ActiveTasks > 0) &&
-            (!isInactiveVehiclesFilterActive || vehicle.ActiveTasks === 0)) {
+        // If both active and inactive filters are disabled, show all vehicles
+        if (!isActiveVehiclesFilterActive && !isInactiveVehiclesFilterActive) {
+            vehicleMarker.addTo(map);
+        } 
+        // If only active vehicles filter is enabled, show vehicles with active tasks
+        else if (isActiveVehiclesFilterActive && vehicle.ActiveTasks > 0) {
+            vehicleMarker.addTo(map);
+        } 
+        // If only inactive vehicles filter is enabled, show vehicles without active tasks
+        else if (isInactiveVehiclesFilterActive && vehicle.ActiveTasks === 0) {
             vehicleMarker.addTo(map);
         }
+
 
         vehicleMarker.on('click', function () {
             clearLines(); // Clear lines when clicking a new marker
@@ -372,31 +407,32 @@ function toggleOffers() {
 function toggleActiveVehicles() {
     const button = document.getElementById('toggleActiveVehicles');
     
-    if (isActiveVehiclesFilterActive) {
-        activeVehicleMarkers.forEach(marker => marker.addTo(map)); // Re-add active vehicle markers
-        button.classList.remove('active-filter');
+    if (!isActiveVehiclesFilterActive) {
+        activeVehicleMarkers.forEach(marker => map.removeLayer(marker)); // Hide active vehicles
+        button.classList.add('active-filter'); // Mark button as active
     } else {
-        activeVehicleMarkers.forEach(marker => map.removeLayer(marker)); // Remove active vehicle markers
-        button.classList.add('active-filter');
+        activeVehicleMarkers.forEach(marker => marker.addTo(map)); // Show active vehicles
+        button.classList.remove('active-filter'); // Mark button as inactive
     }
-    
-    isActiveVehiclesFilterActive = !isActiveVehiclesFilterActive;
+
+    isActiveVehiclesFilterActive = !isActiveVehiclesFilterActive; // Toggle state
 }
 
 // Function to toggle the filter for "Inactive Vehicles"
 function toggleInactiveVehicles() {
     const button = document.getElementById('toggleInactiveVehicles');
     
-    if (isInactiveVehiclesFilterActive) {
-        inactiveVehicleMarkers.forEach(marker => marker.addTo(map)); // Re-add inactive vehicle markers
-        button.classList.remove('active-filter');
+    if (!isInactiveVehiclesFilterActive) {
+        inactiveVehicleMarkers.forEach(marker => map.removeLayer(marker)); // Hide inactive vehicles
+        button.classList.add('active-filter'); // Mark button as active
     } else {
-        inactiveVehicleMarkers.forEach(marker => map.removeLayer(marker)); // Remove inactive vehicle markers
-        button.classList.add('active-filter');
+        inactiveVehicleMarkers.forEach(marker => marker.addTo(map)); // Show inactive vehicles
+        button.classList.remove('active-filter'); // Mark button as inactive
     }
-    
-    isInactiveVehiclesFilterActive = !isInactiveVehiclesFilterActive;
+
+    isInactiveVehiclesFilterActive = !isInactiveVehiclesFilterActive; // Toggle state
 }
+
 
 // Function to toggle the filter for "Lines"
 function toggleLines() {
