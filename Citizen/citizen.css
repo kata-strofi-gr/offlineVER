@@ -721,3 +721,37 @@ tbody tr:hover {
 .offergiveHist{
     display: none;
 }
+
+
+/* Custom checkbox styles */
+input[type="checkbox"].task-checkbox {
+    appearance: none;
+    background-color: white; /* Unchecked background */
+    margin: 0;
+    font: inherit;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #FA4343; /* Red border */
+    border-radius: 4px;
+    display: grid;
+    place-content: center;
+    transition: background-color 120ms ease-in-out; /* Add smooth transition */
+}
+
+input[type="checkbox"].task-checkbox::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    transform: scale(0);
+    transition: transform 120ms ease-in-out;
+}
+
+input[type="checkbox"].task-checkbox:checked {
+    background-color: #00AEEF; /* Red background when checked */
+}
+
+input[type="checkbox"].task-checkbox:checked::before {
+    transform: scale(1);
+    background-color:#00AEEF; /* White checkmark when checked */
+    box-shadow: inset 1em 1em #00AEEF;
+}
