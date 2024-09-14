@@ -124,8 +124,8 @@ INSERT INTO AnnouncementItems (AnnouncementID, ItemID, Quantity) VALUES
 CALL CreateNewRequest(
     2,      
     10,               -- Citizen ID
-    'Rice,Rice,Rice,Blanket,Blanket,Blanket,Blanket', -- Comma-separated item names
-    '100,50,70,33,33,696969,4'             -- Corresponding quantities
+    'Rice,Rice,Rice', -- Comma-separated item names
+    '100,50'             -- Corresponding quantities
 );
 
 -- Test entry for CreateNewOffer procedure
@@ -169,8 +169,52 @@ CALL FinishOffer(3);
 -- Example usage:
 CALL UnloadVehicleItems(2);
 
---test data for charts 
-INSERT INTO Requests (CitizenID, NumberofPeople, Status, DateCreated) VALUES (1, 1, 'PENDING', '2024-07-07');
-INSERT INTO Requests (CitizenID, NumberofPeople, Status, DateCreated) VALUES (1, 1, 'FINISHED', '2024-07-13');
-INSERT INTO Requests (CitizenID, NumberofPeople, Status, DateCreated) VALUES (1, 1, 'FINISHED', '2024-07-07');
-INSERT INTO Requests (CitizenID, NumberofPeople, Status, DateCreated) VALUES (2, 1, 'FINISHED', '2024-07-02');
+
+
+DELIMITER //
+
+CREATE PROCEDURE GenerateEntries(IN num_entries INT)
+BEGIN
+    DECLARE i INT DEFAULT 1;
+    DECLARE base_date DATE DEFAULT '2024-05-14';  -- Start date 4 months before max date (14/09/2024)
+    DECLARE max_date DATE DEFAULT '2024-09-14';   -- Max date is 14/09/2024
+    
+    -- Loop through the number of entries specified
+    WHILE i <= num_entries DO
+        -- Exit the loop if base_date exceeds max_date
+        IF base_date > max_date THEN
+            SET i = num_entries + 1;  -- Exit the loop by setting i beyond num_entries
+        ELSE
+            -- Insert Request
+            INSERT INTO Requests (CitizenID, NumberofPeople, Status, DateCreated, DateAssignedVehicle, DateFinished, RescuerID)
+            VALUES (1,1,  'FINISHED', base_date, base_date + INTERVAL 1 DAY, base_date + INTERVAL 2 DAY, 1);
+            
+            -- Insert corresponding RequestItem
+            INSERT INTO RequestItems (RequestID, ItemID, Quantity)
+            VALUES (LAST_INSERT_ID(), 1, 1);
+            
+            -- Insert Offer
+            INSERT INTO Offers (CitizenID, Status, DateCreated, DateAssignedVehicle, DateFinished, RescuerID)
+            VALUES (1, 'FINISHED', base_date, base_date + INTERVAL 1 DAY, base_date + INTERVAL 2 DAY, 1);
+            
+            -- Insert corresponding OfferItem
+            INSERT INTO OfferItems (OfferID, ItemID, Quantity)
+            VALUES (LAST_INSERT_ID(), 1, 1);
+
+            -- Increment the base date by 1 day
+            SET base_date = base_date + INTERVAL 1 DAY;
+
+            -- Increment the loop counter
+            SET i = i + 1;
+        END IF;
+    END WHILE;
+    
+END //
+
+DELIMITER ;
+
+
+
+
+DELIMITER ;
+CALL GenerateEntries(50);

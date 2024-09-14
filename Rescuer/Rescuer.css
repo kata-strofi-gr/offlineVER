@@ -20,6 +20,15 @@
 
 }
 
+.vehicle-management-active .container {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas: 
+    "modeT modeT modeT" 
+    "logoT menuT menuT" 
+    "imapT imapT imapT";
+}
+
 .logoT{
     grid-area: logoT;
     display: flex;

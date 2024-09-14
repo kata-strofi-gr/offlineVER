@@ -162,6 +162,8 @@ document.getElementById('logoF').addEventListener('click', function (e) {
     // Hide other sections
     contentSectionX.style.display = 'none';
     contentSectionX1.style.display = 'none';
+    // Remove the modified grid layout class
+    document.body.classList.remove('vehicle-management-active');
 });
 
 // Add event listeners for the toggle buttons
@@ -189,6 +191,7 @@ function showVehicleManagement() {
     contentSectionX2.style.display = 'block';  // Show new announcement section
     mapContainer.style.display = 'none';     // Hide map
     taskTable.style.display = 'none';        // Hide task table
+    document.body.classList.add('vehicle-management-active');
 }
 
 function populateTaskTable() {
