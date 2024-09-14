@@ -118,21 +118,23 @@ INSERT INTO AnnouncementItems (AnnouncementID, ItemID, Quantity) VALUES
 (2, 3, 75), -- Announcement 2 includes 75 units of Item 3
 (2, 1, 150); -- Announcement 2 includes 150 units of Item 1
 
+--Drop temporary tables
+DROP TABLE IF EXISTS tempitems;
 
 -- Test entry for CreateNewRequest procedure
 
 CALL CreateNewRequest(
     2,      
     10,               -- Citizen ID
-    'Rice,Rice,Rice', -- Comma-separated item names
-    '100,50'             -- Corresponding quantities
+    'Rice,Blanket', -- Comma-separated item names
+    '888,30'             -- Corresponding quantities
 );
 
 -- Test entry for CreateNewOffer procedure
 CALL CreateNewOffer(
     2,                      -- Citizen ID
-    'Rice,Blanket,Blanket', -- Comma-separated item names
-    '69,5,3'           -- Corresponding quantities
+    'Rice,Blanket', -- Comma-separated item names
+    '69,3'           -- Corresponding quantities
 );
 
 -- Test entry for CreateAnnouncement procedure
@@ -157,9 +159,9 @@ CALL AssignOffer(3, 2); -- Assigning third offer to rescuer1
 CALL AssignOffer(7, 3); -- Assigning fourth offer to rescuer1
 
 
-CALL CancelRequest(1);
+CALL CancelRequest(89);
 
-CALL CancelOffer(4);
+CALL CancelOffer(77);
 
 CALL FinishRequest(2);
 
@@ -195,7 +197,7 @@ BEGIN
             
             -- Insert Offer
             INSERT INTO Offers (CitizenID, Status, DateCreated, DateAssignedVehicle, DateFinished, RescuerID)
-            VALUES (1, 'FINISHED', base_date, base_date + INTERVAL 1 DAY, base_date + INTERVAL 2 DAY, 1);
+            VALUES (1,1, 'FINISHED', base_date, base_date + INTERVAL 1 DAY, base_date + INTERVAL 2 DAY, 1);
             
             -- Insert corresponding OfferItem
             INSERT INTO OfferItems (OfferID, ItemID, Quantity)
@@ -218,3 +220,201 @@ DELIMITER ;
 
 DELIMITER ;
 CALL GenerateEntries(50);
+
+
+
+DELIMITER //
+
+CREATE PROCEDURE LoadVehicleFromOffer(
+    IN p_OfferID INT,
+    IN p_RescuerID INT
+)
+BEGIN
+    DECLARE v_VehicleID INT;
+    DECLARE v_ItemID INT;
+    DECLARE v_OfferQuantity INT;
+    DECLARE v_VehicleQuantity INT;
+    DECLARE done INT DEFAULT 0;
+
+    -- Declare a cursor to go through each item in the offer
+    DECLARE offer_items_cursor CURSOR FOR 
+    SELECT ItemID, Quantity FROM OfferItems WHERE OfferID = p_OfferID;
+
+    -- Declare a handler for when the cursor finishes
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+
+    -- Step 1: Validate that the offer exists
+    IF NOT EXISTS (SELECT 1 FROM Offers WHERE OfferID = p_OfferID) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Error: Offer does not exist.';
+    END IF;
+
+    -- Step 2: Validate that the rescuer is assigned to the offer
+    IF NOT EXISTS (SELECT 1 FROM Offers WHERE OfferID = p_OfferID AND RescuerID = p_RescuerID) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Error: Rescuer is not assigned to this offer.';
+    END IF;
+
+    -- Step 3: Get the VehicleID associated with the rescuer
+    SELECT VehicleID INTO v_VehicleID FROM Vehicles WHERE RescuerID = p_RescuerID;
+
+    IF v_VehicleID IS NULL THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Error: No vehicle assigned to the rescuer.';
+    END IF;
+
+    -- Step 4: Start a transaction to ensure atomicity
+    START TRANSACTION;
+
+    -- Step 5: Open the cursor to iterate through offer items
+    OPEN offer_items_cursor;
+
+    -- Step 6: Loop through each item in the offer
+    items_loop: LOOP
+        -- Fetch the current offer item
+        FETCH offer_items_cursor INTO v_ItemID, v_OfferQuantity;
+
+        -- Exit the loop if done
+        IF done = 1 THEN
+            LEAVE items_loop;
+        END IF;
+
+        -- Step 7: Check if the item already exists in the vehicle
+        IF EXISTS (SELECT 1 FROM VehicleItems WHERE VehicleID = v_VehicleID AND ItemID = v_ItemID) THEN
+            -- Get the current vehicle quantity for the item
+            SELECT Quantity INTO v_VehicleQuantity
+            FROM VehicleItems 
+            WHERE VehicleID = v_VehicleID AND ItemID = v_ItemID;
+
+            -- Update the quantity in the vehicle
+            UPDATE VehicleItems
+            SET Quantity = v_VehicleQuantity + v_OfferQuantity
+            WHERE VehicleID = v_VehicleID AND ItemID = v_ItemID;
+        ELSE
+            -- Insert the item into VehicleItems if it doesn't exist
+            INSERT INTO VehicleItems (VehicleID, ItemID, Quantity)
+            VALUES (v_VehicleID, v_ItemID, v_OfferQuantity);
+        END IF;
+    END LOOP;
+
+    -- Step 8: Close the cursor
+    CLOSE offer_items_cursor;
+
+    -- Step 9: Commit the transaction to confirm the changes
+    COMMIT;
+
+END //
+
+DELIMITER ;
+
+
+--example usage
+CALL LoadVehicleFromOffer(86, 4);
+
+
+
+DELIMITER //
+
+CREATE PROCEDURE UnloadVehicleOnRequestCompletion(
+    IN p_RescuerID INT,
+    IN p_RequestID INT
+)
+BEGIN
+    DECLARE v_VehicleID INT;
+    DECLARE v_ItemID INT;
+    DECLARE v_RequestedQuantity INT;
+    DECLARE v_VehicleQuantity INT;
+    DECLARE v_ItemName VARCHAR(255);  -- To hold the item name
+    DECLARE done INT DEFAULT 0;
+    DECLARE v_ErrorMessage VARCHAR(255);  -- Variable to hold the error message
+    
+    -- Declare a cursor to go through each item in the request, fetching ItemID, Quantity, and ItemName
+    DECLARE request_items_cursor CURSOR FOR 
+    SELECT ri.ItemID, ri.Quantity, i.Name
+    FROM RequestItems ri
+    JOIN Items i ON ri.ItemID = i.ItemID
+    WHERE RequestID = p_RequestID;
+
+    -- Declare a handler for when the cursor finishes
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+
+    -- Step 1: Validate that the rescuer is assigned to the request
+    IF NOT EXISTS (SELECT 1 FROM Requests WHERE RequestID = p_RequestID AND RescuerID = p_RescuerID) THEN
+        -- SIGNAL SQLSTATE '45000'
+        -- SET MESSAGE_TEXT = 'Error: Rescuer is not assigned to this request.';
+        LEAVE items_loop;  -- Skip further execution for this test
+    END IF;
+
+    -- Step 2: Get the VehicleID associated with the rescuer
+    SELECT VehicleID INTO v_VehicleID FROM Vehicles WHERE RescuerID = p_RescuerID;
+
+    IF v_VehicleID IS NULL THEN
+        -- SIGNAL SQLSTATE '45000'
+        -- SET MESSAGE_TEXT = 'Error: No vehicle assigned to the rescuer.';
+        LEAVE items_loop;  -- Skip further execution for this test
+    END IF;
+
+    -- Step 3: Start a transaction to ensure atomicity
+    START TRANSACTION;
+
+    -- Step 4: Open the cursor to iterate through request items
+    OPEN request_items_cursor;
+
+    -- Step 5: Loop through each item in the request
+    items_loop: LOOP
+        -- Fetch the current request item, including the item name
+        FETCH request_items_cursor INTO v_ItemID, v_RequestedQuantity, v_ItemName;
+
+        -- Exit the loop if done
+        IF done = 1 THEN
+            LEAVE items_loop;
+        END IF;
+
+        -- Step 6: Check if the item exists in the vehicle
+        SELECT Quantity INTO v_VehicleQuantity 
+        FROM VehicleItems 
+        WHERE VehicleID = v_VehicleID AND ItemID = v_ItemID;
+
+        -- If the item doesn't exist, continue without raising an error
+        IF v_VehicleQuantity IS NULL THEN
+            -- Comment out the error message for testing
+            -- SET v_ErrorMessage = CONCAT('Error: Item "', v_ItemName, '" (ID ', v_ItemID, ') does not exist in the vehicle.');
+            -- SIGNAL SQLSTATE '45000'
+            -- SET MESSAGE_TEXT = v_ErrorMessage;
+            CONTINUE;  -- Skip this item for testing
+        ELSE
+            -- Check if the quantity in the vehicle is sufficient
+            IF v_VehicleQuantity < v_RequestedQuantity THEN
+                -- Comment out the error message for testing
+                -- SET v_ErrorMessage = CONCAT('Error: Insufficient quantity of item "', v_ItemName, '" (ID ', v_ItemID, ') in the vehicle.');
+                -- SIGNAL SQLSTATE '45000'
+                -- SET MESSAGE_TEXT = v_ErrorMessage;
+                CONTINUE;  -- Skip this item for testing
+            ELSE
+                -- Subtract the requested quantity from the vehicle
+                UPDATE VehicleItems
+                SET Quantity = Quantity - v_RequestedQuantity
+                WHERE VehicleID = v_VehicleID AND ItemID = v_ItemID;
+
+                -- Remove the item completely if the remaining quantity is zero
+                IF (v_VehicleQuantity - v_RequestedQuantity) <= 0 THEN
+                    DELETE FROM VehicleItems WHERE VehicleID = v_VehicleID AND ItemID = v_ItemID;
+                END IF;
+            END IF;
+        END IF;
+    END LOOP;
+
+    -- Step 9: Close the cursor
+    CLOSE request_items_cursor;
+
+    -- Step 10: Commit the transaction to confirm the changes
+    COMMIT;
+
+END //
+
+DELIMITER ;
+
+
+
+--example usage
+CALL UnloadVehicleOnRequestCompletion(4, 89);

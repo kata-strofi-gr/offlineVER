@@ -307,6 +307,7 @@ function populateOfferHistory(data) {
     data.forEach(row => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
+            <td style="display: none;">${row.OfferID}</td> <!-- Hidden Offer ID -->
             <td>${row.Name}</td>
             <td>${row.CategoryName}</td>
             <td>${row.Quantity}</td>
@@ -552,8 +553,8 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-// Add event listener for the delete (cancel) button
-const deleteOfferButton = document.querySelector('.btn.delete');
+// Add event listener for the delete (cancel) button using the ID
+const deleteOfferButton = document.getElementById('btn_delete');
 deleteOfferButton.addEventListener('click', function (e) {
     e.preventDefault(); // Prevent default form submission behavior
 
@@ -618,3 +619,4 @@ function deleteOffer(offerIDs) {
     const data = `offerIDs=${encodeURIComponent(offerIDs.join(','))}`;
     xhr.send(data);
 }
+

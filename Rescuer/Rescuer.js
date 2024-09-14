@@ -783,12 +783,15 @@ function postTaskUndertaking() {
         alert('Δεν έχετε επιλέξει καμία εργασία.');
         return;
     }
-
+    
     // send post for each task localstorage rescuer id
     data = {
         task_id: task_id,
         task_type: task_type
     }
+
+    //pirnt data
+    console.log(data);
 
     fetch('api/undertake_task.php/' + localStorage.getItem('rescuer_id'), {
         method: 'POST',
@@ -1007,3 +1010,65 @@ function stopDrag() {
     draggableBox.style.cursor = 'grab';
 }
 
+document.getElementById('cancelButton').addEventListener('click', function () {
+    // Get the selected checkbox
+    const checkbox = document.querySelector('#taskTable .task-checkbox:checked');
+    
+    // If no checkbox is selected, show an alert
+    if (!checkbox) {
+        alert('Δεν έχετε επιλέξει καμία εργασία.');
+        return;
+    }
+
+    // Get the task ID and task type from the selected row
+    const task_id = checkbox.parentElement.parentElement.dataset.taskId;
+    const task_type = checkbox.parentElement.nextElementSibling.textContent;
+
+    // Search for the task JSON object
+    let task;
+    if (task_type === "Offer") {
+        task = tasks_data.Offers.filter((entry) => entry.ID === task_id)[0];
+    } else {
+        task = tasks_data.Requests.filter((entry) => entry.ID === task_id)[0];
+    }
+    alert('Ακύρωση εργασίας: ' + task_id);
+    // Prepare the API endpoint based on task type (Offer or Request)
+    let apiUrl = '';
+    if (task_type === 'Offer') {
+        apiUrl = 'api/cancel_offer.php';  // Cancel offer API
+    } else if (task_type === 'Request') {
+        apiUrl = 'api/cancel_request.php';  // Cancel request API
+    }
+
+    // Create a new XMLHttpRequest
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', apiUrl, true);
+    xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+    
+    // Handle response
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {  // Check if request is complete
+            console.log('Raw Response:', xhr.responseText);  // Log the raw response to debug
+
+            if (xhr.status === 200) {  // Check if request is successful
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    console.log('Parsed Response:', response);
+
+                    if (response.error) {
+                        throw new Error(response.error);
+                    }
+                    alert('Επιτυχής ακύρωση εργασίας: ' + task_id);
+                    fetchAllExpired();  // Refresh the task list and map
+                } catch (e) {
+                    console.error('Error in response:', e);
+                }
+            } else {
+                console.error('Request failed with status:', xhr.status);
+            }
+        }
+    };
+
+    // Send the request with task_id in the body
+    xhr.send(JSON.stringify({ task_id: task_id }));
+});
