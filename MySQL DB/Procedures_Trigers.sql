@@ -550,59 +550,107 @@ END//
 DELIMITER ;
 
 
-
+--
 DELIMITER //
 
-CREATE PROCEDURE UnloadVehicleItems(
-    IN p_VehicleID INT
+CREATE PROCEDURE UnloadFromVehicleToWarehouse(
+    IN p_RescuerID INT,
+    IN p_ItemNames VARCHAR(1000),  -- Comma-separated item names
+    IN p_Quantities VARCHAR(1000)  -- Comma-separated quantities
 )
 BEGIN
+    DECLARE v_VehicleID INT;
     DECLARE v_ItemID INT;
+    DECLARE v_ItemName VARCHAR(255);
     DECLARE v_Quantity INT;
-    DECLARE done INT DEFAULT 0;
+    DECLARE v_VehicleQuantity INT;
+    DECLARE total_items INT;
+    DECLARE i INT DEFAULT 1;
+    DECLARE v_ErrorMessage VARCHAR(255);  -- Variable to hold the error message
+    
+    -- Calculate total number of items from the comma-separated string
+    SET total_items = LENGTH(p_ItemNames) - LENGTH(REPLACE(p_ItemNames, ',', '')) + 1;
 
-    -- Declare a cursor to go through each item in the vehicle
-    DECLARE vehicle_items_cursor CURSOR FOR 
-    SELECT ItemID, Quantity FROM VehicleItems WHERE VehicleID = p_VehicleID;
+    -- Get the VehicleID associated with the rescuer
+    SELECT VehicleID INTO v_VehicleID
+    FROM Vehicles
+    WHERE RescuerID = p_RescuerID;
 
-    -- Declare a handler for when the cursor finishes
-    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+    IF v_VehicleID IS NULL THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Error: No vehicle assigned to the rescuer.';
+    END IF;
 
-    -- Open the cursor
-    OPEN vehicle_items_cursor;
+    -- Start the transaction to ensure atomicity
+    START TRANSACTION;
 
-    -- The loop to go through all vehicle items
-    items_loop: LOOP
-        -- Fetch the current vehicle item
-        FETCH vehicle_items_cursor INTO v_ItemID, v_Quantity;
+    -- Loop through the comma-separated item names and quantities
+    WHILE i <= total_items DO
+        -- Extract the current item name
+        SET v_ItemName = TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(p_ItemNames, ',', i), ',', -1));
 
-        -- Exit the loop if done
-        IF done = 1 THEN
-            LEAVE items_loop;
+        -- Extract the current quantity and convert to an integer
+        SET v_Quantity = CAST(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(p_Quantities, ',', i), ',', -1)) AS UNSIGNED);
+
+        -- Get the ItemID for the current item
+        SELECT ItemID INTO v_ItemID
+        FROM Items
+        WHERE Name = v_ItemName
+        LIMIT 1;
+
+        IF v_ItemID IS NULL THEN
+            SET v_ErrorMessage = CONCAT('Error: Item "', v_ItemName, '" does not exist in the system.');
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = v_ErrorMessage;
         END IF;
 
-        -- Step 1: Try updating the existing warehouse record first
-        UPDATE Warehouse
-        SET Quantity = Quantity + v_Quantity
-        WHERE ItemID = v_ItemID;
+        -- Check if the item exists in the vehicle and the quantity is sufficient
+        SELECT Quantity INTO v_VehicleQuantity
+        FROM VehicleItems
+        WHERE VehicleID = v_VehicleID AND ItemID = v_ItemID;
 
-        -- Step 2: Check if the update affected any rows (i.e., if the item exists)
-        IF ROW_COUNT() = 0 THEN
-            -- Step 3: If no rows were affected, insert a new record for the item
+        IF v_VehicleQuantity IS NULL THEN
+            SET v_ErrorMessage = CONCAT('Error: Item "', v_ItemName, '" is not available in the vehicle.');
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = v_ErrorMessage;
+        ELSEIF v_VehicleQuantity < v_Quantity THEN
+            SET v_ErrorMessage = CONCAT('Error: Insufficient quantity of item "', v_ItemName, '" in the vehicle.');
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = v_ErrorMessage;
+        END IF;
+
+        -- If the item exists in the warehouse, update the quantity
+        IF EXISTS (SELECT 1 FROM Warehouse WHERE ItemID = v_ItemID) THEN
+            UPDATE Warehouse
+            SET Quantity = Quantity + v_Quantity
+            WHERE ItemID = v_ItemID;
+        ELSE
+            -- Otherwise, insert the item into Warehouse
             INSERT INTO Warehouse (ItemID, Quantity)
             VALUES (v_ItemID, v_Quantity);
         END IF;
-    END LOOP;
 
-    -- Close the cursor
-    CLOSE vehicle_items_cursor;
+        -- Subtract the quantity from the vehicle
+        UPDATE VehicleItems
+        SET Quantity = Quantity - v_Quantity
+        WHERE VehicleID = v_VehicleID AND ItemID = v_ItemID;
 
-    -- Delete all vehicle items for the given VehicleID after unloading
-    DELETE FROM VehicleItems WHERE VehicleID = p_VehicleID;
+        -- If the remaining quantity in the vehicle is zero, delete the item from VehicleItems
+        IF (v_VehicleQuantity - v_Quantity) <= 0 THEN
+            DELETE FROM VehicleItems WHERE VehicleID = v_VehicleID AND ItemID = v_ItemID;
+        END IF;
+
+        SET i = i + 1;
+    END WHILE;
+
+    -- Commit the transaction to apply all changes
+    COMMIT;
 
 END //
 
 DELIMITER ;
+
+
 
 DELIMITER //
 
@@ -880,8 +928,3 @@ DELIMITER ;
 
 DELIMITER ;
 
-CALL LoadFromWarehouseToVehicle(
-    4,                      -- RescuerID
-    'Rice,Blanket',          -- Comma-separated item names
-    '1,3'                   -- Corresponding quantities
-);

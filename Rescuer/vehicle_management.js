@@ -216,20 +216,42 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Function to populate the initial dropdown with dummy data
-function populateItems() {
-    const typeSelect = document.getElementById('type');
-    const items = ['Item 1', 'Item 2', 'Item 3']; // Dummy items
+function fetchAndPopulateItems() {
+    fetch('../fetch_items.php')
+        .then(response => response.json())
+        .then(items => {
+            // Populate the main type dropdown
+            const typeSelect = document.getElementById('type');
+            typeSelect.innerHTML = ''; // Clear existing options
 
-    // Populate the dropdown
-    items.forEach(item => {
-        const option = document.createElement('option');
-        option.value = item;
-        option.textContent = item;
-        typeSelect.appendChild(option);
-    });
+            // Add default option
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.disabled = true;
+            defaultOption.selected = true;
+            defaultOption.textContent = 'Επιλέξτε είδος';
+            typeSelect.appendChild(defaultOption);
+
+            // Populate options with items fetched from the server
+            items.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.Name; // Use the item Name as the value
+                option.textContent = item.Name; // Use the item Name as the display text
+                typeSelect.appendChild(option);
+            });
+
+            // Store fetched items globally for use in dynamic fields
+            document.currentItems = items;
+        })
+        .catch(error => {
+            console.error('Error fetching items:', error);
+        });
 }
 
-// Function to dynamically add extra fields
+
+
+// Function to dynamically add extra fields and populate them with items
+// Function to dynamically add new sets of fields
 function addDynamicFields() {
     const additionalFields = document.getElementById('additionalFields');
     const extraRequests = document.getElementById('extraRequests').value;
@@ -252,8 +274,7 @@ function addDynamicFields() {
         const typeSelect = document.createElement("select");
         typeSelect.name = "extraType" + i;
 
-        // Populate the select dropdown with the same dummy items
-        const items = ['Item 1', 'Item 2', 'Item 3']; // Dummy items
+        // Populate the select dropdown with the available items
         const defaultOption = document.createElement('option');
         defaultOption.value = '';
         defaultOption.disabled = true;
@@ -261,10 +282,11 @@ function addDynamicFields() {
         defaultOption.textContent = 'Επιλέξτε είδος';
         typeSelect.appendChild(defaultOption);
 
-        items.forEach(item => {
+        // Use the globally stored items to populate each new dropdown
+        document.currentItems.forEach(item => {
             const option = document.createElement('option');
-            option.value = item;
-            option.textContent = item;
+            option.value = item.Name;
+            option.textContent = item.Name;
             typeSelect.appendChild(option);
         });
 
@@ -284,31 +306,61 @@ function addDynamicFields() {
     }
 }
 
-// Function to handle loading items to the vehicle (dummy)
-function loadItems(event) {
-    event.preventDefault();
+document.addEventListener('DOMContentLoaded', function () {
+    fetchAndPopulateItems(); // Populate the original dropdown when the page loads
 
-    const type = document.getElementById('type').value;
-    const quantity = document.getElementById('quantity').value;
+    const addButton = document.querySelector(".btn.add-fields");
+    addButton.addEventListener('click', addDynamicFields); // Add fields when button is clicked
 
-    // Collect main item and extra items
-    const items = [{ name: type, quantity: quantity }];
-    const extraFields = document.getElementById('additionalFields').children;
-    
-    for (let i = 0; i < extraFields.length; i += 4) {
-        const extraType = extraFields[i + 1].value;
-        const extraQuantity = extraFields[i + 3].value;
-        if (extraType && extraQuantity) {
-            items.push({ name: extraType, quantity: extraQuantity });
+    const submitButton = document.getElementById('anasub');
+    submitButton.addEventListener('click', function (event) {
+        event.preventDefault(); // Prevent the form from submitting normally
+
+        const type = document.getElementById('type').value;
+        const quantity = document.getElementById('quantity').value;
+
+        // Collect the main item and quantity
+        const items = [{ name: type, quantity: parseInt(quantity) }];
+
+        // Collect extra items and quantities from dynamic fields
+        const extraFields = document.getElementById('additionalFields').children;
+        for (let i = 0; i < extraFields.length; i += 4) {
+            const extraType = extraFields[i + 1].value;
+            const extraQuantity = extraFields[i + 3].value;
+            if (extraType && extraQuantity) {
+                items.push({ name: extraType, quantity: parseInt(extraQuantity) });
+            }
         }
-    }
 
-    console.log('Loaded items:', items);
-    alert(`Φορτώθηκαν τα αντικείμενα: ${JSON.stringify(items)}`);
-}
+        // Get admin ID from localStorage (set during login)
+        const adminID = localStorage.getItem('admin_id'); 
+        if (!adminID) {
+            alert('Admin ID not found. Please log in again.');
+            return;
+        }
 
-// Function to handle unloading all items from the vehicle (dummy)
-function unloadItems(event) {
-    event.preventDefault();
-    alert("Όλα τα είδη εκφορτώθηκαν στο inventory της βάσης.");
-}
+        // Send the data to the server via AJAX
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'createannouncement.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                const response = JSON.parse(xhr.responseText);
+                if (response.success) {
+                    alert('Η ανακοίνωση δημιουργήθηκε επιτυχώς!');
+                    document.getElementById('newAithmata').reset(); // Clear the form fields
+                    document.getElementById('additionalFields').innerHTML = ''; // Clear additional fields
+                } else {
+                    alert('Σφάλμα: ' + response.message);
+                }
+            } else {
+                alert('Η αίτηση απέτυχε. Κωδικός σφάλματος: ' + xhr.status);
+            }
+        };
+
+        // Prepare the data to be sent to the server
+        const data = JSON.stringify({ adminID: adminID, items: items });
+        xhr.send(data);
+    });
+});
