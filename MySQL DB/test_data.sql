@@ -221,7 +221,7 @@ CALL GenerateEntries(50);
 -- CALL LoadVehicleFromOffer(86, 4);
 
 -- example usage
---CALL UnloadVehicleOnRequestCompletion(4, 89);
+-- CALL UnloadVehicleOnRequestCompletion(4, 89);
 
 -- CALL LoadFromWarehouseToVehicle(
 --     4,                      -- RescuerID
