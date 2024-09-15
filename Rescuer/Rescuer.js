@@ -295,66 +295,6 @@ function populateTaskTable() {
     });
 
     // Restore the state of the checkboxes
-    restoreSelectedCheckboxes();
-}
-
-// Save the state of the checkboxes whenever they are changed
-document.addEventListener('change', function (event) {
-    if (event.target.classList.contains('task-checkbox')) {
-        saveSelectedCheckboxes();
-    }
-});
-
-function populateTaskTable() {
-    const taskTableBody = document.getElementById("taskTable")
-        .querySelector('tbody')
-
-    taskTableBody.innerHTML = "";
-
-    tasks_data.Requests.concat(tasks_data.Offers).forEach(task => {
-        const row = document.createElement("tr");
-        // Store the task ID and type in the cell
-        row.dataset.taskId = task.ID;
-        row.dataset.taskType = task.Type;
-
-        // Checkbox cell
-        const checkboxCell = document.createElement("td");
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.classList.add("task-checkbox"); // Add custom class for styling
-        checkboxCell.appendChild(checkbox);
-
-        // Data cells
-        const taskTypeCell = document.createElement("td");
-        taskTypeCell.textContent = task.Type;
-
-        const nameCell = document.createElement("td");
-        nameCell.textContent = task.Name + " " + task.Surname;
-
-        const phoneCell = document.createElement("td");
-        phoneCell.textContent = task.Phone;
-
-        const dateCell = document.createElement("td");
-        dateCell.textContent = task.DateCreated;
-
-        const itemTypeCell = document.createElement("td");
-        itemTypeCell.textContent = task.ItemNames;
-
-        const quantityCell = document.createElement("td");
-        quantityCell.textContent = task.ItemQuantities;
-
-        // Append cells to the row
-        row.appendChild(checkboxCell);  // Add checkbox cell to the row
-        row.appendChild(taskTypeCell);
-        row.appendChild(nameCell);
-        row.appendChild(phoneCell);
-        row.appendChild(dateCell);
-        row.appendChild(itemTypeCell);
-        row.appendChild(quantityCell);
-
-        // Append the row to the table body
-        taskTableBody.appendChild(row);
-    });
     restoreTaskCheckboxes();
 }
 
