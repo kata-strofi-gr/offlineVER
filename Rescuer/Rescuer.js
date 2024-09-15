@@ -209,29 +209,6 @@ function saveSelectedCheckboxes() {
     localStorage.setItem('selectedCheckboxes', JSON.stringify(selectedCheckboxes));
 }
 
-function restoreTaskCheckboxes() {
-    const selectedCheckboxes = JSON.parse(localStorage.getItem('selectedCheckboxes')) || [];
-    selectedCheckboxes.forEach(({ taskId, taskType }) => {
-        const row = document.querySelector(`tr[data-task-id="${taskId}"][data-task-type="${taskType}"]`);
-        if (row) {
-            const checkbox = row.querySelector('.task-checkbox');
-            if (checkbox) {
-                checkbox.checked = true;
-            }
-        }
-    });
-} function saveSelectedCheckboxes() {
-    const selectedCheckboxes = Array.from(document.querySelectorAll('.task-checkbox:checked'))
-        .map(checkbox => {
-            const row = checkbox.closest('tr');
-            return {
-                taskId: row.dataset.taskId,
-                taskType: row.dataset.taskType
-            };
-        });
-    localStorage.setItem('selectedCheckboxes', JSON.stringify(selectedCheckboxes));
-}
-
 function restoreSelectedCheckboxes() {
     const selectedCheckboxes = JSON.parse(localStorage.getItem('selectedCheckboxes')) || [];
     selectedCheckboxes.forEach(({ taskId, taskType }) => {
@@ -246,8 +223,6 @@ function restoreSelectedCheckboxes() {
 }
 
 function populateTaskTable() {
-    saveSelectedCheckboxes();
-
     const taskTableBody = document.getElementById("taskTable")
         .querySelector('tbody');
 
@@ -296,9 +271,49 @@ function populateTaskTable() {
         // Append the row to the table body
         taskTableBody.appendChild(row);
     });
+}
 
-    // Restore the state of the checkboxes
-    restoreTaskCheckboxes();
+function saveSelectedQuantities() {
+    const selectedQuantitiesVehicle = Array.from(document.getElementById('dataTable').querySelectorAll('input'))
+        .map(input => {
+            const row = input.closest('tr');
+            return {
+                itemId: row.dataset.itemId,
+                quantity: input.value
+            };
+        })
+        .filter(item => item.quantity > 0); // Filter out zero quantities
+    localStorage.setItem('selectedQuantitiesVehicle', JSON.stringify(selectedQuantitiesVehicle));
+    
+    const selectedQuantitiesWarehouse = Array.from(document.getElementById('secondTable').querySelectorAll('input'))
+        .map(input => {
+            const row = input.closest('tr');
+            return {
+                itemId: row.dataset.itemId,
+                quantity: input.value
+            };
+        })
+        .filter(item => item.quantity > 0); // Filter out zero quantities
+    localStorage.setItem('selectedQuantitiesWarehouse', JSON.stringify(selectedQuantitiesWarehouse));
+
+}
+
+function restoreSelectedQuantities() {
+    const selectedQuantitiesVehicle = JSON.parse(localStorage.getItem('selectedQuantitiesVehicle')) || [];
+    selectedQuantitiesVehicle.forEach(({ itemId, quantity }) => {
+        const input = document.querySelector(`#dataTable tr[data-item-id="${itemId}"] input`);
+        if (input) {
+            input.value = quantity;
+        }
+    });
+
+    const selectedQuantitiesWarehouse = JSON.parse(localStorage.getItem('selectedQuantitiesWarehouse')) || [];
+    selectedQuantitiesWarehouse.forEach(({ itemId, quantity }) => {
+        const input = document.querySelector(`#secondTable tr[data-item-id="${itemId}"] input`);
+        if (input) {
+            input.value = quantity;
+        }
+    });
 }
 
 // Function to populate the vehicle management table with data from the backend
@@ -815,12 +830,16 @@ function fetchAllExpired() {
         }
 
         if (update_tasks) {
+            saveSelectedCheckboxes()
             populateTaskTable();
+            restoreSelectedCheckboxes()
         }
 
         if (update_warehouse) {
+            saveSelectedQuantities()
             populateVehicleTable();
             populateWarehouseTable();
+            restoreSelectedQuantities()
         }
     });
 }
@@ -931,7 +950,7 @@ function fetchVehicleItems() {
 }
 
 function fetchWarehouseItems() {
-    fetch(`api/get_warehouse_data.php`)
+    return fetch(`api/get_warehouse_data.php`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -1042,7 +1061,7 @@ function postTaskUndertaking() {
 function postCompletedTasks() {
     // Get all checked checkboxes
     const checkboxes = document.getElementById('taskTable').querySelectorAll('.task-checkbox:checked');
-    const task_ids = Array.from(checkboxes).map(checkbox => checkbox.parentElement.parentElement.dataset.taskId);
+    const task_ids = Array.from(checkboxes).map(checkbox => checkbox.closest('tr').dataset.taskId);
     const task_types = Array.from(checkboxes).map(checkbox => checkbox.parentElement.nextElementSibling.textContent);
     const rescuer_id = localStorage.getItem('rescuer_id');  // Assuming rescuer_id is stored in localStorage
 
@@ -1121,12 +1140,12 @@ function loadVehicle() {
 
     // Prepare the data for the POST request
     const data = {
-        item_ids: inputFields.map(input => input.parentElement.parentElement.dataset.itemId), // two parent elements!
+        item_ids: inputFields.map(input => input.closest('tr').dataset.itemId),
         item_quantities: inputFields.map(input => input.value)
     };
 
     console.log(data);
-    
+
     // Send the POST request to load the vehicle
     fetch('api/load_vehicle.php/' + localStorage.getItem('rescuer_id'), {
         method: 'POST',
@@ -1168,7 +1187,7 @@ function unloadVehicle() {
 
     // Prepare the data for the POST request
     const data = {
-        item_ids: inputFields.map(input => input.parentElement.parentElement.dataset.itemId), // two parent elements!
+        item_ids: inputFields.map(input => input.closest('tr').dataset.itemId),
         item_quantities: inputFields.map(input => input.value)
     };
 
@@ -1372,7 +1391,7 @@ document.getElementById('cancelButton').addEventListener('click', function () {
     }
 
     // Get the task ID and task type from the selected row
-    const task_id = checkbox.parentElement.parentElement.dataset.taskId;
+    const task_id = checkbox.closest('tr').dataset.taskId;
     const task_type = checkbox.parentElement.nextElementSibling.textContent;
 
     // Search for the task JSON object
