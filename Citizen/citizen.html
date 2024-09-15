@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="shortcut icon" type="image/x-icon" href="../favicon.ico" />
 </head>
+
 <body>
     <div class="container">
         <div class="modeT">
@@ -48,7 +50,8 @@
                     </datalist>
                     <div class="reqs">
                         <label for="peopleNumb">Αριθμός ατόμων</label>
-                        <input type="number" id="peopleNumb" name="peopleNumb" placeholder="Συνολικά άτομα" value="0" min="0">
+                        <input type="number" id="peopleNumb" name="peopleNumb" placeholder="Συνολικά άτομα" value="0"
+                            min="0">
                     </div>
                     <div class="form-buttons">
                         <button type="submit" class="btn submit">Υποβολή</button>
@@ -100,7 +103,7 @@
                 </div>
                 <div class="form-buttons">
                     <button type="submit" class="btn submit">Υποβολή</button>
-                </div> 
+                </div>
             </div>
             <div class="offergiveHist" id="offerGH">
                 <!-- Add these containers in the appropriate section of your admin.html file -->
@@ -115,7 +118,7 @@
                                     <th>Ημ/νια δημιουργίας</th>
                                     <th>Ημ/νια αποδοχής</th>
                                     <th>Ημ/νια ολοκλήρωσης</th>
-                                    <th>Επιλογή</th>
+                                    <th class="no-sort">Επιλογή</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -126,11 +129,12 @@
                 </div>
                 <div class="form-buttons">
                     <button type="submit" class="btn submit" id="btn_delete">Aκύρωση</button>
-                </div> 
+                </div>
             </div>
             <!-- ola ta popup mexri edo mesas-->
         </div>
     </div>
     <script src="citizen.js"></script>
 </body>
+
 </html>

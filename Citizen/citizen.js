@@ -45,7 +45,7 @@ var offersData;
 var announcementsData;
 var allItemCategories;
 var allItems;
-var expiryDates = {"Requests": null, "Offers": null, "Announcements": null, "Categories": null, "Items": null};
+var expiryDates = { "Requests": null, "Offers": null, "Announcements": null, "Categories": null, "Items": null };
 const expiryTime = 60000; // 1 minute in milliseconds
 const sessionTime = 20 // 20 minutes
 
@@ -67,19 +67,19 @@ categoryList.addEventListener('change', function () {
 });
 
 const requestsScreenButton = document.getElementById('requestsScreen');
-requestsScreenButton.addEventListener('click', function(e) {
+requestsScreenButton.addEventListener('click', function (e) {
     e.preventDefault(); // Prevent default link behavior
     showRequestsScreen();
 });
 
 const offersScreenButton = document.getElementById('offersScreen');
-offersScreenButton.addEventListener('click', function(e) {
+offersScreenButton.addEventListener('click', function (e) {
     e.preventDefault(); // Prevent default link behavior
     showOffersScreen();
 });
 
 const logoutButton = document.getElementById('logout');
-logoutButton.addEventListener('click', function(e) {
+logoutButton.addEventListener('click', function (e) {
     e.preventDefault(); // Prevent default link behavior
 
     document.cookie = "citizen_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
@@ -91,7 +91,7 @@ logoutButton.addEventListener('click', function(e) {
 
 const requestTable = document.getElementById('newRequest');
 const requestSubmitButton = requestTable.querySelector('.btn.submit');
-requestSubmitButton.addEventListener('click', function(e) {
+requestSubmitButton.addEventListener('click', function (e) {
     var selectedItemName = requestTable.querySelector('#searchStock').value;
     var numOfPeople = requestTable.querySelector('#peopleNumb').value;
 
@@ -100,9 +100,9 @@ requestSubmitButton.addEventListener('click', function(e) {
 
 const offerTable = document.getElementById('offerG');
 const offerSubmitButton = offerTable.querySelector('.btn.submit');
-offerSubmitButton.addEventListener('click', function(e) {
+offerSubmitButton.addEventListener('click', function (e) {
     var filledCheckboxes = Array.from(offerTable.querySelectorAll('input[type=checkbox]'))
-    .filter(input => input.checked);
+        .filter(input => input.checked);
 
     // Get parent tr, select third column (which contains item name)
     var selectedItemNames = Array.from(filledCheckboxes).map(checkbox => {
@@ -123,12 +123,12 @@ offerSubmitButton.addEventListener('click', function(e) {
 // https://stackoverflow.com/questions/14267781/sorting-html-table-with-javascript
 const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
 
-const comparer = (idx, asc) => (a, b) => ((v1, v2) => 
+const comparer = (idx, asc) => (a, b) => ((v1, v2) =>
     v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
-    )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+)(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
 
 // Add event listeners to each header for sorting
-document.querySelectorAll('th').forEach(th => th.addEventListener('click', function() {
+document.querySelectorAll('th').forEach(th => th.addEventListener('click', function () {
     if (th.classList.contains('no-sort')) return; // Skip sorting for this column
 
     const table = th.closest('table');
@@ -154,7 +154,7 @@ document.querySelectorAll('th').forEach(th => th.addEventListener('click', funct
  */
 const menuItems = document.querySelectorAll('.menu-item');
 menuItems.forEach(item => {
-    item.addEventListener('click', function(event) {
+    item.addEventListener('click', function (event) {
         if (window.innerWidth <= 768) {
             event.stopPropagation(); // Prevent the click from closing the menu
             menuItems.forEach(el => el !== this && el.classList.remove('active'));
@@ -164,7 +164,7 @@ menuItems.forEach(item => {
 });
 
 // Close dropdown when clicking outside
-document.addEventListener('click', function() {
+document.addEventListener('click', function () {
     if (window.innerWidth <= 768) {
         menuItems.forEach(item => item.classList.remove('active'));
     }
@@ -196,10 +196,10 @@ function showRequestsScreen() {
     requestsData.then(requests => {
         populateRequestHistory(requests);
     });
-    
+
 }
 
-function showOffersScreen(){
+function showOffersScreen() {
     var contentSection1 = document.getElementById('newRequest');
     var contentSection2 = document.getElementById('historyR');
     var contentSection3 = document.getElementById('offerG');
@@ -233,10 +233,10 @@ function populateRequestCategories(data) {
         const id = row.CategoryID;
 
         let categoryOption = document.createElement('option');
-            categoryOption.innerHTML = category;
-            categoryOption.setAttribute('value', id);
-            categoryList.appendChild(categoryOption);
-        
+        categoryOption.innerHTML = category;
+        categoryOption.setAttribute('value', id);
+        categoryList.appendChild(categoryOption);
+
     });
 }
 
@@ -314,7 +314,8 @@ function populateOfferHistory(data) {
             <td>${row.DateCreated}</td>
             <td>${row.DateAssignedVehicle}</td> 
             <td>${row.DateFinished}</td> 
-            <td><input type="checkbox" class="task-checkbox" data-id="${row.Name}"></td> 
+            <td><input type="checkbox" class="task-checkbox" data-id="${row.Name}" 
+                ${row.DateAssignedVehicle !== '-' ? 'disabled' : ''}></td> 
         `;
         tableBody.appendChild(tr);
     });
@@ -469,10 +470,10 @@ function fetchAnnouncements() {
 }
 
 function createRequest(items, numOfPeople) {
-   
+
     const xhr = new XMLHttpRequest();
     var citizen_id = localStorage.getItem('citizen_id');
-    xhr.open('POST', 'create_request.php/'+ citizen_id, true);
+    xhr.open('POST', 'create_request.php/' + citizen_id, true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
     // Define what happens when the server responds
@@ -498,7 +499,7 @@ function createRequest(items, numOfPeople) {
         &people=${encodeURIComponent(numOfPeople)}
     `;
     xhr.send(data);
- 
+
 }
 
 function createOffer(items, quantities) {
@@ -536,7 +537,7 @@ function createOffer(items, quantities) {
         &quantities=${encodeURIComponent(quantities)}
     `;
     xhr.send(data);
- 
+
 }
 
 /**
@@ -548,7 +549,7 @@ setInterval(checkSession, 60000);  // Check every 1 minute
 
 document.addEventListener("DOMContentLoaded", function () {
     fetchAllExpired();
-    setInterval(fetchAllExpired, expiryTime/10); //check every 1th of the expiry time
+    setInterval(fetchAllExpired, expiryTime / 10); //check every 1th of the expiry time
 
 });
 

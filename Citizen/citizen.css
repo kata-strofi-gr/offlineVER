@@ -755,3 +755,17 @@ input[type="checkbox"].task-checkbox:checked::before {
     background-color:#00AEEF; /* White checkmark when checked */
     box-shadow: inset 1em 1em #00AEEF;
 }
+
+/* Styles for disabled checkboxes */
+input[type="checkbox"].task-checkbox:disabled {
+    background-color: #e0e0e0;
+    /* Grey background when disabled */
+    border-color: #b0b0b0;
+    /* Grey border when disabled */
+}
+
+input[type="checkbox"].task-checkbox:disabled::before {
+    background-color: #b0b0b0;
+    /* Grey checkmark when disabled */
+    box-shadow: inset 1em 1em #b0b0b0;
+}
