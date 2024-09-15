@@ -499,7 +499,7 @@ input[type="text"], input[type="password"] {
     right: 20px;
     width: 30px;
     height: 30px;
-    background: url('Group5.png') no-repeat center center;
+    background: url('../Media/Group5.png') no-repeat center center;
     background-size: contain;
     cursor: pointer;
 }

@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 // Store the admin ID in localStorage
                                 localStorage.setItem('admin_id', response.specificID);
                                 
-                                window.location.href = 'Admin/admin.html';
+                                window.location.href = '../Admin/admin.html';
 
                             } else if (response.role === 'Citizen') {
                                 
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 setCookie('citizen_session', 'active', 20000);
                                 localStorage.setItem('citizen_id', response.specificID);
 
-                                window.location.href = 'Citizen/citizen.html';
+                                window.location.href = '../Citizen/citizen.html';
 
                             }else if (response.role === 'Rescuer') {
                                 
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 setCookie('rescuer_session', 'active', 20000);
                                 localStorage.setItem('rescuer_id', response.specificID);
                                 
-                                window.location.href = 'Rescuer/rescuer.html';
+                                window.location.href = '../Rescuer/rescuer.html';
 
                             }else {
                                 window.location.href = 'blank.html';
