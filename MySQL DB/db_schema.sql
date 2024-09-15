@@ -1,10 +1,5 @@
-
-CREATE DATABASE IF NOT EXISTS kata_strofh
-    DEFAULT CHARACTER SET = 'utf8mb4'
-    DEFAULT COLLATE = 'utf8mb4_unicode_ci';
-
+CREATE DATABASE IF NOT EXISTS kata_strofh DEFAULT CHARACTER SET = 'utf8mb4' DEFAULT COLLATE = 'utf8mb4_unicode_ci';
 USE kata_strofh;
-
 -- Users Table
 CREATE TABLE Users (
     UserID INT AUTO_INCREMENT PRIMARY KEY,
@@ -12,23 +7,19 @@ CREATE TABLE Users (
     Password VARCHAR(255) NOT NULL,
     Role ENUM('Administrator', 'Rescuer', 'Citizen') NOT NULL,
     UNIQUE INDEX (Username)
-) ENGINE=InnoDB;
-
+) ENGINE = InnoDB;
 -- Administrator Table
 CREATE TABLE Administrator (
     UserID INT,
     AdminID INT AUTO_INCREMENT PRIMARY KEY,
     FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
-) ENGINE=InnoDB;
-
+) ENGINE = InnoDB;
 -- Rescuer Table
 CREATE TABLE Rescuer (
     UserID INT,
     RescuerID INT AUTO_INCREMENT PRIMARY KEY,
     FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
-) ENGINE=InnoDB;
-
-
+) ENGINE = InnoDB;
 -- Citizen Table
 CREATE TABLE Citizen (
     UserID INT,
@@ -39,14 +30,12 @@ CREATE TABLE Citizen (
     Latitude DECIMAL(10, 8) NOT NULL,
     Longitude DECIMAL(11, 8) NOT NULL,
     FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
-) ENGINE=InnoDB;
-
+) ENGINE = InnoDB;
 -- Category Table
 CREATE TABLE Category (
     CategoryID INT AUTO_INCREMENT PRIMARY KEY,
     CategoryName VARCHAR(50) NOT NULL
-) ENGINE=InnoDB;
-
+) ENGINE = InnoDB;
 -- Items Table
 CREATE TABLE Items (
     ItemID INT AUTO_INCREMENT PRIMARY KEY,
@@ -56,15 +45,13 @@ CREATE TABLE Items (
     DetailValue VARCHAR(100),
     UNIQUE INDEX (Name),
     FOREIGN KEY (CategoryID) REFERENCES Category(CategoryID) ON DELETE CASCADE
-) ENGINE=InnoDB;
-
+) ENGINE = InnoDB;
 -- Warehouse Table
 CREATE TABLE Warehouse (
     ItemID INT,
-    Quantity INT NOT NULL CHECK (Quantity > 0),
+    Quantity INT NOT NULL CHECK (Quantity >= 0),
     FOREIGN KEY (ItemID) REFERENCES Items(ItemID) ON DELETE CASCADE
-) ENGINE=InnoDB;
-
+) ENGINE = InnoDB;
 -- Requests Table
 CREATE TABLE Requests (
     RequestID INT AUTO_INCREMENT PRIMARY KEY,
@@ -81,22 +68,19 @@ CREATE TABLE Requests (
     INDEX (RescuerID),
     INDEX (DateCreated),
     INDEX (DateAssignedVehicle)
-) ENGINE=InnoDB;
-
+) ENGINE = InnoDB;
 -- RequestItems Table to handle multiple items per request
 CREATE TABLE RequestItems (
     RequestItemID INT AUTO_INCREMENT PRIMARY KEY,
     RequestID INT,
     ItemID INT,
-    Quantity INT NOT NULL CHECK (Quantity > 0),
+    Quantity INT NOT NULL CHECK (Quantity >= 0),
     FOREIGN KEY (RequestID) REFERENCES Requests(RequestID) ON DELETE CASCADE,
     FOREIGN KEY (ItemID) REFERENCES Items(ItemID) ON DELETE CASCADE,
     INDEX (RequestID),
     INDEX (ItemID),
     UNIQUE KEY uq_request_item (RequestID, ItemID)
-) ENGINE=InnoDB;
-
-
+) ENGINE = InnoDB;
 -- Offers Table
 CREATE TABLE Offers (
     OfferID INT AUTO_INCREMENT PRIMARY KEY,
@@ -112,30 +96,25 @@ CREATE TABLE Offers (
     INDEX (RescuerID),
     INDEX (DateCreated),
     INDEX (DateAssignedVehicle)
-) ENGINE=InnoDB;
-
-
-
+) ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS BaseLocation (
     BaseID INT AUTO_INCREMENT PRIMARY KEY,
     BaseName VARCHAR(100) NOT NULL,
     Latitude DECIMAL(10, 8) NOT NULL,
     Longitude DECIMAL(11, 8) NOT NULL
 );
-
 -- OfferItems Table to handle multiple items per offer
 CREATE TABLE OfferItems (
     OfferItemID INT AUTO_INCREMENT PRIMARY KEY,
     OfferID INT,
     ItemID INT,
-    Quantity INT NOT NULL CHECK (Quantity > 0),
+    Quantity INT NOT NULL CHECK (Quantity >= 0),
     FOREIGN KEY (OfferID) REFERENCES Offers(OfferID) ON DELETE CASCADE,
     FOREIGN KEY (ItemID) REFERENCES Items(ItemID) ON DELETE CASCADE,
     INDEX (OfferID),
     INDEX (ItemID),
     UNIQUE KEY uq_request_item (OfferID, ItemID)
-) ENGINE=InnoDB;
-
+) ENGINE = InnoDB;
 -- Vehicles Table
 CREATE TABLE Vehicles (
     VehicleID INT AUTO_INCREMENT PRIMARY KEY,
@@ -144,21 +123,18 @@ CREATE TABLE Vehicles (
     Longitude DECIMAL(11, 8) NOT NULL,
     FOREIGN KEY (RescuerID) REFERENCES Rescuer(RescuerID) ON DELETE CASCADE,
     INDEX (RescuerID)
-) ENGINE=InnoDB;
-
+) ENGINE = InnoDB;
 -- VehicleItems Table to handle multiple items per vehicle
 CREATE TABLE VehicleItems (
     VehicleItemID INT AUTO_INCREMENT PRIMARY KEY,
     VehicleID INT,
     ItemID INT,
-    Quantity INT NOT NULL CHECK (Quantity > 0),
+    Quantity INT NOT NULL CHECK (Quantity >= 0),
     FOREIGN KEY (VehicleID) REFERENCES Vehicles(VehicleID) ON DELETE CASCADE,
     FOREIGN KEY (ItemID) REFERENCES Items(ItemID) ON DELETE CASCADE,
     INDEX (VehicleID),
     INDEX (ItemID)
-) ENGINE=InnoDB;
-
-
+) ENGINE = InnoDB;
 -- Announcements Table
 CREATE TABLE Announcements (
     AnnouncementID INT AUTO_INCREMENT PRIMARY KEY,
@@ -167,23 +143,17 @@ CREATE TABLE Announcements (
     FOREIGN KEY (AdminID) REFERENCES Administrator(AdminID) ON DELETE CASCADE,
     INDEX (AdminID),
     INDEX (DateCreated)
-) ENGINE=InnoDB;
-
+) ENGINE = InnoDB;
 -- AnnouncementItems Table to handle multiple items per announcement
 CREATE TABLE AnnouncementItems (
     AnnouncementItemID INT AUTO_INCREMENT PRIMARY KEY,
     AnnouncementID INT,
     ItemID INT,
-    Quantity INT NOT NULL CHECK (Quantity > 0),
+    Quantity INT NOT NULL CHECK (Quantity >= 0),
     FOREIGN KEY (AnnouncementID) REFERENCES Announcements(AnnouncementID) ON DELETE CASCADE,
     FOREIGN KEY (ItemID) REFERENCES Items(ItemID) ON DELETE CASCADE,
     INDEX (AnnouncementID),
     INDEX (ItemID),
     UNIQUE KEY uq_announcement_item (AnnouncementID, ItemID)
-) ENGINE=InnoDB;
-
-
+) ENGINE = InnoDB;
 -- DROP DATABASE kata_strofh;
-
-
-
