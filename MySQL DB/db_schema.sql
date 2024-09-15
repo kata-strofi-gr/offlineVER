@@ -53,6 +53,9 @@ CREATE TABLE Warehouse (
     UNIQUE (ItemID), 
     FOREIGN KEY (ItemID) REFERENCES Items(ItemID) ON DELETE CASCADE
 ) ENGINE = InnoDB;
+
+ALTER TABLE Warehouse ADD UNIQUE KEY uq_warehouse_item (ItemID);
+
 -- Requests Table
 CREATE TABLE Requests (
     RequestID INT AUTO_INCREMENT PRIMARY KEY,
@@ -82,6 +85,9 @@ CREATE TABLE RequestItems (
     INDEX (ItemID),
     UNIQUE KEY uq_request_item (RequestID, ItemID)
 ) ENGINE = InnoDB;
+
+
+
 -- Offers Table
 CREATE TABLE Offers (
     OfferID INT AUTO_INCREMENT PRIMARY KEY,

@@ -634,7 +634,6 @@ DELIMITER ;
 
 
 
-
 DELIMITER //
 
 CREATE PROCEDURE UnloadVehicleOnRequestCompletion(

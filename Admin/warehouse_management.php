@@ -144,6 +144,7 @@ function createItem($conn) {
 }
 
 // Update item details
+// Update item details
 function updateItemDetails($conn) {
     $itemId = $_POST['itemId'];
     $detailName = $_POST['detailName'];
@@ -165,16 +166,31 @@ function updateItemDetails($conn) {
     $stmt->bind_param("ssi", $detailName, $detailValue, $itemId);
     $successItems = $stmt->execute();
 
-    // Update the Warehouse table
-    $queryWarehouse = "UPDATE Warehouse SET Quantity = ? WHERE ItemID = ?";
-    $stmtWarehouse = $conn->prepare($queryWarehouse);
-    $stmtWarehouse->bind_param("ii", $quantity, $itemId);
+    // Check if item exists in the Warehouse table
+    $checkWarehouseQuery = "SELECT * FROM Warehouse WHERE ItemID = ?";
+    $stmtCheck = $conn->prepare($checkWarehouseQuery);
+    $stmtCheck->bind_param("i", $itemId);
+    $stmtCheck->execute();
+    $resultCheck = $stmtCheck->get_result();
+
+    if ($resultCheck->num_rows > 0) {
+        // If item exists in Warehouse, update the quantity
+        $queryWarehouse = "UPDATE Warehouse SET Quantity = ? WHERE ItemID = ?";
+        $stmtWarehouse = $conn->prepare($queryWarehouse);
+        $stmtWarehouse->bind_param("ii", $quantity, $itemId);
+    } else {
+        // If item does not exist, insert a new row
+        $queryWarehouse = "INSERT INTO Warehouse (ItemID, Quantity) VALUES (?, ?)";
+        $stmtWarehouse = $conn->prepare($queryWarehouse);
+        $stmtWarehouse->bind_param("ii", $itemId, $quantity);
+    }
+
     $successWarehouse = $stmtWarehouse->execute();
 
     if ($successItems && $successWarehouse) {
         echo json_encode(['success' => true]);
     } else {
-        echo json_encode(['success' => false, 'message' => $stmt->error]); // Send DB error message
+        echo json_encode(['success' => false, 'message' => $conn->error]); // Send DB error message
     }
 }
 

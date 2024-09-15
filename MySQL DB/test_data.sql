@@ -134,7 +134,7 @@ CALL CreateNewRequest(
 CALL CreateNewOffer(
     2,                      -- Citizen ID
     'Rice,Blanket', -- Comma-separated item names
-    '69,3'           -- Corresponding quantities
+    '69,3000'           -- Corresponding quantities
 );
 
 -- Test entry for CreateAnnouncement procedure
