@@ -50,6 +50,7 @@ CREATE TABLE Items (
 CREATE TABLE Warehouse (
     ItemID INT,
     Quantity INT NOT NULL CHECK (Quantity >= 0),
+    UNIQUE (ItemID), 
     FOREIGN KEY (ItemID) REFERENCES Items(ItemID) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 -- Requests Table
@@ -132,6 +133,7 @@ CREATE TABLE VehicleItems (
     Quantity INT NOT NULL CHECK (Quantity >= 0),
     FOREIGN KEY (VehicleID) REFERENCES Vehicles(VehicleID) ON DELETE CASCADE,
     FOREIGN KEY (ItemID) REFERENCES Items(ItemID) ON DELETE CASCADE,
+    UNIQUE KEY uq_vehicle_item (VehicleID, ItemID),
     INDEX (VehicleID),
     INDEX (ItemID)
 ) ENGINE = InnoDB;
