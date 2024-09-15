@@ -319,7 +319,7 @@ function updateMap() {
     // Store vehicle location for easy lookup
     vehicleMarkerLatLng = { lat: vehicle_data.Latitude, lng: vehicle_data.Longitude };
 
-    vehicleMarker = L.marker([vehicleMarkerLatLng.lat, vehicleMarkerLatLng.lng], { icon: blueIcon, draggable: true});
+    vehicleMarker = L.marker([vehicleMarkerLatLng.lat, vehicleMarkerLatLng.lng], { icon: blueIcon, draggable: true });
     vehicleMarker.addTo(map).bindPopup(`<b>You are here!</b>`);
 
     // Handle dragging of the base marker
@@ -327,6 +327,7 @@ function updateMap() {
         vehicleMarker.setLatLng = event.target.getLatLng();
         vehicle_data.Latitude = event.target.getLatLng().lat;
         vehicle_data.Longitude = event.target.getLatLng().lng;
+        vehicleMarkerLatLng = { lat: vehicle_data.Latitude, lng: vehicle_data.Longitude };
         drawTaskLines();
         postVehiclePosition();
     });
@@ -335,7 +336,7 @@ function updateMap() {
     if (initialLoad) {
         map.setView([base_data.Latitude, base_data.Longitude], 16);
         vehicleMarker.openPopup();
-        
+
         // Set the rescuer's name in the header //todo: not the right place to be in
         document.getElementById('rescuer-name').innerText = 'Συνδεδεμένος ως: ' + rescuer_data.Username + ' (Rescuer)';
         initialLoad = false;
@@ -382,7 +383,7 @@ function updateMap() {
 
             // Draw a line to the vehicle if selected and the lines filter is not active
             if (!isLinesFilterActive && !isPendingRequestFilterActive) {
-                drawLineToVehicle(requestMarker, vehicleMarkerLatLng); 
+                drawLineToVehicle(requestMarker, vehicleMarkerLatLng);
             }
         });
     });
@@ -413,7 +414,7 @@ function updateMap() {
                 <p><strong>Είδη:</strong> ${offer.ItemNames}</p>
                 <p><strong>Ποσότητες:</strong> ${offer.ItemQuantities}</p>
                 
-            `, 
+            `,
                 taskID: offer.OfferID,
                 taskType: "Offer"
             });
@@ -444,7 +445,7 @@ function updateMap() {
             clearLines(); // Clear lines when clicking a new marker
             showPopup({
                 type: "task-offer-box",
-                title:"Προσφορά",
+                title: "Προσφορά",
                 details: `
                 <p><strong>Ονοματεπώνυμο:</strong> ${offer.Name}</p>
                 <p><strong>Τηλέφωνο:</strong> ${offer.Phone}</p>
@@ -480,7 +481,7 @@ function updateMap() {
             clearLines(); // Clear lines when clicking a new marker
             showPopup({
                 type: "task-request-box",
-                title:"Αίτημα",
+                title: "Αίτημα",
                 details: `
                 <p><strong>Ονοματεπώνυμο:</strong> ${request.Name}</p>
                 <p><strong>Τηλέφωνο:</strong> ${request.Phone}</p>
@@ -499,7 +500,7 @@ function updateMap() {
 }
 
 // Function to show the vehicle popup
-function showPopup({ type, title, details, taskID=null, taskType=null }) {
+function showPopup({ type, title, details, taskID = null, taskType = null }) {
     const popup = document.getElementById('draggableBox');
     popup.className = type
     if (taskID && taskType) {
@@ -783,7 +784,7 @@ function postTaskUndertaking() {
         alert('Δεν έχετε επιλέξει καμία εργασία.');
         return;
     }
-    
+
     // send post for each task localstorage rescuer id
     data = {
         task_id: task_id,
@@ -817,13 +818,13 @@ function postTaskUndertaking() {
             expiryDates['Offers'] = null; // Force a refresh of the offers and re-rendering
             popup.style.display = 'none';
             fetchAllExpired();
-            
+
         })
         .catch(error => {
             console.error('Fetch Error:', error);
             throw error; // Rethrow after logging to allow caller to handle
-    });
-    
+        });
+
 
 
 }
@@ -856,7 +857,7 @@ function postCompletedTasks() {
 
         // Calculate the distance between the vehicle and the task location
         const distance = calculateDistance(task.Latitude, task.Longitude, vehicle_data.Latitude, vehicle_data.Longitude);
-        
+
         // If the distance is greater than 100 meters, show an alert and stop the process
         if (distance > 100) {
             alert("Δεν βρίσκεστε αρκετά κοντά για να ολοκληρώσετε την εργασία.");
@@ -1004,7 +1005,7 @@ function startDrag(e) {
 
 function drag(e) {
     if (!isDragging) return;
-    
+
     const event = e.type === 'touchmove' ? e.touches[0] : e;
     offsetX = event.clientX - initialX;
     offsetY = event.clientY - initialY;
@@ -1020,7 +1021,7 @@ function stopDrag() {
 document.getElementById('cancelButton').addEventListener('click', function () {
     // Get the selected checkbox
     const checkbox = document.querySelector('#taskTable .task-checkbox:checked');
-    
+
     // If no checkbox is selected, show an alert
     if (!checkbox) {
         alert('Δεν έχετε επιλέξει καμία εργασία.');
@@ -1051,7 +1052,7 @@ document.getElementById('cancelButton').addEventListener('click', function () {
     const xhr = new XMLHttpRequest();
     xhr.open('POST', apiUrl, true);
     xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-    
+
     // Handle response
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {  // Check if request is complete
