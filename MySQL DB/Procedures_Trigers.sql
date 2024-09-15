@@ -555,13 +555,12 @@ DELIMITER //
 
 CREATE PROCEDURE UnloadFromVehicleToWarehouse(
     IN p_RescuerID INT,
-    IN p_ItemIDs VARCHAR(1000),  -- Comma-separated item names
+    IN p_ItemIDs VARCHAR(1000),  -- Comma-separated item IDs
     IN p_Quantities VARCHAR(1000)  -- Comma-separated quantities
 )
 BEGIN
     DECLARE v_VehicleID INT;
     DECLARE v_ItemID INT;
-    DECLARE v_ItemName VARCHAR(255);
     DECLARE v_Quantity INT;
     DECLARE v_VehicleQuantity INT;
     DECLARE total_items INT;
@@ -586,7 +585,7 @@ BEGIN
 
     -- Loop through the comma-separated item names and quantities
     WHILE i <= total_items DO
-        -- Extract the current item name
+        -- Extract the current item ID
         SET v_ItemID = CAST(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(p_ItemIDs, ',', i), ',', -1)) AS UNSIGNED);
 
         -- Extract the current quantity and convert to an integer
@@ -607,10 +606,11 @@ BEGIN
             SET MESSAGE_TEXT = v_ErrorMessage;
         END IF;
 
-        -- If the item exists in the vehicle, update the quantity
+        -- If the item exists in the warehouse, update the quantity
+        -- This will correctly sum the quantities in the Warehouse table
         INSERT INTO Warehouse (ItemID, Quantity)
         VALUES (v_ItemID, v_Quantity)
-        ON DUPLICATE KEY UPDATE Quantity = Quantity + VALUES(Quantity);
+        ON DUPLICATE KEY UPDATE Quantity = Warehouse.Quantity + v_Quantity;
 
         -- Subtract the quantity from the vehicle
         UPDATE VehicleItems
@@ -631,6 +631,7 @@ BEGIN
 END //
 
 DELIMITER ;
+
 
 
 
@@ -815,21 +816,22 @@ DELIMITER ;
 
 DELIMITER //
 
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS LoadFromWarehouseToVehicle;
 CREATE PROCEDURE LoadFromWarehouseToVehicle(
     IN p_RescuerID INT,
-    IN p_ItemIDs VARCHAR(1000),  -- Comma-separated item names
-    IN p_Quantities VARCHAR(1000)  -- Comma-separated quantities
+    IN p_ItemIDs VARCHAR(1000),  
+    IN p_Quantities VARCHAR(1000)  
 )
 BEGIN
     DECLARE v_VehicleID INT;
     DECLARE v_ItemID INT;
-    DECLARE v_ItemName VARCHAR(255);
     DECLARE v_Quantity INT;
     DECLARE v_WarehouseQuantity INT;
     DECLARE total_items INT;
     DECLARE i INT DEFAULT 1;
-    DECLARE item_count INT;
-    DECLARE v_ErrorMessage VARCHAR(255);  -- Variable to hold the error message
+    DECLARE v_ErrorMessage VARCHAR(255);  
     
     -- Calculate total number of items from the comma-separated string
     SET total_items = LENGTH(p_ItemIDs) - LENGTH(REPLACE(p_ItemIDs, ',', '')) + 1;
@@ -847,15 +849,15 @@ BEGIN
     -- Start the transaction to ensure atomicity
     START TRANSACTION;
 
-    -- Loop through the comma-separated item names and quantities
+    -- Loop through the comma-separated item IDs and quantities
     WHILE i <= total_items DO
-        -- Extract the current item id
+        -- Extract the current item ID
         SET v_ItemID = CAST(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(p_ItemIDs, ',', i), ',', -1)) AS UNSIGNED);
 
         -- Extract the current quantity and convert to an integer
         SET v_Quantity = CAST(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(p_Quantities, ',', i), ',', -1)) AS UNSIGNED);
 
-        -- Check if the item exists in the warehouse and the quantity is sufficient
+        -- Get the Warehouse quantity for the current item
         SELECT Quantity INTO v_WarehouseQuantity
         FROM Warehouse
         WHERE ItemID = v_ItemID;
@@ -870,17 +872,17 @@ BEGIN
             SET MESSAGE_TEXT = v_ErrorMessage;
         END IF;
 
-        -- If the item exists in the warehouse, update the quantity
+        -- Insert into VehicleItems, or update quantity if the item already exists
         INSERT INTO VehicleItems (VehicleID, ItemID, Quantity)
         VALUES (v_VehicleID, v_ItemID, v_Quantity)
-        ON DUPLICATE KEY UPDATE Quantity = Quantity + VALUES(Quantity);
+        ON DUPLICATE KEY UPDATE Quantity = Quantity + v_Quantity;
 
-        -- Subtract the quantity from the vehicle
+        -- Subtract the quantity from the warehouse
         UPDATE Warehouse
         SET Quantity = Quantity - v_Quantity
         WHERE ItemID = v_ItemID;
 
-        -- If the remaining quantity in the vehicle is zero, delete the item from VehicleItems
+        -- If the remaining warehouse quantity is zero, delete the item from Warehouse
         IF (v_WarehouseQuantity - v_Quantity) <= 0 THEN
             DELETE FROM Warehouse WHERE ItemID = v_ItemID;
         END IF;
@@ -894,4 +896,6 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
 
