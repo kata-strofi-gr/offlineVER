@@ -402,7 +402,7 @@ function fetchRequests() {
     return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         let citizen_id = localStorage.getItem('citizen_id');
-        xhr.open('GET', 'fetch_requests.php/' + citizen_id, true);
+        xhr.open('GET', 'api/fetch_requests.php/' + citizen_id, true);
 
         xhr.onload = function () {
             if (xhr.status === 200) {
@@ -427,7 +427,7 @@ function fetchOffers() {
     return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         let citizen_id = localStorage.getItem('citizen_id');
-        xhr.open('GET', 'fetch_offers.php/' + citizen_id, true);
+        xhr.open('GET', 'api/fetch_offers.php/' + citizen_id, true);
 
         xhr.onload = function () {
             if (xhr.status === 200) {
@@ -476,7 +476,7 @@ function createRequest(items, numOfPeople) {
 
     const xhr = new XMLHttpRequest();
     var citizen_id = localStorage.getItem('citizen_id');
-    xhr.open('POST', 'create_request.php/' + citizen_id, true);
+    xhr.open('POST', 'api/create_request.php/' + citizen_id, true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
     // Define what happens when the server responds
@@ -514,7 +514,7 @@ function createOffer(items, quantities) {
 
     const xhr = new XMLHttpRequest();
     var citizen_id = localStorage.getItem('citizen_id');
-    xhr.open('POST', 'create_offer.php/' + citizen_id, true);
+    xhr.open('POST', 'api/create_offer.php/' + citizen_id, true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
     // Define what happens when the server responds
@@ -597,7 +597,7 @@ function deleteOffers(offerIDs) {
     // Prepare the request
     const xhr = new XMLHttpRequest();
     var citizen_id = localStorage.getItem('citizen_id');
-    xhr.open('POST', 'delete_offer.php/' + citizen_id, true);
+    xhr.open('POST', 'api/delete_offer.php/' + citizen_id, true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
     // Define what happens on server response
@@ -664,7 +664,7 @@ function deleteRequests(requestIDs) {
     // Prepare the request
     const xhr = new XMLHttpRequest();
     var citizen_id = localStorage.getItem('citizen_id');
-    xhr.open('POST', 'delete_request.php/' + citizen_id, true);
+    xhr.open('POST', 'api/delete_request.php/' + citizen_id, true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
     // Define what happens on server response
