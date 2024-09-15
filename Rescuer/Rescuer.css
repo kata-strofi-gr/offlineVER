@@ -538,6 +538,24 @@ tbody tr:hover {
     color: white;
 }
 
+th.sort-asc::after {
+    content: ' ▲'; /* Up arrow */
+}
+
+th.sort-desc::after {
+    content: ' ▼'; /* Down arrow */
+}
+
+thead tr th:hover {
+    cursor: pointer;
+}
+
+thead tr th.no-sort:hover {
+    cursor: default; /* don't show pointer cursor for non-sortable columns */    
+}
+
+
+
 .viewStockW{
     display: none;
 }
@@ -781,6 +799,11 @@ input[type="checkbox"].task-checkbox:checked::before {
     background-color:#00AEEF; /* White checkmark when checked */
     box-shadow: inset 1em 1em #00AEEF;
 }
+
+input[type="number"] { 
+    width: 3em;
+}
+
 #draggableBox {
     position: relative;
     max-width: 90%; /* Control size */

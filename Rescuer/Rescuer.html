@@ -76,14 +76,15 @@
                             <table id="dataTable">
                                 <thead>
                                     <tr>
-                                        <th colspan="5" class="table-title">Φορτίο Οχήματος</th>
+                                        <th colspan="6" class="table-title">Φορτίο Οχήματος</th>
                                     </tr>
                                     <tr>
                                         <th>Κατηγορία</th>
                                         <th>Όνομα</th>
                                         <th>Detail Name</th>
                                         <th>Detail Value</th>
-                                        <th>Ποσότητα</th>
+                                        <th>Τρέχουσα Ποσότητα</th>
+                                        <th>Αλλαγή ποσότητας</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -96,14 +97,15 @@
                             <table id="secondTable">
                                 <thead>
                                     <tr>
-                                        <th colspan="5" class="table-title">Περιεχόμενο Αποθήκης</th>
+                                        <th colspan="6" class="table-title">Περιεχόμενο Αποθήκης</th>
                                     </tr>
                                     <tr>
                                         <th>Κατηγορία</th>
                                         <th>Όνομα</th>
                                         <th>Detail Name</th>
                                         <th>Detail Value</th>
-                                        <th>Ποσότητα</th>
+                                        <th>Τρέχουσα Ποσότητα</th>
+                                        <th>Αλλαγή ποσότητας</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -138,7 +140,7 @@
                         </div>
 
                         <div class="form-buttons2">
-                            <button id="anasub" class="btn submit">Φόρτωση</button>
+                            <button id="loadBtn" class="btn submit">Φόρτωση</button>
                             <button id="unloadBtn" class="btn submit">Εκφόρτωση</button>
                         </div>
                     </div>
@@ -195,11 +197,8 @@
                 </div>
             </div>
         </div>
-
-
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
         <script src="Rescuer.js"></script>
-        <script src="vehicle_management.js"></script>
 </body>
 
 </html>
