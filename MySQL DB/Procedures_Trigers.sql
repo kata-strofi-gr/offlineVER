@@ -598,11 +598,11 @@ BEGIN
         WHERE VehicleID = v_VehicleID AND ItemID = v_ItemID;
 
         IF v_VehicleQuantity IS NULL THEN
-            SET v_ErrorMessage = CONCAT('Error: Item "', v_ItemID, '" is not available in the vehicle.');
+            SET v_ErrorMessage = CONCAT('Item "', v_ItemID, '" is not available in the vehicle.');
             SIGNAL SQLSTATE '45000'
             SET MESSAGE_TEXT = v_ErrorMessage;
         ELSEIF v_VehicleQuantity < v_Quantity THEN
-            SET v_ErrorMessage = CONCAT('Error: Insufficient quantity of item "', v_ItemID, '" in the vehicle.');
+            SET v_ErrorMessage = CONCAT('Insufficient quantity of item "', v_ItemID, '" in the vehicle.');
             SIGNAL SQLSTATE '45000'
             SET MESSAGE_TEXT = v_ErrorMessage;
         END IF;
