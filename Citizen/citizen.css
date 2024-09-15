@@ -116,58 +116,6 @@
     font-size: 5vh;
 }
 
-/* edo gia xarti*/
-.mapContainer {
-    width: 100%;
-    max-width: 1000px;
-    margin: 0 auto;
-    border-radius: 30px;
-    /*border: 3px solid #FA4343;*/
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.mapWtitle {
-    font-family: Roboto;
-    background-color: #FA4343;
-    color: white;
-    padding: 20px;
-    margin: 0;
-    text-align: center;
-    font-size: 1.5em;
-    border-radius: 15px 15px 0px 0px;
-}
-
-.mapView {
-    position: relative;
-    overflow: hidden; /* Ensure no overflow issues */
-    z-index: 2;
-}
-
-#map {
-    width: 100%;
-    height: 30rem; /* Ensure sufficient height */
-    border-bottom: 2px solid #FA4343;
-}
-
-.help-icon {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: white;
-    color: #FA4343;
-    border-radius: 50%;
-    width: 15px;
-    height: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5em;
-    cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    z-index: 999;
-    margin: 15px;
-}
-
 .buttonArea {
     display: flex;
     flex-wrap: wrap;
