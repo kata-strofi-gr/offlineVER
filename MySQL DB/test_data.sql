@@ -118,7 +118,7 @@ INSERT INTO AnnouncementItems (AnnouncementID, ItemID, Quantity) VALUES
 (2, 3, 75), -- Announcement 2 includes 75 units of Item 3
 (2, 1, 150); -- Announcement 2 includes 150 units of Item 1
 
---Drop temporary tables
+-- Drop temporary tables
 DROP TABLE IF EXISTS tempitems;
 
 -- Test entry for CreateNewRequest procedure
@@ -169,7 +169,7 @@ CALL FinishOffer(3);
 
 
 -- Example usage:
-CALL UnloadVehicleItems(2);
+-- CALL UnloadVehicleItems(2);
 
 
 
