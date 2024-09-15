@@ -32,7 +32,9 @@
                 <a href="#" class="menu-item" id="logout">Αποσύνδεση</a>
             </nav>
         </div>
-        <div class="imapT">
+        
+
+        <div class="left-box">
             <div class="form-container" id="newRequest">
                 <div class="form-header">
                     Νέο αίτημα
@@ -50,40 +52,15 @@
                     </datalist>
                     <div class="reqs">
                         <label for="peopleNumb">Αριθμός ατόμων</label>
-                        <input type="number" id="peopleNumb" name="peopleNumb" placeholder="Συνολικά άτομα" value="0"
-                            min="0">
+                        <input type="number" id="peopleNumb" name="peopleNumb" placeholder="Συνολικά άτομα" value="0" min="0">
                     </div>
                     <div class="form-buttons">
                         <button type="submit" class="btn submit">Υποβολή</button>
                     </div>
                 </div>
             </div>
-            <div class="historyReq" id="historyR">
-                <!-- Add these containers in the appropriate section of your admin.html file -->
-                <div class="data-container">
-                    <div class="table-container">
-                        <table id="dataTable">
-                            <thead>
-                                <tr>
-                                    <th>Είδος</th>
-                                    <th>Κατηγορία</th>
-                                    <th>Ποσότητα</th>
-                                    <th>Ημ/νια δημιουργίας</th>
-                                    <th>Ημ/νια αποδοχής</th>
-                                    <th>Ημ/νια ολοκλήρωσης</th>
-                                    <th class="no-sort">Επιλογή</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Table rows will be dynamically inserted here -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="form-buttons">
-                    <button type="submit" class="btn submit" id="btn_delete">Ακύρωση</button>
-                </div>
-            </div>
+
+                    
             <div class="offergive" id="offerG">
                 <!-- Add these containers in the appropriate section of your admin.html file -->
                 <div class="data-container">
@@ -109,6 +86,37 @@
                     <button type="submit" class="btn submit">Υποβολή</button>
                 </div>
             </div>
+
+        </div>
+    
+        <!-- Right Box: History -->
+        <div class="right-box">
+            <div class="historyReq" id="historyR">
+                <div class="data-container">
+                    <div class="table-container">
+                        <table id="dataTable">
+                            <thead>
+                                <tr>
+                                    <th>Είδος</th>
+                                    <th>Κατηγορία</th>
+                                    <th>Ποσότητα</th>
+                                    <th>Ημ/νια δημιουργίας</th>
+                                    <th>Ημ/νια αποδοχής</th>
+                                    <th>Ημ/νια ολοκλήρωσης</th>
+                                    <th class="no-sort">Επιλογή</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Table rows will be dynamically inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="form-buttons">
+                    <button type="submit" class="btn submit" id="btn_delete">Ακύρωση</button>
+                </div>
+            </div>
+
             <div class="offergiveHist" id="offerGH">
                 <!-- Add these containers in the appropriate section of your admin.html file -->
                 <div class="data-container">
@@ -135,8 +143,10 @@
                     <button type="submit" class="btn submit" id="btn_delete">Aκύρωση</button>
                 </div>
             </div>
-            <!-- ola ta popup mexri edo mesas-->
+
+
         </div>
+
     </div>
     <script src="citizen.js"></script>
 </body>

@@ -20,7 +20,7 @@
     grid-template-areas: 
     "modeT modeT modeT" 
     "logoT menuT menuT" 
-    "imapT imapT imapT";
+    "left-box right-box right-box";
 
 }
 
@@ -45,16 +45,15 @@
     align-items: flex-start;
 }
 
-.imapT{
-    padding: 5%;
-    grid-area: imapT;
-    display: flex;
-    flex-direction: row;
+.left-box {
+    padding-top: 8%;
+    grid-area:left-box;
+ 
 }
 
-.boxesT{
-    
-    grid-area: boxesT;
+.right-box{
+    padding-top: 2%;
+    grid-area: right-box;
 }
 
 .modeRectangle{
@@ -236,7 +235,6 @@
 }
 
 .form-container {
-    
     font-family: roboto;
     display: none;
     background-color: white;
@@ -561,7 +559,8 @@ tbody tr:hover {
         grid-template-areas: 
         "modeT modeT" 
         "logoT menuT" 
-        "imapT imapT";
+        "left-box left-box"
+        "right-box right-box";
         height: auto;
     
     }
@@ -583,12 +582,12 @@ tbody tr:hover {
     .modeF{
         font-size: small;
     }
-    .imapT {
-        grid-area: imapT;
+    .right-box {
+        grid-area: right-box;
     }
 
-    .boxesT {
-        grid-area: boxesT;
+    .left-box {
+        grid-area: left-box;
     }
     .offer-box {
         width: 90%; /* Reduce width for mobile */
