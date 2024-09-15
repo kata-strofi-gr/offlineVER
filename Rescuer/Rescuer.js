@@ -1138,6 +1138,18 @@ function loadVehicle() {
         return;
     }
 
+    alert(base_data.Latitude + " " + base_data.Longitude + " " + vehicle_data.Latitude + " " + vehicle_data.Longitude);
+
+    // Calculate the distance between the vehicle and the task location
+    const distance = calculateDistance(base_data.Latitude, base_data.Longitude, vehicle_data.Latitude, vehicle_data.Longitude);
+
+    // If the distance is greater than 50 meters, show an alert and stop the process
+    if (distance > 50) {
+          alert("Δεν βρίσκεστε αρκετά κοντά για να ολοκληρώσετε την εργασία.");
+         return;
+    }
+
+
     // Prepare the data for the POST request
     const data = {
         item_ids: inputFields.map(input => input.closest('tr').dataset.itemId),
@@ -1184,6 +1196,16 @@ function unloadVehicle() {
         alert('Δεν έχετε εισάγει ποσότητα για εκφόρτωση.');
         return;
     }
+
+     // Calculate the distance between the vehicle and the task location
+    const distance = calculateDistance(base_data.Latitude, base_data.Longitude, vehicle_data.Latitude, vehicle_data.Longitude);
+
+    // If the distance is greater than 50 meters, show an alert and stop the process
+    if (distance > 50) {
+           alert("Δεν βρίσκεστε αρκετά κοντά για να ολοκληρώσετε την εργασία.");
+           return;
+    }
+    
 
     // Prepare the data for the POST request
     const data = {
