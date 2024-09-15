@@ -13,6 +13,7 @@ include '../db_config.php';
 
 $sql = "
     SELECT
+        req.RequestID,
         items.Name,
         categ.CategoryName,
         reqitems.Quantity,
@@ -31,6 +32,7 @@ $items = [];
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         $items[] = [
+            'RequestID' => $row['RequestID'],
             'Name' => $row['Name'],
             'CategoryName' => $row['CategoryName'],
             'Quantity' => $row['Quantity'],

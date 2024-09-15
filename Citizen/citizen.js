@@ -185,7 +185,7 @@ function showRequestsScreen() {
     var contentSection4 = document.getElementById('offerGH');
 
     contentSection1.style.display = 'block';
-    contentSection2.style.display = 'flex';
+    contentSection2.style.display = 'block';
     contentSection3.style.display = 'none';
     contentSection4.style.display = 'none';
 
@@ -271,12 +271,15 @@ function populateRequestHistory(data) {
     data.forEach(row => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
+            <td style="display: none;">${row.RequestID}</td> <!-- Hidden Request ID -->
             <td>${row.Name}</td>
             <td>${row.CategoryName}</td>
             <td>${row.Quantity}</td>
             <td>${row.DateCreated}</td>
             <td>${row.DateAssignedVehicle}</td> 
             <td>${row.DateFinished}</td>
+            <td><input type="checkbox" class="task-checkbox" data-id="${row.Name}" 
+                ${row.DateAssignedVehicle !== '-' ? 'disabled' : ''}></td> 
         `;
         tableBody.appendChild(tr);
     });
@@ -576,10 +579,10 @@ deleteOfferButton.addEventListener('click', function (e) {
     });
 
     // Call the deleteOffer function with the selected offer IDs
-    deleteOffer(selectedOfferIDs);
+    deleteOffers(selectedOfferIDs);
 });
 
-function deleteOffer(offerIDs) {
+function deleteOffers(offerIDs) {
     // Check if offerIDs array is not empty
     if (offerIDs.length === 0) {
         alert('No offers selected.');
@@ -621,3 +624,69 @@ function deleteOffer(offerIDs) {
     xhr.send(data);
 }
 
+// Add event listener for the delete (cancel) button using the ID
+const deleteRequestButton = document.getElementById('btn_delete_req');
+deleteRequestButton.addEventListener('click', function (e) {
+    e.preventDefault(); // Prevent default form submission behavior
+
+    // Find selected requests (checkbox checked)
+    const selectedRequests = Array.from(document.querySelectorAll('#dataTable input[type=checkbox]'))
+        .filter(input => input.checked);
+
+    // Ensure at least one request is selected
+    if (selectedRequests.length === 0) {
+        alert('Please select a request to cancel.');
+        return;
+    }
+
+    // Get the request IDs from the selected rows
+    const selectedRequestIDs = selectedRequests.map(checkbox => {
+        const row = checkbox.closest('tr');
+        return row.querySelectorAll('td')[0].textContent; // Assuming the first column contains the offer ID
+    });
+
+    // Call the deleteRequest function with the selected offer IDs
+    deleteRequests(selectedRequestIDs);
+});
+
+function deleteRequests(requestIDs) {
+    // Check if offerIDs array is not empty
+    if (requestIDs.length === 0) {
+        alert('No requests selected.');
+        return;
+    }
+
+    // Confirm deletion with the user
+    if (!confirm('Are you sure you want to cancel the selected request(s)?')) {
+        return;
+    }
+
+    // Prepare the request
+    const xhr = new XMLHttpRequest();
+    var citizen_id = localStorage.getItem('citizen_id');
+    xhr.open('POST', 'delete_request.php/' + citizen_id, true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+    // Define what happens on server response
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            const response = JSON.parse(xhr.responseText);
+            if (response.success) {
+                alert('Request(s) canceled successfully!');
+                // Refresh the offer history
+                requestsData = fetchOffers();
+                requestsData.then(requests => {
+                    populateRequestHistory(requests);
+                });
+            } else {
+                alert('Error: ' + response.message);
+            }
+        } else {
+            alert('Request failed. Error code: ' + xhr.status);
+        }
+    };
+
+    // Send request with the selected offer IDs
+    const data = `requestIDs=${encodeURIComponent(requestIDs.join(','))}`;
+    xhr.send(data);
+}
