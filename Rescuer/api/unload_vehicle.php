@@ -1,6 +1,4 @@
 <?php
-
-// get id from url
 if (isset($_SERVER['PATH_INFO'])) {
     $rescuer_id = trim($_SERVER['PATH_INFO'], '/');
 } else {
@@ -13,21 +11,22 @@ include '../../db_config.php';
 // Get the JSON input
 $data = json_decode(file_get_contents('php://input'), true);
 
-$latitude = $data['latitude'];
-$longitude = $data['longitude'];
+$item_ids = $data['item_ids'];
+$item_quantities = $data['item_quantities'];
+//convert arrays to strings
+$item_ids = implode(',', $item_ids);
+$item_quantities = implode(',', $item_quantities);
 
-// Prepare and execute the update statement
-$sql = "UPDATE Vehicles SET Latitude = ?, Longitude = ? WHERE RescuerID = $rescuer_id"; 
-// Assuming there's only one vehicle
-
+// Prepare and execute procedure
+$sql = "CALL UnloadFromVehicleToWarehouse(?, ?, ?)";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param('dd', $latitude, $longitude);
+$stmt->bind_param('iss', $rescuer_id, $item_ids, $item_quantities);
 
 $response = [];
 
 if ($stmt->execute()) {
     $response['success'] = true;
-    $response['message'] = 'Base location updated successfully';
+    $response['message'] = 'Vehicle unloaded successfully';
 } else {
     $response['success'] = false;
     $response['error'] = $stmt->error;
@@ -35,5 +34,6 @@ if ($stmt->execute()) {
 
 echo json_encode($response);
 
+$stmt->close();
 $conn->close();
 ?>

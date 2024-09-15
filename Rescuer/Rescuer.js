@@ -96,7 +96,9 @@ var vehicle_base_data;
 var rescuer_data;
 var availabe_requests_data;
 var availabe_offers_data;
-var expiryDates = { "Requests": null, "Offers": null, "Tasks": null, "VehicleBaseRescuer": null };
+var vehicle_items_data;
+var warehouse_items_data;
+var expiryDates = { "Requests": null, "Offers": null, "Tasks": null, "VehicleBaseRescuer": null, "VehicleItems": null, "WarehouseItems": null };
 const expiryTime = 60000; // 1 minute in milliseconds
 const sessionTime = 20 // 20 minutes
 
@@ -175,6 +177,9 @@ document.getElementById('toggleLines').addEventListener('click', toggleLines);
 
 document.getElementById('completedButton').addEventListener('click', postCompletedTasks);
 document.getElementById('task').addEventListener('click', postTaskUndertaking);
+
+document.getElementById('loadBtn').addEventListener('click', loadVehicle);
+document.getElementById('unloadBtn').addEventListener('click', unloadVehicle);
 
 /**
  * Frontend functions
@@ -296,6 +301,103 @@ function populateTaskTable() {
 
     // Restore the state of the checkboxes
     restoreTaskCheckboxes();
+}
+
+// Function to populate the vehicle management table with data from the backend
+function populateVehicleTable() {
+    // Get the table body element
+    const tableBody = document.querySelector('#dataTable tbody');
+    tableBody.innerHTML = '';  // Clear the table first
+
+    // Populate the table with data
+    vehicle_items_data.forEach(item => {
+        const row = document.createElement('tr');
+        row.setAttribute('data-item-id', item.ItemID);
+
+        // Create cells for each piece of data
+        const categoryCell = document.createElement('td');
+        categoryCell.textContent = item.CategoryName;
+
+        const nameCell = document.createElement('td');
+        nameCell.textContent = item.Name;
+
+        const detailNameCell = document.createElement('td');
+        detailNameCell.textContent = item.DetailName;
+
+        const detailValueCell = document.createElement('td');
+        detailValueCell.textContent = item.DetailValue;
+
+        const quantityCell = document.createElement('td');
+        quantityCell.textContent = item.Quantity;
+
+        // Create a cell for the input field
+        const inputCell = document.createElement('td');
+        const inputField = document.createElement('input');
+        inputField.type = 'number';
+        inputField.min = '0'; // Only positive integers
+        inputField.placeholder = '0';
+        inputCell.appendChild(inputField);
+
+        // Append cells to the row
+        row.appendChild(categoryCell);
+        row.appendChild(nameCell);
+        row.appendChild(detailNameCell);
+        row.appendChild(detailValueCell);
+        row.appendChild(quantityCell);
+        row.appendChild(inputCell);
+
+        // Append the row to the table body
+        tableBody.appendChild(row);
+    });
+}
+
+// Function to populate the warehouse table with data from the backend
+function populateWarehouseTable() {
+    // Get the table body element
+    const tableBody = document.querySelector('#secondTable tbody');
+    tableBody.innerHTML = '';  // Clear the table first
+
+    // Populate the table with data
+    warehouse_items_data.forEach(item => {
+        const row = document.createElement('tr');
+        row.setAttribute('data-item-id', item.ItemID);
+
+        // Create cells for each piece of data
+        const categoryCell = document.createElement('td');
+        categoryCell.textContent = item.CategoryName;
+
+        const nameCell = document.createElement('td');
+        nameCell.textContent = item.Name;
+
+        const detailNameCell = document.createElement('td');
+        detailNameCell.textContent = item.DetailName;
+
+        const detailValueCell = document.createElement('td');
+        detailValueCell.textContent = item.DetailValue;
+
+        const quantityCell = document.createElement('td');
+        quantityCell.textContent = item.Quantity;
+
+        // Create a cell for the input field
+        const inputCell = document.createElement('td');
+        const inputField = document.createElement('input');
+        inputField.type = 'number';
+        inputField.min = '0'; // Only positive integers
+        inputField.placeholder = '0';
+        inputCell.appendChild(inputField);
+
+        // Append cells to the row
+        row.appendChild(categoryCell);
+        row.appendChild(nameCell);
+        row.appendChild(detailNameCell);
+        row.appendChild(detailValueCell);
+        row.appendChild(quantityCell);
+        row.appendChild(inputCell);
+
+        // Append the row to the table body
+        tableBody.appendChild(row);
+    });
+
 }
 
 // Function to clear all lines from the map
@@ -671,6 +773,7 @@ function showConfirmPopup() {
 function fetchAllExpired() {
     let update_map = false;
     let update_tasks = false;
+    let update_warehouse = false;
     let promises = [];
     if (expiryDates['Requests'] == null || Date.now() - expiryDates['Requests'] > expiryTime) {
         promises.push(fetchRequests());
@@ -698,6 +801,16 @@ function fetchAllExpired() {
         update_map = true;
     }
 
+    if (expiryDates['VehicleItems'] == null || Date.now() - expiryDates['VehicleItems'] > expiryTime) {
+        promises.push(fetchVehicleItems());
+        update_warehouse = true;
+    }
+
+    if (expiryDates['WarehouseItems'] == null || Date.now() - expiryDates['WarehouseItems'] > expiryTime) {
+        promises.push(fetchWarehouseItems());
+        update_warehouse = true;
+    }
+
     Promise.all(promises).then(() => {
         if (update_map) {
             updateMap();
@@ -705,6 +818,11 @@ function fetchAllExpired() {
 
         if (update_tasks) {
             populateTaskTable();
+        }
+
+        if (update_warehouse) {
+            populateVehicleTable();
+            populateWarehouseTable();
         }
     });
 }
@@ -787,6 +905,46 @@ function fetchVehicleBaseRescuer() {
             vehicle_data = vehicle_base_data.Vehicle;
             base_data = vehicle_base_data.Base;
             rescuer_data = vehicle_base_data.Rescuer;
+        })
+        .catch(error => {
+            console.error('Fetch Error:', error);
+            throw error; // Rethrow after logging to allow caller to handle
+        });
+}
+
+function fetchVehicleItems() {
+    return fetch('api/get_vehicle_data.php/' + localStorage.getItem('rescuer_id'))
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.error) {
+                throw new Error(data.error);
+            }
+            vehicle_items_data = data.data;
+        })
+        .catch(error => {
+            console.error('Fetch Error:', error);
+            throw error; // Rethrow after logging to allow caller to handle
+        });
+}
+
+function fetchWarehouseItems() {
+    fetch(`api/get_warehouse_data.php`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.error) {
+                throw new Error(data.error);
+            }
+            warehouse_items_data = data.data;
         })
         .catch(error => {
             console.error('Fetch Error:', error);
@@ -953,6 +1111,100 @@ function postCompletedTasks() {
     });
 }
 
+function loadVehicle() {
+    // Get all input fields with value more than 0
+    const inputFields = Array.from(document.getElementById('secondTable').querySelectorAll('input[type="number"]'))
+        .filter(input => input.value > 0);
+
+    if (inputFields.length === 0) {
+        alert('Δεν έχετε εισάγει ποσότητα για φόρτωση.');
+        return;
+    }
+
+    // Prepare the data for the POST request
+    const data = {
+        item_ids: inputFields.map(input => input.parentElement.parentElement.dataset.itemId), // two parent elements!
+        item_quantities: inputFields.map(input => input.value)
+    };
+
+    console.log(data);
+    
+    // Send the POST request to load the vehicle
+    fetch('api/load_vehicle.php/' + localStorage.getItem('rescuer_id'), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+        .then(response => response.json())  // Directly parse the JSON response
+        .then(data => {
+            if (data.error) {
+                // Display the error message from the backend
+                alert('Error: ' + data.error);
+            } else {
+                // Log the success message and refresh tasks
+                console.log(data['message']);
+                expiryDates['VehicleItems'] = null;  // Force a refresh of the vehicle items and re-rendering
+                expiryDates['WarehouseItems'] = null;  // Force a refresh of the warehouse items and re-rendering
+                fetchAllExpired();  // Call the function to refresh tasks and map data
+                alert('Vehicle loaded successfully.');
+            }
+        })
+        .catch(error => {
+            console.error('Fetch Error:', error);
+            alert('Failed to load vehicle due to a network error.');
+        });
+
+}
+
+function unloadVehicle() {
+    // Get all input fields with value more than 0
+    const inputFields = Array.from(document.getElementById('dataTable').querySelectorAll('input[type="number"]'))
+        .filter(input => input.value > 0);
+
+    if (inputFields.length === 0) {
+        alert('Δεν έχετε εισάγει ποσότητα για εκφόρτωση.');
+        return;
+    }
+
+    // Prepare the data for the POST request
+    const data = {
+        item_ids: inputFields.map(input => input.parentElement.parentElement.dataset.itemId), // two parent elements!
+        item_quantities: inputFields.map(input => input.value)
+    };
+
+    console.log(data);
+
+    // Send the POST request to unload the vehicle
+    fetch('api/unload_vehicle.php/' + localStorage.getItem('rescuer_id'), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+        .then(response => response.json())  // Directly parse the JSON response
+        .then(data => {
+            if (data.error) {
+                // Display the error message from the backend
+                alert('Error: ' + data.error);
+            }
+            else {
+                // Log the success message and refresh tasks
+                console.log(data['message']);
+                expiryDates['VehicleItems'] = null;  // Force a refresh of the vehicle items and re-rendering
+                expiryDates['WarehouseItems'] = null;  // Force a refresh of the warehouse items and re-rendering
+                fetchAllExpired();  // Call the function to refresh tasks and map data
+                alert('Vehicle unloaded successfully.');
+            }
+        })
+        .catch(error => {
+            console.error('Fetch Error:', error);
+            alert('Failed to unload vehicle due to a network error.');
+        });
+}
+
 function calculateDistance(lat1, lon1, lat2, lon2) {
     const R = 6371; // Radius of the Earth in kilometers
     const rad = Math.PI / 180; // Factor to convert degrees to radians
@@ -977,6 +1229,44 @@ function vehicleToTaskDistance(taskMarker) {
     return distance
 
 }
+
+// Table sorting!
+// https://stackoverflow.com/questions/14267781/sorting-html-table-with-javascript
+// handle input field as well
+const getCellValue = (tr, idx) => {
+    const cell = tr.children[idx];
+    const input = cell.querySelector('input[type="number"]');
+    if (input) {
+        return parseFloat(input.value) || 0; // Return the input value if it exists
+    }
+    return cell.innerText || cell.textContent;
+};
+
+const comparer = (idx, asc) => (a, b) => ((v1, v2) =>
+    v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
+)(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+
+// Add event listeners to each header for sorting
+document.querySelectorAll('th').forEach(th => th.addEventListener('click', function () {
+    if (th.classList.contains('no-sort')) return; // Skip sorting for this column
+
+    const table = th.closest('table');
+    const tbody = table.querySelector('tbody');
+    const index = Array.from(th.parentNode.children).indexOf(th);
+    const asc = this.asc = !this.asc;
+
+    // Remove sort indicators from all headers
+    document.querySelectorAll('th').forEach(header => {
+        header.classList.remove('sort-asc', 'sort-desc');
+    });
+
+    // Add sort indicator to the clicked header
+    th.classList.add(asc ? 'sort-asc' : 'sort-desc');
+
+    Array.from(tbody.querySelectorAll('tr'))
+        .sort(comparer(index, asc))
+        .forEach(tr => tbody.appendChild(tr));
+}));
 
 /**
  * Mobile Frontend Functions

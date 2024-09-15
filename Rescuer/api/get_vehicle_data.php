@@ -2,13 +2,11 @@
 // Include the database connection
 include '../../db_config.php';  // Adjust this to your actual DB connection file
 
-// Get the rescuer ID (this can be passed via POST or GET)
-$rescuer_id = $_GET['rescuer_id'];  // Assuming you pass rescuer_id via GET
-
-// Check if rescuer ID is provided
-if (empty($rescuer_id)) {
-    echo json_encode(['error' => 'Rescuer ID not provided.']);
-    exit;
+// get id from url
+if (isset($_SERVER['PATH_INFO'])) {
+    $rescuer_id = trim($_SERVER['PATH_INFO'], '/');
+} else {
+    echo json_encode(['error' => 'No rescuer ID provided']);
 }
 
 try {
