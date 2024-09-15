@@ -705,7 +705,21 @@ thead tr th.no-sort:hover {
 
     table {
         font-family: roboto;
-        font-size: 0.8em; /* Decrease font size */
+        font-size: 0.7em; /* Decrease font size */
+    }
+
+    
+    th, td {
+        padding: 1.5px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background-color: #FA4343;
+        color: white;
     }
 }
 
