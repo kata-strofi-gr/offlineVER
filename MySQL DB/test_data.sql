@@ -215,25 +215,22 @@ END //
 
 DELIMITER ;
 
-
-DELIMITER ;
 CALL GenerateEntries(50);
 
---example usage
-CALL LoadVehicleFromOffer(86, 4);
+-- example usage
+-- CALL LoadVehicleFromOffer(86, 4);
 
+-- example usage
+--CALL UnloadVehicleOnRequestCompletion(4, 89);
 
---example usage
-CALL UnloadVehicleOnRequestCompletion(4, 89);
+-- CALL LoadFromWarehouseToVehicle(
+--     4,                      -- RescuerID
+--     'Rice,Blanket',          -- Comma-separated item names
+--     '1,3'                   -- Corresponding quantities
+-- );
 
-CALL LoadFromWarehouseToVehicle(
-    4,                      -- RescuerID
-    'Rice,Blanket',          -- Comma-separated item names
-    '1,3'                   -- Corresponding quantities
-);
-
-CALL UnloadFromVehicleToWarehouse(
-    2,                      -- RescuerID
-    'Rice,Blanket',          -- Comma-separated item names
-    '69,3'                   -- Corresponding quantities
-);
+-- CALL UnloadFromVehicleToWarehouse(
+--     2,                      -- RescuerID
+--     'Rice,Blanket',          -- Comma-separated item names
+--     '69,3'                   -- Corresponding quantities
+-- );
