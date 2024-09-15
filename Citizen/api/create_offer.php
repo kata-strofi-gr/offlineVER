@@ -9,7 +9,7 @@ if (isset($_SERVER['PATH_INFO'])) {
 }
 
 // Include the database configuration file
-include '../db_config.php';
+include '../../db_config.php';
 
 $items = rtrim($_POST['items']);
 $quantities = rtrim($_POST['quantities']);

@@ -10,7 +10,8 @@ if (isset($_SERVER['PATH_INFO'])) {
 }
 
 // Include the database configuration file
-include '../db_config.php';
+include '../../db_config.php';
+
 
 // Get the selected offer IDs from the POST request
 if (!isset($_POST['offerIDs'])) {
