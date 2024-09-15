@@ -194,15 +194,66 @@ function showVehicleManagement() {
     document.body.classList.add('vehicle-management-active');
 }
 
+function saveSelectedCheckboxes() {
+    const selectedCheckboxes = Array.from(document.querySelectorAll('.task-checkbox:checked'))
+        .map(checkbox => {
+            const row = checkbox.closest('tr');
+            return {
+                taskId: row.dataset.taskId,
+                taskType: row.dataset.taskType
+            };
+        });
+    localStorage.setItem('selectedCheckboxes', JSON.stringify(selectedCheckboxes));
+}
+
+function restoreTaskCheckboxes() {
+    const selectedCheckboxes = JSON.parse(localStorage.getItem('selectedCheckboxes')) || [];
+    selectedCheckboxes.forEach(({ taskId, taskType }) => {
+        const row = document.querySelector(`tr[data-task-id="${taskId}"][data-task-type="${taskType}"]`);
+        if (row) {
+            const checkbox = row.querySelector('.task-checkbox');
+            if (checkbox) {
+                checkbox.checked = true;
+            }
+        }
+    });
+} function saveSelectedCheckboxes() {
+    const selectedCheckboxes = Array.from(document.querySelectorAll('.task-checkbox:checked'))
+        .map(checkbox => {
+            const row = checkbox.closest('tr');
+            return {
+                taskId: row.dataset.taskId,
+                taskType: row.dataset.taskType
+            };
+        });
+    localStorage.setItem('selectedCheckboxes', JSON.stringify(selectedCheckboxes));
+}
+
+function restoreSelectedCheckboxes() {
+    const selectedCheckboxes = JSON.parse(localStorage.getItem('selectedCheckboxes')) || [];
+    selectedCheckboxes.forEach(({ taskId, taskType }) => {
+        const row = document.querySelector(`tr[data-task-id="${taskId}"][data-task-type="${taskType}"]`);
+        if (row) {
+            const checkbox = row.querySelector('.task-checkbox');
+            if (checkbox) {
+                checkbox.checked = true;
+            }
+        }
+    });
+}
+
 function populateTaskTable() {
+    saveSelectedCheckboxes();
+
     const taskTableBody = document.getElementById("taskTable")
-        .querySelector('tbody')
+        .querySelector('tbody');
 
     taskTableBody.innerHTML = "";
 
     tasks_data.Requests.concat(tasks_data.Offers).forEach(task => {
         const row = document.createElement("tr");
         row.dataset.taskId = task.ID; // Store the task ID in the cell
+        row.dataset.taskType = task.Type; // Store the task type in the cell
 
         // Checkbox cell
         const checkboxCell = document.createElement("td");
@@ -242,6 +293,69 @@ function populateTaskTable() {
         // Append the row to the table body
         taskTableBody.appendChild(row);
     });
+
+    // Restore the state of the checkboxes
+    restoreSelectedCheckboxes();
+}
+
+// Save the state of the checkboxes whenever they are changed
+document.addEventListener('change', function (event) {
+    if (event.target.classList.contains('task-checkbox')) {
+        saveSelectedCheckboxes();
+    }
+});
+
+function populateTaskTable() {
+    const taskTableBody = document.getElementById("taskTable")
+        .querySelector('tbody')
+
+    taskTableBody.innerHTML = "";
+
+    tasks_data.Requests.concat(tasks_data.Offers).forEach(task => {
+        const row = document.createElement("tr");
+        // Store the task ID and type in the cell
+        row.dataset.taskId = task.ID;
+        row.dataset.taskType = task.Type;
+
+        // Checkbox cell
+        const checkboxCell = document.createElement("td");
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.classList.add("task-checkbox"); // Add custom class for styling
+        checkboxCell.appendChild(checkbox);
+
+        // Data cells
+        const taskTypeCell = document.createElement("td");
+        taskTypeCell.textContent = task.Type;
+
+        const nameCell = document.createElement("td");
+        nameCell.textContent = task.Name + " " + task.Surname;
+
+        const phoneCell = document.createElement("td");
+        phoneCell.textContent = task.Phone;
+
+        const dateCell = document.createElement("td");
+        dateCell.textContent = task.DateCreated;
+
+        const itemTypeCell = document.createElement("td");
+        itemTypeCell.textContent = task.ItemNames;
+
+        const quantityCell = document.createElement("td");
+        quantityCell.textContent = task.ItemQuantities;
+
+        // Append cells to the row
+        row.appendChild(checkboxCell);  // Add checkbox cell to the row
+        row.appendChild(taskTypeCell);
+        row.appendChild(nameCell);
+        row.appendChild(phoneCell);
+        row.appendChild(dateCell);
+        row.appendChild(itemTypeCell);
+        row.appendChild(quantityCell);
+
+        // Append the row to the table body
+        taskTableBody.appendChild(row);
+    });
+    restoreTaskCheckboxes();
 }
 
 // Function to clear all lines from the map
@@ -889,6 +1003,7 @@ function postCompletedTasks() {
                     console.log(data['message']);
                     expiryDates['Tasks'] = null;  // Force a refresh of the tasks and re-rendering
                     fetchAllExpired();  // Call the function to refresh tasks and map data
+                    alert('Task(s) complete sucesfully.');
                 }
             })
             .catch(error => {
