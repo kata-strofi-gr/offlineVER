@@ -189,11 +189,9 @@ document.getElementById('unloadBtn').addEventListener('click', unloadVehicle);
 function showVehicleManagement() {
     var contentSection = document.getElementById('vehiclem'); // Show this section
     var mapContainer = document.getElementById('mapContainerI'); // Hide the map section
-    var contentSectionX2 = document.getElementById('newAithmata'); // Hide new announcement section    
     var taskTable = document.getElementById('taskT'); // Hide task table
 
     contentSection.style.display = 'block';  // Show vehicle management
-    contentSectionX2.style.display = 'block';  // Show new announcement section
     mapContainer.style.display = 'none';     // Hide map
     taskTable.style.display = 'none';        // Hide task table
     document.body.classList.add('vehicle-management-active');
