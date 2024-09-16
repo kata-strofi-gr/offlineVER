@@ -8,7 +8,7 @@ function checkSession() {
     if (!sessionCookie || !citizen_id) {
         // If the session cookie is missing or expired, redirect to login
         localStorage.removeItem('citizen_id');
-        window.location.href = '../start.html';
+        window.location.href = '../Starter/start.html';
     }
 }
 
@@ -86,7 +86,7 @@ logoutButton.addEventListener('click', function (e) {
     localStorage.removeItem('citizen_id');
     localStorage.removeItem('role');
 
-    window.location.href = '../start.html';
+    window.location.href = '../Starter/start.html';
 });
 
 const requestTable = document.getElementById('newRequest');

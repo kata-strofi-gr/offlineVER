@@ -165,3 +165,4 @@ CREATE TABLE AnnouncementItems (
     UNIQUE KEY uq_announcement_item (AnnouncementID, ItemID)
 ) ENGINE = InnoDB;
 -- DROP DATABASE kata_strofh;
+

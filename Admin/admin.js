@@ -26,7 +26,7 @@ function checkSession() {
 
     if (!sessionCookie || !adminID) {
         // If the session cookie is missing or expired, redirect to login
-        window.location.href = '../start.html';
+        window.location.href = '../Starter/start.html';
     }
 }
 
@@ -63,7 +63,7 @@ document.getElementById('loggout').addEventListener('click', function (e) {
     localStorage.removeItem('role');
 
     // Redirect to login page
-    window.location.href = '../start.html';
+    window.location.href = '../Starter/start.html';
 });
 
 

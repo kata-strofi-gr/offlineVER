@@ -8,7 +8,7 @@ function checkSession() {
     if (!sessionCookie || !rescuer_id) {
         // If the session cookie is missing or expired, redirect to login
         localStorage.removeItem('rescuer_id');
-        window.location.href = '../start.html';
+        window.location.href ='../Starter/start.html';
     }
 }
 
@@ -147,7 +147,7 @@ document.getElementById('loggout').addEventListener('click', function (e) {
     localStorage.removeItem('role');
 
     // Redirect to login page
-    window.location.href = '../start.html';
+    window.location.href = '../Starter/start.html';
 });
 
 //todo: change contents to function
@@ -1419,11 +1419,12 @@ document.getElementById('cancelButton').addEventListener('click', function () {
     // Search for the task JSON object
     let task;
     if (task_type === "Offer") {
+        alert('Ακύρωση ssssεργασίας: ' + task_id);
         task = tasks_data.Offers.filter((entry) => entry.ID === task_id)[0];
     } else {
         task = tasks_data.Requests.filter((entry) => entry.ID === task_id)[0];
     }
-    alert('Ακύρωση εργασίας: ' + task_id);
+    
     // Prepare the API endpoint based on task type (Offer or Request)
     let apiUrl = '';
     if (task_type === 'Offer') {
