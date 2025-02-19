@@ -1,4 +1,3 @@
-
 //mobile menu leitourgia
 document.addEventListener('DOMContentLoaded', function() {
     const menuToggle = document.getElementById('menu-toggle');
@@ -29,6 +28,102 @@ document.addEventListener('DOMContentLoaded', function() {
     overlayLoginButton.addEventListener('click', function() {
         alert('Login button clicked inside overlay');
     });
+
+    // New map and dropdown code
+    const mapContainer = document.querySelector('.map-container');
+    const dropdown = document.getElementById('regionDropdown');
+    const dropdownSelected = dropdown.querySelector('.dropdown-selected');
+    const dropdownOptions = dropdown.querySelector('.dropdown-options');
+    let svgDoc = null;
+
+    // 1. Basic dropdown functionality
+    dropdownSelected.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const isOpen = dropdownOptions.style.display === 'block';
+        dropdownOptions.style.display = isOpen ? 'none' : 'block';
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function() {
+        dropdownOptions.style.display = 'none';
+    });
+
+    // 2. Wait for SVG to load
+    const greeceMap = document.getElementById('greeceMap');
+    greeceMap.addEventListener('load', function() {
+        svgDoc = this.contentDocument;
+        if (svgDoc) {
+            initializeMap();
+        }
+    });
+
+    function initializeMap() {
+        // Define our regions
+        const regions = [
+            { id: 'thessaloniki', name: 'Θεσσαλονίκη' },
+            { id: 'thessaly', name: 'Θεσσαλία' },
+            { id: 'attica', name: 'Αττική' },
+            { id: 'crete', name: 'Κρήτη' }
+        ];
+
+        // Set up each region in the SVG
+        regions.forEach(region => {
+            const path = svgDoc.getElementById(region.id);
+            if (path) {
+                // Add hover effect
+                path.addEventListener('mouseenter', () => {
+                    if (!path.classList.contains('active')) {
+                        path.style.fill = '#FFAA33'; // Hover color
+                    }
+                });
+
+                path.addEventListener('mouseleave', () => {
+                    if (!path.classList.contains('active')) {
+                        path.style.fill = ''; // Reset to original
+                    }
+                });
+
+                // Add click handler
+                path.addEventListener('click', () => {
+                    selectRegion(region.id, region.name);
+                });
+
+                // Set cursor
+                path.style.cursor = 'pointer';
+            }
+        });
+
+        // Set up dropdown options
+        dropdownOptions.querySelectorAll('.dropdown-option').forEach(option => {
+            option.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const regionId = this.dataset.region;
+                const regionName = this.textContent;
+                selectRegion(regionId, regionName);
+            });
+        });
+    }
+
+    function selectRegion(regionId, regionName) {
+        // Clear previous selection
+        if (svgDoc) {
+            svgDoc.querySelectorAll('path').forEach(path => {
+                path.style.fill = '';
+                path.classList.remove('active');
+            });
+
+            // Highlight selected region
+            const selectedPath = svgDoc.getElementById(regionId);
+            if (selectedPath) {
+                selectedPath.style.fill = '#FA4343'; // Your brand red
+                selectedPath.classList.add('active');
+            }
+        }
+
+        // Update dropdown text
+        dropdownSelected.querySelector('span').textContent = regionName;
+        dropdownOptions.style.display = 'none';
+    }
 });
 
 
@@ -65,4 +160,5 @@ document.addEventListener("DOMContentLoaded", () => {
         cont2.style.display = 'none';
     });
 
+});
 });
