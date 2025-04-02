@@ -4,8 +4,8 @@
 #### Subject: Volunteer Coordination Platform during Natural Disasters  
 #### Version 1.0 – 03/11/2023
 
-![Project Logo](./Media/kata-strofi_RN.svg)
-![Secondary Logo](./Media/thesalia_vector-01.svg)
+<img src="./Media/kata-strofi_RN.svg" alt="Project Logo" width="150" />
+<img src="./Media/thesalia_vector-01.svg" alt="Secondary Logo" width="150" />
 
 ---
 
@@ -108,7 +108,7 @@ The application is organized into several modules and components:
 - **Entity Relationship Diagram (ERD):**  
   The ERD diagram outlining the relationships between tables and entities in the database can be found here:
 
-![ERD Diagram](MySQL DB/erd.png)
+<img src="./MySQL%20DB/erd.png" alt="ERD Diagram" width="100" />
 
 ---
 
