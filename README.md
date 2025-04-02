@@ -5,6 +5,7 @@
 #### Version 1.0 – 03/11/2023
 
 ![Project Logo](kata-strofiF.svg)
+![Secondary Logo](thesalia_vector-01.svg)
 
 ---
 
@@ -56,7 +57,7 @@ The application is organized into several modules and components:
 ### 1. User Authentication & Account Management
 
 - **Login/Logout:**  
-  Ensures that only authorized users can access the system. Unauthorized access is redirected to a login page.  
+  Ensures that only authorized users can access the system. Unauthorized access is redirected to the login page.  
 - **Account Creation:**  
   Administrators create accounts for rescuers, while citizens register through the public interface. Registration includes geolocation data for accurate mapping.
 
@@ -93,6 +94,21 @@ The application is organized into several modules and components:
   Administrators can access dashboards that showcase charts and graphs representing the overall performance of task management including new submissions, task completions, and current inventory levels.  
 - **Historical Data Analysis:**  
   The system stores historical data to permit analysis over configurable time intervals, helping evaluate the efficiency and responsiveness of the rescue operations.
+
+---
+
+## Database Overview
+
+- **SQL Dump:**  
+  The file [`Dump20240916.sql`](Final Web Project/DB_Exported/Dump20240916.sql) contains the exported schema and data, including necessary commands to disable/enable foreign key checks and set the proper SQL modes.
+  
+- **JSON Data:**  
+  JSON files like [`test.json`](Final Web Project/kata-strofi/MySQL DB/test.json) include extensive lists of product categories used to initialize and update the inventory.
+
+- **Entity Relationship Diagram (ERD):**  
+  The ERD diagram outlining the relationships between tables and entities in the database can be found here:
+
+![ERD Diagram](MySQL DB/erd.png)
 
 ---
 
