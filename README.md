@@ -1,199 +1,132 @@
-# Disaster Relief Management System
+# Volunteer Coordination Platform  
+## Programming & Systems on the World Wide Web  
+### Academic Lab Exercise - 2023/2024  
+#### Subject: Volunteer Coordination Platform during Natural Disasters  
+#### Version 1.0 – 03/11/2023
 
-This project is a disaster relief management system designed to streamline the process of managing resources and requests during a disaster. It includes a MySQL database schema, stored procedures, triggers, and test data to support a PHP-based web application.
+![Project Logo](kata-strofiF.svg)
 
-## Database Schema
+---
 
-The database schema is defined in `db_schema.sql` and includes the following tables:
+## Overview
 
-- `Administrator`: Stores information about system administrators.
-- `user`: Stores information about all users (administrators, rescuers, and citizens).
-- `Rescuer`: Stores information about rescuers who handle requests.
-- `Citizen`: Stores information about citizens who can make requests and offers.
-- `Items`: Stores information about items available for requests and offers.
-- `Warehouse`: Manages item quantities in the warehouse.
-- `Requests`: Manages requests made by citizens for specific items.
-- `RequestItems`: Manages the items and quantities associated with each request.
-- `Offers`: Manages offers made by citizens to provide specific items.
-- `OfferItems`: Manages the items and quantities associated with each offer.
-- `Vehicles`: Manages vehicles assigned to rescuers for delivering items.
-- `VehicleItems`: Manages the items and quantities associated with each vehicle.
-- `Announcements`: Stores announcements made by administrators.
-- `AnnouncementItems`: Manages the items and quantities associated with each announcement.
+This web application is developed as a collaborative system for registering urgent help requests and managing community needs following natural disasters. Its modular design supports three distinct user roles, each with specific functionalities to ensure the efficient coordination of supplies and resources during an emergency:
 
+- **Citizens** submit urgent requests for essential supplies and also indicate availability of surplus items.
+- **Rescuers** use dedicated vehicles to collect or deliver these items based on proximity and demand.
+- **Administrators (Base)** manage the inventory, update product categories, monitor ongoing tasks, and maintain the overall system through an intuitive mapping interface.
 
-## Stored Procedures and Triggers
+---
 
-The `Procedures_Trigers.sql` file contains stored procedures and triggers, including:
+## Project Structure
 
-### Stored Procedures
+The application is organized into several modules and components:
 
-1. **CreateNewRequest**
-   - **Usage:** Create a new request using item names.
-   - **Parameters:** 
-     - `citizenID INT`: ID of the citizen making the request.
-     - `items JSON`: JSON array of items and their quantities.
-     - **Description:** Inserts a new request with status `PENDING` into the `Requests` table and associates items with the new request.
+- **Administrator Module:**  
+  - **User Authentication:** Secure login and logout for administrators.
+  - **Inventory Management:** Creation, modification, and real-time updating of product categories and supplies through forms and JSON uploads.
+  - **Mapping Interface:** Displays the base, vehicle positions, and tasks (requests/offers) on an interactive map with filters for specific data points.
+  - **Reporting & Statistics:** Provides real-time charts and graphs (via Chart.js) that depict key performance indicators such as new submissions, completed deliveries, and current inventory levels.
+  - **Account Management:** Ability to create accounts for rescuers to facilitate task coordination.
 
-2. **CreateNewOffer**
-   - **Usage:** Create a new offer using item names.
-   - **Parameters:** 
-     - `citizenID INT`: ID of the citizen making the offer.
-     - `items JSON`: JSON array of items and their quantities.
-     - **Description:** Inserts a new offer with status `PENDING` into the `Offers` table and associates items with the new offer.
+- **Rescuer Module:**  
+  - **Geolocation & Proximity Detection:** Rescuers’ vehicles have geolocation integration to ensure tasks are only completed when within a specified distance (between 50 and 100 meters) from the target location.
+  - **Task Management:** Displays a list of active tasks on the map, allows rescuers to claim tasks, and shows task details including citizen information and item requests.
+  - **Vehicle Load Management:** Rescuers manage their vehicle’s load—loading items when near the base and unloading on task completion—with automatic updates to the inventory.
 
-3. **CreateNewRescuer**
-   - **Usage:** Create a new rescuer and associate a vehicle with the rescuer.
-   - **Parameters:** 
-     - `username VARCHAR(50)`: Username of the rescuer.
-     - `password VARCHAR(255)`: Password of the rescuer.
-     - `latitude DECIMAL(10, 8)`: Latitude where the vehicle is located.
-     - `longitude DECIMAL(11, 8)`: Longitude where the vehicle is located.
-     - **Description:** Inserts a new rescuer into the `Rescuer` table and associates a vehicle with the new rescuer, including the vehicle's latitude and longitude.
+- **Citizen Module:**  
+  - **Account Registration & Login:** Secure authentication and account management including personal, contact, and geolocation details.
+  - **Request/Offer Submission:** Citizens can create multiple product requests and offers using an intuitive form interface with search and auto-complete features to help select the correct product category.
+  - **History & Notifications:** Displays a detailed history of submitted requests and offers along with live updates on the status of each submission. Notifications inform citizens when an offer has been claimed or when a request is ready for delivery.
 
-4. **CreateNewCitizen**
-   - **Usage:** Create a new citizen.
-   - **Parameters:**
-     - `username VARCHAR(50)`: Username of the citizen.
-     - `password VARCHAR(255)`: Password of the citizen.
-     - `name VARCHAR(100)`: Name of the citizen.
-     - `phone VARCHAR(15)`: Phone number of the citizen.
-     - `latitude DECIMAL(10, 8)`: Latitude of the citizen's location.
-     - `longitude DECIMAL(11, 8)`: Longitude of the citizen's location.
-     - **Description:** Inserts a new citizen into the `Citizen` table and associates the citizen with a user account.
+- **Database Module:**  
+  - **Schema & Relationships:** The database stores relationships among users, inventory items, requests/offers, and tasks. It includes constraints and relationships to ensure data integrity.
+  - **Stored Procedures & Triggers:** Automated procedures handle data consistency when tasks are claimed or marked as completed. E.g., triggers ensure that inventory levels are adjusted automatically during task processing.
+  - **Data Imports:** The system supports importing product data from JSON files and shared repositories, ensuring that product catalogs are consistently updated.
 
-5. **AssignRequest**
-   - **Usage:** Assign a rescuer to a request.
-   - **Parameters:** 
-     - `requestID INT`: ID of the request.
-     - `rescuerID INT`: ID of the rescuer.
-   - **Description:** Assigns a rescuer to the specified request and updates the request status to `INPROGRESS`.
+- **Mapping & Visualization:**  
+  - **Interactive Map:** Utilizes mapping APIs to render the base, citizen request locations, rescuer vehicle positions, and task markers.
+  - **Marker Customization:** Different marker colors and icons are used to distinguish between requests, offers, active tasks, and completed tasks.
+  - **Filters & Layers:** Users can apply filters (toggle view options) on the map to isolate markers based on their status or type.
 
-6. **CreateNewAdmin**
-   - **Usage:** Create a new administrator.
-   - **Parameters:** 
-     - `username VARCHAR(255)`: Username of the new admin.
-     - `password VARCHAR(255)`: Password for the new admin.
-     - **Description:** Inserts a new admin into the `Admin` table and associates the admin with a user account.
+---
 
-7. **AssignOffer**
-   - **Usage:** Assign a rescuer to an offer.
-   - **Parameters:** 
-     - `offerID INT`: ID of the offer.
-     - `rescuerID INT`: ID of the rescuer.
-   - **Description:** Assigns a rescuer to the specified offer and updates the offer status to `INPROGRESS`.
+## Detailed Functionality
 
+### 1. User Authentication & Account Management
 
-8. **CancelRequest**
-   - **Usage:** Cancel a request.
-   - **Parameters:** 
-     - `requestID INT`: ID of the request.
-   - **Description:** Cancels the specified request and updates the request status to `CANCELLED`.
+- **Login/Logout:**  
+  Ensures that only authorized users can access the system. Unauthorized access is redirected to a login page.  
+- **Account Creation:**  
+  Administrators create accounts for rescuers, while citizens register through the public interface. Registration includes geolocation data for accurate mapping.
 
+### 2. Inventory & Product Management
 
-9. **CancelOffer**
-   - **Usage:** Cancel an offer.
-   - **Parameters:** 
-     - `offerID INT`: ID of the offer.
-   - **Description:** Cancels the specified offer and updates the offer status to `CANCELLED`.
+- **Product Catalog:**  
+  Administrators maintain a catalog of products including essential supplies such as water, food, medical supplies, and more.  
+- **Data Import & Integration:**  
+  Supports initialization and ongoing updates from external JSON repositories, ensuring the product catalog is current.  
+- **Real-Time Adjustments:**  
+  Inventory levels are updated dynamically based on tasks completed by rescuers, which either deduct or add quantities based on the type of transaction (loading or unloading).
 
+### 3. Task Coordination & Management
 
-10. **FinishRequest**
-   - **Usage:** Mark a request as finished.
-   - **Parameters:** 
-     - `requestID INT`: ID of the request.
-   - **Description:** Marks the specified request as `FINISHED`.
+- **Task Submission:**  
+  Citizens submit requests or offers with details such as item type, quantity, and the number of people affected. Each submission generates an individual task.
+- **Task Assignment:**  
+  Rescuers have a dynamic list of tasks that they can accept. The system verifies proximity and vehicle load before allowing a task to be claimed.
+- **Completion & Cancellation:**  
+  Rescuers can mark tasks as "completed," automatically updating the system inventory, or "cancel" tasks so that they can be picked up by other rescuers.
 
+### 4. Mapping & Real-Time Visualizations
 
-11. **FinishOffer**
-   - **Usage:** Mark an offer as finished.
-   - **Parameters:** 
-     - `offerID INT`: ID of the offer.
-   - **Description:** Marks the specified offer as `FINISHED`
+- **Interactive Map:**  
+  Displays all key entities with customized markers and allows for "click and drag" repositioning of both the base and vehicles.  
+- **Live Data Overlays:**  
+  Information about task status (active, completed, pending) is visually represented on the map for rapid decision-making.  
+- **Filter & Search Options:**  
+  Users can filter the map view to display specific types of markers (e.g., pending offers, active requests) to reduce clutter and focus on specific areas of interest.
 
-12. **CreateAnnouncement**
-   - **Usage:** Create a new announcement.
-   - **Parameters:**
-     - `adminID INT`: ID of the administrator making the announcement.
-     - `items JSON`: JSON array of items and their quantities.
-   - **Description:** Inserts a new announcement into the `Announcements` table and its associated items into the `AnnouncementItems` table.
-date are reset.
+### 5. Reporting & Analytics
 
-### Triggers
+- **Real-Time Dashboard:**  
+  Administrators can access dashboards that showcase charts and graphs representing the overall performance of task management including new submissions, task completions, and current inventory levels.  
+- **Historical Data Analysis:**  
+  The system stores historical data to permit analysis over configurable time intervals, helping evaluate the efficiency and responsiveness of the rescue operations.
 
-1. **BeforeAssignRescuerToRequest**
-   - **Description:** Checks conditions before assigning a rescuer to a request. Ensures that the rescuer is not already assigned to more than a certain number of task (e.g., 4 tasks) and that the request is currently in a `PENDING` state.
+---
 
-2. **BeforeAssignRescuerToOffer**
-   - **Description:** Checks conditions before assigning a rescuer to an offer. Ensures that the rescuer is not already assigned to more than a certain number of tasks (e.g., 4 tasks) and that the offer is currently in a `PENDING` state.
+## Getting Started
 
-3. **PreventReassignInProgressRequest**
-   - **Description:** Prevents reassigning an `INPROGRESS` request to another rescuer.
+1. **Server Configuration:**  
+   Install and run a PHP/MySQL server using XAMPP. Ensure the project is located under `c:\xampp\htdocs\offlineVER`.
 
-4. **PreventReassignInProgressOffer**
-   - **Description:** Prevents reassigning an `INPROGRESS` offer to another rescuer.
+2. **Database Setup:**  
+   Import the SQL dump from [`Dump20240916.sql`](Final Web Project/DB_Exported/Dump20240916.sql) along with any additional scripts (procedures and triggers).  
+   Verify your connection settings in `db_config.php`.
 
-5. **PreventPendingRequestFinished**
-   - **Description:** Prevents changing the status of a `PENDING` request directly to `FINISHED`.
+3. **Initializing Inventory:**  
+   Use the provided JSON files (e.g., [`test.json`](Final Web Project/kata-strofi/MySQL DB/test.json)) to import the product catalog and update inventory details.
 
-6. **PreventPendingOfferFinished**
-   - **Description:** Prevents changing the status of a `PENDING` offer directly to `FINISHED`.
+4. **Launching the Application:**  
+   Open the administrator interface (`admin.html`) or use the corresponding citizen and rescuer interfaces to start interacting with the system.
 
-7. **PreventFinishedRequestAlteration**
-   - **Description:** Prevents any alteration of a `FINISHED` request.
+---
 
-8. **PreventFinishedOfferAlteration**
-   - **Description:** Prevents any alteration of a `FINISHED` offer
+## Authors
 
-### Custom Error Codes
+- [OrestisMakris](https://github.com/OrestisMakris)
+- [AxillV](https://github.com/AxillV)
+- [NickMavrias](https://github.com/NickMavrias)
 
-| Error Code | Description                                    |
-|------------|------------------------------------------------|
-| 4001       | One or more items do not exist in the dB       |
-|------------|------------------------------------------------|
-| 6002       |Rescuer has reached the maximum number of tasks.|
-|------------|------------------------------------------------|
-| 5003       | In-progress requests cannot be reassigned.     |
-|------------|------------------------------------------------|
-| 5004       | In-progress offers cannot be reassigned.       |
-|------------|------------------------------------------------|
-| 5005       | Pending requests cannot be marked as finished. |
-|------------|------------------------------------------------|
-| 5006       | Pending offers cannot be marked as finished.   |
-|------------|------------------------------------------------|
-| 5007       | Finished requests cannot be altered.           |
-|------------|------------------------------------------------|
-| 5008       | Finished offers cannot be altered.             |
-|------------|------------------------------------------------|
+---
 
+## License
 
-## Test Data
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-The `test_data.sql` file provides sample data to populate the database for testing purposes. It includes sample administrators, rescuers, citizens, items, requests, and offers.
+---
 
-## How to Use
+## Conclusion
 
-1. **Setup Database:**
-   - Create a new MySQL database.
-   - Run `db_schema.sql` to create the database schema.
-   - Run `Procedures_Trigers.sql` to add the stored procedures and triggers.
-   - Run `test_data.sql` to populate the database with sample data.
-
-2. **Configure PHP Application:**
-   - Update the database connection settings in your PHP application to connect to the MySQL database.
-   - Use the provided database schema and procedures to handle requests, offers, and other operations in the application.
-
-3. **API Integration:**
-   - Create PHP scripts to interact with the database using the defined schema and procedures.
-   - Implement API endpoints to manage disaster relief operations, such as creating requests, assigning rescuers, updating statuses, and more.
-
-## Example API Endpoints
-
-- `POST /api/requests`: Create a new request.
-- `POST /api/offers`: Create a new offer.
-- `GET /api/requests`: Retrieve a list of requests.
-- `GET /api/offers`: Retrieve a list of offers.
-- `PUT /api/requests/:id/assign`: Assign a request to a rescuer.
-- `PUT /api/requests/:id/status`: Update the status of a request.
-- `PUT /api/offers/:id/assign`: Assign an offer to a rescuer.
-- `PUT /api/offers/:id/status`: Update the status of an offer.
+This platform offers a comprehensive, modular solution for managing urgent requests and coordinating volunteer efforts during natural disasters. Its advanced features – ranging from secure user authentication and dynamic inventory management to real-time mapping and task coordination – ensure that emergency supplies are distributed efficiently and that all stakeholders have access to up-to-date information.
