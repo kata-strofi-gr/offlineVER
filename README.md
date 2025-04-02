@@ -4,8 +4,8 @@
 #### Subject: Volunteer Coordination Platform during Natural Disasters  
 #### Version 1.0 – 03/11/2023
 
-![Project Logo](kata-strofiF.svg)
-![Secondary Logo](thesalia_vector-01.svg)
+![Project Logo](./Media/kata-strofi_RN.svg)
+![Secondary Logo](./Media/thesalia_vector-01.svg)
 
 ---
 
