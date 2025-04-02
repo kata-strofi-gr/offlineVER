@@ -5,7 +5,7 @@
 #### Version 1.0 – 03/11/2023
 
 <div style="display: flex; align-items: center; justify-content: center;">
-    <img src="./Media/kata-strofi_RN.svg" alt="Project Logo" width="500" style="margin-right: 20px;" />
+    <img src="./Media/kata-strofi_RN.svg" alt="Project Logo" width="400" style="margin-right: 10px;" />
     <img src="./Media/thesalia_vector-01.svg" alt="Secondary Logo" width="400" />
 </div>
 
