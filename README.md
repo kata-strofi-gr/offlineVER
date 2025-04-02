@@ -108,7 +108,7 @@ The application is organized into several modules and components:
 - **Entity Relationship Diagram (ERD):**  
   The ERD diagram outlining the relationships between tables and entities in the database can be found here:
 
-<img src="./MySQL%20DB/erd.png" alt="ERD Diagram" width="400" />
+<img src="./MySQL%20DB/erd.png" alt="ERD Diagram" width="800" />
 
 ---
 
