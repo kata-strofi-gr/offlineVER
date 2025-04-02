@@ -26,7 +26,7 @@ $offers_sql = "
         cit.Latitude Latitude, 
         cit.Longitude Longitude,
         GROUP_CONCAT(offitems.ItemID) AS ItemIDs,
-        GROUP_CONCAT(items.Name SEPARATOR ', ') AS ItemNames,
+        GROUP_CONCAT(Items.Name SEPARATOR ', ') AS ItemNames,
         GROUP_CONCAT(offitems.Quantity SEPARATOR ', ') AS ItemQuantities
     FROM Offers off
     JOIN Citizen cit on cit.CitizenID = off.CitizenID

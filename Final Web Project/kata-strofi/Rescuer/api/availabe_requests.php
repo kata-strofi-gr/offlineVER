@@ -17,7 +17,7 @@ $sql = "
         cit.Latitude, 
         cit.Longitude,
         GROUP_CONCAT(reqItems.ItemID) AS ItemIDs,
-        GROUP_CONCAT(items.Name SEPARATOR ', ') AS ItemNames,
+        GROUP_CONCAT(Items.Name SEPARATOR ', ') AS ItemNames,
         GROUP_CONCAT(reqItems.Quantity SEPARATOR ', ') AS ItemQuantities
     FROM Requests req
     JOIN Citizen cit on cit.CitizenID = req.CitizenID

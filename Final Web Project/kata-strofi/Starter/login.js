@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 setCookie('rescuer_session', 'active', 20000);
                                 localStorage.setItem('rescuer_id', response.specificID);
                                 
-                                window.location.href = '../Rescuer/rescuer.html';
+                                window.location.href = '../Rescuer/Rescuer.html';
 
                             }else {
                                 window.location.href = 'blank.html';
