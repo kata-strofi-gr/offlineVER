@@ -4,7 +4,7 @@
 $host = 'localhost';
 $db = 'kata_strofh';
 $user = 'root';
-$pass = '0r35t1s21802!';
+$pass = '';
 $charset = 'utf8mb4';
 
 $conn = new mysqli($host, $user, $pass, $db);
